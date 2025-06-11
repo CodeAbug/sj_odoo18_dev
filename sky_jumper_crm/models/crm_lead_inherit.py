@@ -28,14 +28,14 @@ class CrmLeadInherit(models.Model):
         string='New Stage Status'
     )
 
-    s2_qualified_status = fields.Selection(
+    s2_qualification_status = fields.Selection(
         [
             ('contacted', 'Contacted'),
             ('visited', 'Visited'),
             ('intro_email', 'Intro Email Sent'),
             ('follow_up', 'Follow Up'),
         ], tracking=True,
-        string='Qualified Lead Status'
+        string='Qualification Lead Status'
     )
 
     s3_proposal_status = fields.Selection(
@@ -101,6 +101,115 @@ class CrmLeadInherit(models.Model):
                             ('others', 'Others')],
                             string="Birthday Person's Gender",tracking=True)
     is_birthday_party_lead = fields.Boolean(string="Is Birthday Party Lead",compute="_compute_is_birthday_party_lead",store=True )
+    
+    ####### School Booking Qualification Stage fields ############
+
+    type_of_school = fields.Char("Type Of School", help="Type of the school, e.g., Pre-school, Primary, Secondary, Higher Secondary, or College")
+    preferred_date_of_visit = fields.Date("Preferred Date Of Visit", help="Preferred date or week for the school’s visit")
+    purpose_of_visit = fields.Selection([
+        ('field_trip', 'Field Trip'),
+        ('annual_day', 'Annual Day Outing'),
+        ('sports_week', 'Sports Week'),
+        ('reward_program', 'Reward Program'),
+    ], string="Purpose of Visit", help="Purpose of visit to the SkyJumper park")
+    student_per_class = fields.Integer(
+        string='Student Per Class',
+        help="Number of students per class visiting the park"
+    )
+    free_teacher_visit_bool = fields.Boolean("Free Visits for Teachers?", help="Indicates whether free entry for teachers/staff is included based on group size")
+    average_fees = fields.Float("Average Fees", help="Average fees charged per student at the school")
+    budget_per_student = fields.Float("Budget per Student", help="Estimated budget range per student as shared by the school")
+    total_trips_planned = fields.Integer("Total Trips Planned", help="Total number of trips planned by the school for the academic year")
+
+    ########## School Booking - Proposition state Fields ##############
+
+    included_activities_ids = fields.Many2many(
+        'included.activities', 
+        string="Included Activities",
+        help="Activities included in the chosen package (trampoline, games, lunch, team-building, etc.)"
+    )
+    addons_pack = fields.Text("Add-ons Pack", help="Additional items or services like certificates, snacks, group photo, gift packs")
+    quotation_sent_date  = fields.Date("Quotation Sent Date", help="Date on which the proposal/quotation was shared with the school")
+    onground_requirements_ids = fields.Many2many(
+        'onground.requirements', 
+        string="On-ground Requirements",
+        help="On-ground resources needed for the visit (first aid, security, lunch tables, audio system, etc.)"
+    )
+    quotation_amount = fields.Float("Quotation Amount", help="Total estimated cost of the visit, including students and staff")
+    quotation_valid_till = fields.Date("Quotation Valid Till", help="Validity date for the quotation provided to the school")
+
+    ################### Negotiation Stage fields ##############
+
+    discount_percentage = fields.Float("Discount %", help="Discount percentage offered to the school during negotiation")
+    negotiated_price =  fields.Float("Negotiated Price", help="Final negotiated price after applying discounts")
+    buy_some_get_some_free = fields.Text("Buy some Get Some free", help="Special offer like buy one, get one free on certain items/services")
+    book_five_get_one_free = fields.Text("Book for 5, Get 1 Free", help="Special offer where a group of 6 pays for only 5 entries")
+    free_meal_coupon_bool = fields.Boolean("Free Meal Coupon", help="Indicates whether free meal coupons are included in the deal")
+    happy_hour_bool = fields.Boolean("Happy Hour", help="Indicates whether happy hour discounts apply to the booking")
+
+    
+    ########## School Booking - Converted Stage Fields  ##############
+    ############# this status will be added later after the discussions ###############
+    # booking_status = fields.Selection([
+    #     ('confirmed', 'Confirmed'),
+    #     ('tentative', 'Tentative'),
+    #     ('cancelled', 'Cancelled')
+    # ], string="Booking Status", help="Final booking status: Confirmed, Tentative, or Cancelled")
+
+    planned_vs_current_trips = fields.Char(string="Planned vs Current Trips", help="Example: 2/10 - number of planned trips vs current confirmed trips")
+
+    shift_time_slot = fields.Selection([
+        ('morning', 'Morning'),
+        ('afternoon', 'Afternoon'),
+        ('full_day', 'Full Day')
+    ], string="Shift Time Slot", help="Morning, Afternoon, or Full Day slot for the visit")
+
+    confirmed_number_of_students = fields.Integer(string="Confirmed Number of Students", help="Final confirmed number of participating students")
+
+    confirmed_number_of_staff = fields.Integer(string="Confirmed Number of Staff", help="Teachers, helpers, bus drivers, etc. accompanying students")
+
+    meal_plan_details = fields.Text(string="Meal Plan (if applicable)", help="Meal details or attached menu for the event")
+
+    advance_received = fields.Float(string="Advance Received", help="Token payment received from the client")
+
+    final_payment_due = fields.Float(string="Final Payment Due", help="Remaining amount to be paid")
+
+    invoice_number = fields.Char(string="Invoice Number", help="Auto-generated invoice number, integrated with POS system")
+
+    booking_id = fields.Char(string="Booking ID", help="Unique ID for tracking the booking")
+
+    assigned_event_manager = fields.Char(string="Assigned Event Manager", help="SkyJumper event coordinator assigned to the client")
+
+    
+    ##################### Re-engagement fields ###########
+    # Added to Mailing List
+    added_to_mailing_list = fields.Selection([
+        ('yes', 'Yes'),
+        ('no', 'No')
+    ], string="Added to Mailing List")
+    corporate_discount_code = fields.Char(string="Corporate Discount Code", help="Unique discount code for repeat events")
+    anniversary_festival_offers = fields.Text(string="Anniversary / Festival Offers", help="Shared via email campaigns")
+    last_visit_date = fields.Date(string="Last Visit Date", help="For reactivation")
+    client_category = fields.Selection([
+        ('platinum', 'Platinum'),
+        ('gold', 'Gold'),
+        ('silver', 'Silver')
+    ], string="Client Category", help="Corporate Client Category")
+
+
+    ########## School Booking - Re-engagement Fields  ##############
+    added_to_mailing_list = fields.Selection([
+        ('yes', 'Yes'),
+        ('no', 'No')
+    ], string="Added to Mailing List", help="Whether the client has been added to the mailing list")
+
+    discount_code = fields.Char(string="Discount Code", help="Unique discount code for repeat events or re-engagement offers")
+
+    teacher_referral = fields.Boolean(string="Teacher Referral", help="Indicates if a teacher/staff has referred another school")
+
+    last_visit_date = fields.Date(string="Last Visit Date", help="Last visit date, useful for planning follow-ups for the next academic cycle")
+
+    
     @api.depends('lead_type_id', 'birthday_person_name', 'birthday_person_dob', 'birthday_person_gender',
             'source_id','lead_source')
     def _compute_is_birthday_party_lead(self):

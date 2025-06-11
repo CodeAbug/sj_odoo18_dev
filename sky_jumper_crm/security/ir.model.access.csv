@@ -2,3 +2,6 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_city_city,access_city_city,model_city_city,base.group_user,1,1,1,1
 access_package_request,access_package_request,model_package_request,base.group_user,1,1,1,1
 access_lead_type,access_lead_type,model_lead_type,base.group_user,1,1,1,1
+access_onground_requirements,access_onground_requirements,model_onground_requirements,,1,1,1,1
+access_included_activities,access_included_activities,model_included_activities,,1,1,1,1
+

@@ -11,20 +11,30 @@
 
             <!-- First of all Clear the old form items -->
             
-            <xpath expr="//div[@class='oe_title']" position="replace">
+            <!-- <xpath expr="//div[@class='oe_title']" position="replace">
                 <div class="oe_title">
                 <h1><field class="text-break" options="{'line_breaks': False}" widget="text" name="name" placeholder="e.g. Product Pricing"/></h1>
                 </div>
             </xpath>
 
+            <xpath expr="//group[@name='lead_partner']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//group[@name='opportunity_partner']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//page[@name='internal_notes']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//page[@name='lead']" position="attributes">
                 <attribute name="invisible">1</attribute>
-            </xpath>
+            </xpath> -->
 
-            <!-- <xpath expr="//header/field[@name='stage_id']" position="after"> -->
+            <xpath expr="//sheet" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
             <xpath expr="//header" position="after">
                         <div style="text-align: right;">
                         <field name="s1_new_status" 
@@ -33,7 +43,7 @@
                             statusbar_colors='{"enquiry": "blue"}'
                             invisible="stage_id != 1"/>
 
-                        <field name="s2_qualified_status" 
+                        <field name="s2_qualification_status" 
                             widget="statusbar_duration" 
                             options="{'clickable': '1'}"
                             statusbar_colors='{"enquiry": "blue"}'
@@ -59,10 +69,11 @@
                             </div>
             </xpath>
             
-                <xpath expr="//sheet" position="inside">
-                    <group>
-                        <group string="Contact Information">
-                            <field name="partner_name"/>
+                <xpath expr="//sheet" position="replace">
+                    <sheet>
+                        <group string="Contact Information" style="margin-top:-30px !important;">
+                            <group>
+                            <field name="partner_name" string="Company/School Name"/>
                             <label for="street_page_lead" string="Address"/>
                             <div class="o_address_format">
                                 <field name="street" id="street_page_lead" placeholder="Street..." class="o_address_street"/>
@@ -72,17 +83,61 @@
                                 <field name="zip" placeholder="ZIP" class="o_address_zip"/>
                                 <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
                             </div>
+                            <field name="type_of_school" invisible="lead_type_id != 3"/>
+                            
                             <field name="website" widget="url" placeholder="e.g. https://www.odoo.com"/>
                             <field name="lang_active_count" invisible="1"/>
                             <field name="lang_id" invisible="lang_active_count &lt;= 1"
                                 options="{'no_quick_create': True, 'no_create_edit': True, 'no_open': True}"/>
                         </group>
                         <group class="mt48">
+                            <field name="partner_id" widget="res_partner_many2one" string="Choose Contact"
+                                    context="{
+                                        'default_name': contact_name,
+                                        'default_title': title,
+                                        'default_street': street,
+                                        'default_street2': street2,
+                                        'default_city': city,
+                                        'default_state_id': state_id,
+                                        'default_zip': zip,
+                                        'default_country_id': country_id,
+                                        'default_function': function,
+                                        'default_phone': phone,
+                                        'default_mobile': mobile,
+                                        'default_email': email_from,
+                                        'default_user_id': user_id,
+                                        'default_team_id': team_id,
+                                        'default_website': website,
+                                        'default_lang': lang_code,
+                                        'show_vat': True
+                                    }" invisible="not is_partner_visible"/>
                             <label for="contact_name_page_lead"/>
                             <div class="o_row">
                                 <field name="contact_name" id="contact_name_page_lead"/>
                                 <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
                             </div>
+                            <label for="email_from" class="oe_inline"/>
+                                <div class="o_row o_row_readonly">
+                                    <button name="mail_action_blacklist_remove" class="fa fa-ban text-danger"
+                                        title="This email is blacklisted for mass mailings. Click to unblacklist."
+                                        type="object" context="{'default_email': email_from}" groups="base.group_user"
+                                        invisible="not is_blacklisted"/>
+                                    <field name="email_from" string="Email" widget="email"/>
+                                    <span class="fa fa-exclamation-triangle text-warning oe_edit_only"
+                                        title="By saving this change, the customer email will also be updated."
+                                        invisible="not partner_email_update"/>
+                                </div>
+                                <label for="phone" class="oe_inline"/>
+                                <div class="o_row o_row_readonly">
+                                    <button name="phone_action_blacklist_remove" class="fa fa-ban text-danger"
+                                        title="This phone number is blacklisted for SMS Marketing. Click to unblacklist."
+                                        type="object" context="{'default_phone': phone}" groups="base.group_user"
+                                        invisible="not phone_blacklisted"/>
+                                    <field name="phone" widget="phone"/>
+                                    <span class="fa fa-exclamation-triangle text-warning oe_edit_only"
+                                        title="By saving this change, the customer phone number will also be updated."
+                                        invisible="not partner_phone_update"/>
+                                </div>
                             <field name="function"/>
                             <label for="mobile_page_lead" class="oe_inline"/>
                             <div class="o_row o_row_readonly">
@@ -93,15 +148,21 @@
                                 <field name="mobile" id="mobile_page_lead" widget="phone"/>
                             </div>
                         </group>
-                        
-                    </group>
+                        </group>
+                    
                     <group name="party_and_persons">
                         <group string="Party Details" name="party_details">
+                            <field name="enquiry_date"/>
                             <field name="nearest_branch_city_id"/>
                             <field name="lead_type_id"/>
-                            <field name="lead_source"/>
-                            <field name="package_request_id"/>
-                            <field name="enquiry_date"/>
+                            <field name="lead_source" readonly="stage_id != 2"/>
+                            <!-- <field name="preferred_date_of_visit" readonly="stage_id != 2"/>
+                            <field name="purpose_of_visit" readonly="stage_id != 2"/>
+                            <field name="student_per_class" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
+                            <field name="free_teacher_visit_bool" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
+                            <field name="average_fees" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
+                            <field name="budget_per_student" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
+                            <field name="total_trips_planned" invisible="lead_type_id != 3" readonly="stage_id != 2"/> -->
                             <field name="next_follow_up_date"/>
                         </group>
 
@@ -110,6 +171,20 @@
                             <field name="no_of_persons"/>
                             <field name="jumper"/>
                             <field name="non_jumper"/>
+                            
+                            <!-- <separator string="Proposition Fields" colspan="4" />
+                                
+                            
+                            <field name="package_request_id" readonly="stage_id != 3"/>
+                            <field name="included_activities_ids" readonly="stage_id != 3" widget="many2many_tags"/>
+                            <field name="addons_pack" readonly="stage_id != 3"/>
+                            <field name="quotation_sent_date" readonly="stage_id != 3"/>
+                            <field name="quotation_amount" readonly="stage_id != 3" help="Estimated total cost (students + staff)"/>
+                            <field name="onground_requirements_ids" readonly="stage_id != 3" widget="many2many_tags"/>
+
+                            <field name="quotation_valid_till" readonly="stage_id != 3" help="Expiry date for offer"/> -->
+
+
                         </group>
                     </group>
 
@@ -129,6 +204,96 @@
                     </group>
 
                     
+                <group string="School Booking - Qualification Stage">
+                    <group>
+                        <field name="type_of_school"/>
+                        <field name="preferred_date_of_visit"/>
+                    </group>
+                    <group>
+                        <field name="purpose_of_visit"/>
+                        <field name="student_per_class"/>
+                    </group>
+                    <group>
+                        <field name="free_teacher_visit_bool"/>
+                        <field name="average_fees"/>
+                    </group>
+                    <group>
+                        <field name="budget_per_student"/>
+                        <field name="total_trips_planned"/>
+                    </group>
+                    </group>
+
+                    <group string="School Booking - Proposition Stage">
+                    <group>
+                        <field name="included_activities_ids" widget="many2many_tags"/>
+                        <field name="addons_pack"/>
+                    </group>
+                    <group>
+                        <field name="quotation_sent_date"/>
+                        <field name="onground_requirements_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="quotation_amount"/>
+                        <field name="quotation_valid_till"/>
+                    </group>
+                    </group>
+
+                    <group string="School Booking - Negotiation Stage">
+                    <group>
+                        <field name="discount_percentage"/>
+                        <field name="negotiated_price"/>
+                    </group>
+                    <group>
+                        <field name="buy_some_get_some_free"/>
+                        <field name="book_five_get_one_free"/>
+                    </group>
+                    <group>
+                        <field name="free_meal_coupon_bool"/>
+                        <field name="happy_hour_bool"/>
+                    </group>
+                    </group>
+
+                    <group string="School Booking - Converted Stage">
+                    <group>
+                        <field name="planned_vs_current_trips"/>
+                        <field name="shift_time_slot"/>
+                    </group>
+                    <group>
+                        <field name="confirmed_number_of_students"/>
+                        <field name="confirmed_number_of_staff"/>
+                    </group>
+                    <group>
+                        <field name="meal_plan_details"/>
+                        <field name="advance_received"/>
+                    </group>
+                    <group>
+                        <field name="final_payment_due"/>
+                        <field name="invoice_number"/>
+                    </group>
+                    <group>
+                        <field name="booking_id"/>
+                        <field name="assigned_event_manager"/>
+                    </group>
+                    </group>
+
+                    <group string="School Booking - Re-engagement state">
+                    <group>
+                        <field name="added_to_mailing_list"/>
+                        <field name="corporate_discount_code"/>
+                    </group>
+                    <group>
+                        <field name="anniversary_festival_offers"/>
+                        <field name="last_visit_date"/>
+                    </group>
+                    <group>
+                        <field name="client_category"/>
+                        <field name="discount_code"/>
+                    </group>
+                    <group>
+                        <field name="teacher_referral"/>
+                    </group>
+                    </group>
+
                     <group name="marketing_and_tracking">
                     <group string="Marketing" name="marketing">
                         <field name="campaign_id" options="{'create_name_field': 'title'}"/>
@@ -159,7 +324,14 @@
                                 <field name="is_birthday_party_lead" readonly="1"/>
                             </group>
                         </page>
+                        <page name="notes" string="Notes">
+                            <group name="notes" string="Notes">
+                                <field name="description"/>
+                            </group>
+                        </page>
                     </notebook>
+
+                </sheet>
                 </xpath>
             </field>
         </record>
