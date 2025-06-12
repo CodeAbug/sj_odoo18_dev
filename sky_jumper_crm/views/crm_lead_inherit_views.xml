@@ -8,72 +8,113 @@
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
 
-
-            <!-- First of all Clear the old form items -->
-            
-            <!-- <xpath expr="//div[@class='oe_title']" position="replace">
-                <div class="oe_title">
-                <h1><field class="text-break" options="{'line_breaks': False}" widget="text" name="name" placeholder="e.g. Product Pricing"/></h1>
-                </div>
-            </xpath>
-
-            <xpath expr="//group[@name='lead_partner']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-
-            <xpath expr="//group[@name='opportunity_partner']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//page[@name='internal_notes']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//page[@name='lead']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath> -->
-
             <xpath expr="//sheet" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            
+
             <xpath expr="//header" position="after">
-                        <div style="text-align: right;">
-                        <field name="s1_new_status" 
-                            widget="statusbar_duration" 
-                            options="{'clickable': '1'}"
-                            statusbar_colors='{"enquiry": "blue"}'
-                            invisible="stage_id != 1"/>
+                
+                        <style>
+                        .my-colored-statusbar .o_form_statusbar {
+                        background-color: #f3edfc !important;
+                        border: 2px solid #7f56d9 !important;
+                        border-radius: 10px !important;
+                        padding: 6px !important;
+                    }
 
-                        <field name="s2_qualification_status" 
-                            widget="statusbar_duration" 
-                            options="{'clickable': '1'}"
-                            statusbar_colors='{"enquiry": "blue"}'
-                            invisible="stage_id != 2"/>
+                    /* Default inactive buttons */
+                    .my-colored-statusbar .o_statusbar_status .btn,
+                    .my-colored-statusbar .o_statusbar_status .btn.disabled {
+                        background-color: #e6dcfa !important;
+                        color: #5c3ca3 !important;
+                        border: 1px solid #e6dcfa !important;
+                        font-weight: bold !important;
+                        border-radius: 0 !important;
+                        transition: 0.2s ease-in-out !important;
+                    }
 
-                        <field name="s3_proposal_status" 
-                            widget="statusbar_duration" 
-                            options="{'clickable': '1'}"
-                            statusbar_colors='{"enquiry": "blue"}'
-                            invisible="stage_id != 3"/>
+                    /* Active (current stage) button */
+                    .my-colored-statusbar .o_statusbar_status .btn-primary.disabled {
+                        background-color: #7f56d9 !important;
+                        color: white !important;
+                        border-color:  #82caf6 !important;
+                        box-shadow: inset 0 -2px 0 #553c9a !important;
+                        border-radius: 0 !important;
+                    }
 
-                        <field name="s4_quotation_status" 
-                            widget="statusbar_duration" 
-                            options="{'clickable': '1'}"
-                            statusbar_colors='{"enquiry": "blue"}'
-                            invisible="stage_id != 4"/>
-                        
-                            <field name="s5_contracted_status" 
-                            widget="statusbar_duration" 
-                            options="{'clickable': '1'}"
-                            statusbar_colors='{"enquiry": "blue"}'
-                            invisible="stage_id != 5"/>
-                            </div>
+                    /* Arrow after effect */
+                    .my-colored-statusbar .o_arrow_button::after {
+                        border-left-color: #7f56d9 !important;
+                    }
+
+                    /* Hover effect on all buttons */
+                    .my-colored-statusbar .o_statusbar_status .btn:hover {
+                        background-color: #a084e8 !important;
+                        color: #fff !important;
+                        transform: scale(1.03);
+                    }
+                        </style>
+
+                <div style="text-align: right;">
+                    <field name="s1_new_status"
+                        options="{'clickable': '1'}"
+                        widget="statusbar"
+                        class="my-colored-statusbar"
+                        statusbar_visible="enquiry,connected,not_connected,visit"
+                        invisible="stage_id != 1"/>
+
+                    <field name="s2_qualification_status"
+                        widget="statusbar_duration"
+                        options="{'clickable': '1'}"
+                        class="my-colored-statusbar"
+                        statusbar_colors='{"enquiry": "blue"}'
+                        invisible="stage_id != 2"/>
+
+                    <field name="s3_proposal_status"
+                        widget="statusbar_duration"
+                        options="{'clickable': '1'}"
+                        class="my-colored-statusbar"
+                        statusbar_colors='{"enquiry": "blue"}'
+                        invisible="stage_id != 3"/>
+
+                    <field name="s4_quotation_status"
+                        widget="statusbar_duration"
+                        options="{'clickable': '1'}"
+                        class="my-colored-statusbar"
+                        statusbar_colors='{"enquiry": "blue"}'
+                        invisible="stage_id != 4"/>
+
+                    <field name="s5_contracted_status"
+                        widget="statusbar_duration"
+                        options="{'clickable': '1'}"
+                        class="my-colored-statusbar"
+                        statusbar_colors='{"enquiry": "blue"}'
+                        invisible="stage_id != 5"/>
+                </div>
             </xpath>
+
+
             
                 <xpath expr="//sheet" position="replace">
-                    <sheet>
+                    <sheet><group style="margin-bottom:10px !important;">
+                        <group>
+                        <field name="lead_type_id"/>
+                            </group>
+                            <group>
+                            <field name="lead_source"/>
+                            <field name="user_id" string="Lead Assigned To"/>
+                            <field name="create_uid" string="Lead Created By"/>
+                            </group>
+                            </group>
                         <group string="Contact Information" style="margin-top:-30px !important;">
                             <group>
                             <field name="partner_name" string="Company/School Name"/>
+
+                            <label for="contact_name_page_lead"/>
+                            <div class="o_row">
+                                <field name="contact_name" id="contact_name_page_lead" string="Contact Person"/>
+                                <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
+                            </div>
                             <label for="street_page_lead" string="Address"/>
                             <div class="o_address_format">
                                 <field name="street" id="street_page_lead" placeholder="Street..." class="o_address_street"/>
@@ -111,11 +152,7 @@
                                         'default_lang': lang_code,
                                         'show_vat': True
                                     }" invisible="not is_partner_visible"/>
-                            <label for="contact_name_page_lead"/>
-                            <div class="o_row">
-                                <field name="contact_name" id="contact_name_page_lead"/>
-                                <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
-                            </div>
+                            
                             <label for="email_from" class="oe_inline"/>
                                 <div class="o_row o_row_readonly">
                                     <button name="mail_action_blacklist_remove" class="fa fa-ban text-danger"
@@ -151,11 +188,9 @@
                         </group>
                     
                     <group name="party_and_persons">
-                        <group string="Party Details" name="party_details">
+                        <group string="Enquiry Details" name="party_details">
                             <field name="enquiry_date"/>
                             <field name="nearest_branch_city_id"/>
-                            <field name="lead_type_id"/>
-                            <field name="lead_source" readonly="stage_id != 2"/>
                             <!-- <field name="preferred_date_of_visit" readonly="stage_id != 2"/>
                             <field name="purpose_of_visit" readonly="stage_id != 2"/>
                             <field name="student_per_class" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
@@ -163,7 +198,13 @@
                             <field name="average_fees" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
                             <field name="budget_per_student" invisible="lead_type_id != 3" readonly="stage_id != 2"/>
                             <field name="total_trips_planned" invisible="lead_type_id != 3" readonly="stage_id != 2"/> -->
+                            <field name="party_date" string="Event Date"/>
+                            <field name="time_slot"/>
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                            <field name="total_hours" readonly="1"/>
                             <field name="next_follow_up_date"/>
+
                         </group>
 
                         <group string="Guest Details" name="guest_details">
@@ -188,23 +229,19 @@
                         </group>
                     </group>
 
-                    <group name="party_and_birthday">
-                        <group string="Party Timing" name="party_timing">
-                            <field name="party_date"/>
-                            <field name="time_slot"/>
-                            <field name="start_time"/>
-                            <field name="end_time"/>
-                            <field name="total_hours" readonly="1"/>
+                    <!-- <group name="party_and_birthday">
+                        <group string="Timing" name="timing">
+                            
                         </group>
                         <group string="Birthday Person Details" name="birthday_person_details">
                             <field name="birthday_person_name"/>
                             <field name="birthday_person_dob"/>
                             <field name="birthday_person_gender"/>
                         </group>
-                    </group>
+                    </group> -->
 
                     
-                <group string="School Booking - Qualification Stage">
+                <group string="School Booking - Qualification Stage" invisible="lead_type_id != 3 and stage_id != 2">
                     <group>
                         <field name="type_of_school"/>
                         <field name="preferred_date_of_visit"/>
@@ -221,9 +258,9 @@
                         <field name="budget_per_student"/>
                         <field name="total_trips_planned"/>
                     </group>
-                    </group>
+                </group>
 
-                    <group string="School Booking - Proposition Stage">
+                    <group string="School Booking - Proposition Stage" invisible="lead_type_id != 3 and stage_id != 3">
                     <group>
                         <field name="included_activities_ids" widget="many2many_tags"/>
                         <field name="addons_pack"/>
@@ -238,7 +275,7 @@
                     </group>
                     </group>
 
-                    <group string="School Booking - Negotiation Stage">
+                    <group string="School Booking - Quotation Stage" invisible="lead_type_id != 3 and stage_id != 4">
                     <group>
                         <field name="discount_percentage"/>
                         <field name="negotiated_price"/>
@@ -253,7 +290,7 @@
                     </group>
                     </group>
 
-                    <group string="School Booking - Converted Stage">
+                    <group string="School Booking - Contracted Stage" invisible="lead_type_id != 3 and stage_id != 5">
                     <group>
                         <field name="planned_vs_current_trips"/>
                         <field name="shift_time_slot"/>
@@ -274,9 +311,8 @@
                         <field name="booking_id"/>
                         <field name="assigned_event_manager"/>
                     </group>
-                    </group>
+                    
 
-                    <group string="School Booking - Re-engagement state">
                     <group>
                         <field name="added_to_mailing_list"/>
                         <field name="corporate_discount_code"/>
@@ -292,8 +328,7 @@
                     <group>
                         <field name="teacher_referral"/>
                     </group>
-                    </group>
-
+                </group>
                     <group name="marketing_and_tracking">
                     <group string="Marketing" name="marketing">
                         <field name="campaign_id" options="{'create_name_field': 'title'}"/>
