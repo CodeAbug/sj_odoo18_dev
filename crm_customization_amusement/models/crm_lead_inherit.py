@@ -12,6 +12,8 @@ class CrmLeadInherit(models.Model):
     
     school_type_id = fields.Many2one('school.type', string="School Type" ,tracking=True)
     
+    visiting_center_id = fields.Many2one('city.city',tracking=True,string="Visiting Center")
+    
     lead_source = fields.Selection([
                             ('whats_app', "What's App"),
                             ('website', 'Website'),
@@ -40,5 +42,5 @@ class Lead2OpportunityPartnerInherit(models.TransientModel):
         ('create', 'Create a new Contact'),
         ('exist', 'Link to an existing Contact'),
         ('nothing', 'Do not link to a Contact')
-    ], string='Related Contact', compute='_compute_action', readonly=False, store=True, compute_sudo=False)
+    ], string='Related Contact', compute='_compute_action', readonly=False, store=True, compute_sudo=False,tracking=True)
 

@@ -36,8 +36,8 @@ class OtherStakeholder(models.Model):
     crm_lead_id = fields.Many2one('crm.lead',tracking=True)
     mail = fields.Char("Mail", tracking=True)
     phone = fields.Char("Phone", tracking= True)
-    designation_id = fields.Many2one('stakeholder.designation', string="Designation")
-    is_primary_bool = fields.Boolean("Is Primary Person")
+    designation_id = fields.Many2one('stakeholder.designation', string="Designation",tracking=True)
+    is_primary_bool = fields.Boolean("Is Primary Person",tracking=True)
 
 
 

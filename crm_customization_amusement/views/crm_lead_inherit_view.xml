@@ -58,11 +58,13 @@
                 <xpath expr="//field[@name='user_id']" position="before">
                     <field name="lead_type_id"/>
                     <field name="lead_source"/>
+                    <field name="visiting_center_id"/>
                 </xpath>
 
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="after">
-                                <field name="school_type_id" invisible="lead_type_id != 3"/>
+                    <field name="school_type_id" invisible="lead_type_id != 3"/>
                 </xpath>
+                
             </field>
 
         </record>

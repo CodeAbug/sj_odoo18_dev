@@ -16,7 +16,12 @@
         'data/lead_type_data.xml',
         'data/city_data.xml',
         'data/school_type_data.xml',
+        'data/designation_data.xml',
         
+        'views/city_view.xml',
+        'views/lead_type_views.xml',
+        'views/school_type_views.xml',
+        'views/stakeholder_designation_views.xml',
         'views/crm_lead_inherit_view.xml',
         ],
     'assets': {

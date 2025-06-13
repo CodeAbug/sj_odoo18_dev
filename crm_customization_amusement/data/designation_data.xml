@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="designation_principal" model="stakeholder.designation">
+            <field name="name">Principal</field>
+        </record>
+
+        <record id="designation_vice_principal" model="stakeholder.designation">
+            <field name="name">Vice Principal</field>
+        </record>
+
+        <record id="designation_coordinator" model="stakeholder.designation">
+            <field name="name">Coordinator</field>
+        </record>
+
+        <record id="designation_teacher" model="stakeholder.designation">
+            <field name="name">Teacher</field>
+        </record>
+
+        <record id="designation_admin_staff" model="stakeholder.designation">
+            <field name="name">Admin Staff</field>
+        </record>
+
+        <record id="designation_pe_instructor" model="stakeholder.designation">
+            <field name="name">PE Instructor</field>
+        </record>
+
+        <record id="designation_trustee" model="stakeholder.designation">
+            <field name="name">Trustee</field>
+        </record>
+
+        <record id="designation_accountant" model="stakeholder.designation">
+            <field name="name">Accountant</field>
+        </record>
+
+        <record id="designation_other" model="stakeholder.designation">
+            <field name="name">Other</field>
+        </record>
+
+    </data>
+</odoo>
