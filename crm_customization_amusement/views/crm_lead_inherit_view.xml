@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherit the CRM Lead Form View -->
+        <record id="crm_lead_inherit_form" model="ir.ui.view">
+            <field name="name">crm.lead.inherit.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//label[@for='contact_name']" position="before">
+                        <field name="lead_type_id"/>
+                        <field name="lead_source" string="Lead Source"/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_name']" position="attributes">
+                    <attribute name="string">Orgranization Name</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_name']" position="after">
+                        <field name="school_type_id" invisible="lead_type_id != 3"/>
+                </xpath>
+
+                <xpath expr="//field[1][@name='user_id']" position="attributes">
+                    <attribute name="string">Lead Assigned To</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='internal_notes']" position="before">
+                    <page name="other_stakeholders" string="Other Stakeholders">
+                            <field name="other_stakeholders_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="mail" string="Email" widget="email"/>
+                                    <field name="phone" string="Phone" widget="phone"/>
+                                    <field name="designation_id" string="Designation"/>
+                                    <field name="is_primary_bool" string="Is Primary?"/>
+                                </list>
+                            </field>
+                    </page>
+
+                </xpath>
+
+
+
+
+                <!-- Opportunity fields added here -->
+
+                <xpath expr="//field[1][@name='partner_id']" position="after">
+                    <field name="customer_visit_datetime" string="School Visit Datetime" invisible="lead_type_id != 3"/>
+                    <field name="number_of_students" invisible="lead_type_id != 3"/>
+                    <field name="student_class" invisible="lead_type_id != 3"/>
+                    <field name="number_of_teachers" invisible="lead_type_id != 3"/>
+
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="total_trips" invisible="lead_type_id != 3"/>
+                </xpath>
+
+                <xpath expr="//field[@name='user_id']" position="before">
+                    <field name="lead_type_id"/>
+                    <field name="lead_source"/>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="after">
+                                <field name="school_type_id" invisible="lead_type_id != 3"/>
+                </xpath>
+            </field>
+
+        </record>
+
+
+
+        <!-- <record id="view_crm_lead2opportunity_partner_wizard_form_inherit" model="ir.ui.view">
+            <field name="name">crm.lead2opportunity.partner.form.inherit</field>
+        <field name="model">crm.lead2opportunity.partner</field>
+            <field name="inherit_id" ref="crm.view_crm_lead2opportunity_partner"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//label[@for='contact_name']" position="before">
+                        <field name="lead_type_id"/>
+                        <field name="lead_source" string="Lead Source"/>
+                </xpath>
+</field>
+</record> -->
+
+    </data>
+
+</odoo>

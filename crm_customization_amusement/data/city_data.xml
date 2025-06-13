@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- City Records -->
+        <record id="city_ambernath" model="city.city">
+            <field name="name">Ambernath</field>
+        </record>
+        
+        <record id="city_amritsar" model="city.city">
+            <field name="name">Amritsar</field>
+        </record>
+        
+        <record id="city_bangalore" model="city.city">
+            <field name="name">Bangalore</field>
+        </record>
+        
+        <record id="city_bathinda" model="city.city">
+            <field name="name">Bathinda</field>
+        </record>
+        
+        <record id="city_chennai" model="city.city">
+            <field name="name">Chennai</field>
+        </record>
+        
+        <record id="city_chandigarh" model="city.city">
+            <field name="name">Chandigarh</field>
+        </record>
+        
+        <record id="city_delhi" model="city.city">
+            <field name="name">Delhi</field>
+        </record>
+        
+        <record id="city_faridabad" model="city.city">
+            <field name="name">Faridabad</field>
+        </record>
+        
+        <record id="city_ghaziabad" model="city.city">
+            <field name="name">Ghaziabad</field>
+        </record>
+        
+        <record id="city_gurugram_ild" model="city.city">
+            <field name="name">Gurugram ILD</field>
+        </record>
+        
+        <record id="city_gurugram_ocus_medley" model="city.city">
+            <field name="name">Gurugram Ocus Medley</field>
+        </record>
+        
+        <record id="city_gurugram_m3m_broadway" model="city.city">
+            <field name="name">Gurugram M3M Broadway</field>
+        </record>
+        
+        <record id="city_jalandhar" model="city.city">
+            <field name="name">Jalandhar</field>
+        </record>
+        
+        <record id="city_karnal" model="city.city">
+            <field name="name">Karnal</field>
+        </record>
+        
+        <record id="city_lucknow" model="city.city">
+            <field name="name">Lucknow</field>
+        </record>
+        
+        <record id="city_noida_go_bananas" model="city.city">
+            <field name="name">Noida Go Bananas</field>
+        </record>
+        
+        <record id="city_pune_amanora" model="city.city">
+            <field name="name">Pune Amanora</field>
+        </record>
+        
+        <record id="city_pune_creaticity" model="city.city">
+            <field name="name">Pune Creaticity</field>
+        </record>
+    </data>
+</odoo>

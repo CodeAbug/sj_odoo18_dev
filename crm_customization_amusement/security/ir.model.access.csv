@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_city_city,access_city_city,model_city_city,base.group_user,1,1,1,1
+access_lead_type,access_lead_type,model_lead_type,base.group_user,1,1,1,1
+access_school_type,access_school_type,model_school_type,base.group_user,1,1,1,1
+access_stakeholder_designation,access_stakeholder_designation,model_stakeholder_designation,base.group_user,1,1,1,1
+access_other_stakeholder_line,access_other_stakeholder_line,model_other_stakeholder_line,base.group_user,1,1,1,1

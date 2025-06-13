@@ -232,43 +232,43 @@ class CrmLeadInherit(models.Model):
     
     
     
-    @api.model
-    def create(self, vals):
-        lead = super(CrmLeadInherit, self).create(vals)
-        lead._handle_partner_creation()
-        return lead
+    # @api.model
+    # def create(self, vals):
+    #     lead = super(CrmLeadInherit, self).create(vals)
+    #     lead._handle_partner_creation()
+    #     return lead
 
-    def write(self, vals):
-        res = super(CrmLeadInherit, self).write(vals)
-        self._handle_partner_creation()
-        return res
+    # def write(self, vals):
+    #     res = super(CrmLeadInherit, self).write(vals)
+    #     self._handle_partner_creation()
+    #     return res
 
-    def _handle_partner_creation(self):
-        for lead in self:
-            if not lead.partner_name or not lead.contact_name:
-                continue
+    # def _handle_partner_creation(self):
+    #     for lead in self:
+    #         if not lead.partner_name or not lead.contact_name:
+    #             continue
 
-            # 1. Check if company exists
-            company_partner = self.env['res.partner'].search([
-                ('name', '=', lead.partner_name),
-                ('is_company', '=', True)
-            ], limit=1)
+    #         # # 1. Check if company exists
+    #         # company_partner = self.env['res.partner'].search([
+    #         #     ('name', '=', lead.partner_name),
+    #         #     ('is_company', '=', True)
+    #         # ], limit=1)
 
-            # 2. If not, create company
-            if not company_partner:
-                company_partner = self.env['res.partner'].create({
-                    'name': lead.partner_name,
-                    'is_company': True,
-                    'company_type': 'company'
-                })
+    #         # # 2. If not, create company
+    #         # if not company_partner:
+    #         #     company_partner = self.env['res.partner'].create({
+    #         #         'name': lead.partner_name,
+    #         #         'is_company': True,
+    #         #         'company_type': 'company'
+    #         #     })
 
-            # 3. Create contact under this company
-            contact = self.env['res.partner'].create({
-                'name': lead.contact_name,
-                'is_company': False,
-                'company_type': 'person',
-                'parent_id': company_partner.id,
-            })
+    #         # 3. Create contact under this company
+    #         contact = self.env['res.partner'].create({
+    #             'name': lead.contact_name,
+    #             'is_company': True,
+    #             'company_type': 'person',
+    #             # 'parent_id': company_partner.id,
+    #         })
 
-            # 4. Set this contact as partner_id
-            lead.partner_id = contact
+    #         # 4. Set this contact as partner_id
+    #         lead.partner_id = contact
