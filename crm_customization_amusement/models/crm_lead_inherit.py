@@ -21,6 +21,14 @@ class CrmLeadInherit(models.Model):
                             ('ivr', 'IVR')],
                             string="Lead Source",tracking=True)
     
+    visit = fields.Selection(
+        [
+            ('yes', 'Yes'),
+            ('no', 'No')
+        ]
+        , tracking=True
+    )
+    visiting_person = fields.Char(tracking=True)
     other_stakeholders_ids = fields.One2many("other.stakeholder.line",'crm_lead_id',tracking=True)
     
     customer_visit_datetime = fields.Datetime(tracking=True)

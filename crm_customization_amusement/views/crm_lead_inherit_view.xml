@@ -56,11 +56,19 @@
                 </xpath>
 
                 <xpath expr="//field[@name='user_id']" position="before">
-                    <field name="lead_type_id"/>
-                    <field name="lead_source"/>
                     <field name="visiting_center_id"/>
+                    <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2"/>
+                    <field name="visiting_person" invisible = "visit != 'yes'"/>
+                    
                 </xpath>
 
+                <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="before">
+                    <field name="lead_type_id"/>
+                    <field name="lead_source"/>
+                </xpath>
+
+                <!-- <field name="lead_type_id"/>
+                    <field name="lead_source"/> -->
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="after">
                     <field name="school_type_id" invisible="lead_type_id != 3"/>
                 </xpath>
