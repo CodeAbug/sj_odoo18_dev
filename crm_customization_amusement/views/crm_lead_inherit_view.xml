@@ -77,7 +77,7 @@
 
                 <xpath expr="//field[@name='user_id']" position="before">
                     <field name="visiting_center_id" string="Preferred Visiting Center"/>
-                    <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2"/>
+                    <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2 and type=='opportunity'"/>
                     <field name="visiting_person" invisible = "visit != 'yes'"/>
                     
                 </xpath>
