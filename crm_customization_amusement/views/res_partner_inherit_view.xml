@@ -15,7 +15,7 @@
         </record>
 
 
-    <record id="base_res_partner_form_view_inherit" model="ir.ui.view">
+    <!-- <record id="base_res_partner_form_view_inherit" model="ir.ui.view">
             <field name="name">base.res.partner.form.view.inherit</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -24,7 +24,7 @@
                     <field name="is_primary_stakeholder_bool"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
 </data>
 </odoo>
