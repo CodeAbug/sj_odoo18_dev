@@ -3,6 +3,12 @@ from odoo.exceptions import ValidationError
 from validate_email_address import validate_email
 import re
 
+
+class ResPartnerInherit(models.Model):
+    _inherit='res.partner'
+    
+    is_primary_stakeholder_bool = fields.Boolean('Primary Stakeholder',tracking=True)
+    
 class CrmLeadInherit(models.Model):
     _inherit = 'crm.lead'
     
@@ -94,8 +100,7 @@ class CrmLeadInherit(models.Model):
                     )
                     record.partner_id = contact.id
                     print("creaeted record is here - ",contact.name)
-                
-                
+
     # def write(self, values):
     #     self.create_stakeholder_contact()
     #     result = super(CrmLeadInherit, self).write(values)
@@ -116,10 +121,4 @@ class Lead2OpportunityPartnerInherit(models.TransientModel):
         if self.lead_id:
             self.lead_id.create_stakeholder_contact()
         return result
-
-class ResPartnerInherit(models.Model):
-    _inherit='res.partner'
-    
-    is_primary_stakeholder_bool = fields.Boolean('Primary Stakeholder',tracking=True)
-    
     
