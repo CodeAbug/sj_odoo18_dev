@@ -1,6 +1,5 @@
 from odoo import models,fields,api
 from odoo.exceptions import ValidationError
-from validate_email_address import validate_email
 import re
 
 
