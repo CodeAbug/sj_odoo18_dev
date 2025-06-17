@@ -28,7 +28,7 @@ class StakeholderDesignation(models.Model):
 
     name = fields.Char(copy=False,tracking=True)
 
-
+    
 class OtherStakeholder(models.Model):
     _name = 'other.stakeholder.line'
     _order = 'id desc'

@@ -12,7 +12,6 @@ class CrmLeadInherit(models.Model):
     _inherit = 'crm.lead'
     
     
-    
     lead_type_id = fields.Many2one('lead.type' , string="Lead Type" ,tracking=True)
     
     school_type_id = fields.Many2one('school.type', string="School Type" ,tracking=True)
