@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <record id="base_res_partner_tree_view_inherit" model="ir.ui.view">
+            <field name="name">base.res.partner.tree.view.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml"> 
+                <xpath expr="//field[@name='phone']" position="before">
+                    <field name="company_type" widget="badge"
+                                decoration-warning="company_type == 'company'"
+                                decoration-info="company_type == 'person'"/>
+                </xpath>
+        
+            </field>
+        </record>
+
+
+    <record id="base_res_partner_form_view_inherit" model="ir.ui.view">
+            <field name="name">base.res.partner.form.view.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml"> 
+                <xpath expr="//field[@name='category_id']" position="before">
+                    <field name="is_primary_stakeholder_bool"/>
+                </xpath>
+            </field>
+        </record>
+
+</data>
+</odoo>

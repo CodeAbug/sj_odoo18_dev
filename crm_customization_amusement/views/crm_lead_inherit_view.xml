@@ -8,14 +8,37 @@
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
                 
-                <xpath expr="//label[@for='contact_name']" position="before">
-                        <field name="lead_type_id"/>
-                        <field name="lead_source" string="Lead Source"/>
-                </xpath>
+                
 
-                <xpath expr="//field[@name='partner_name']" position="attributes">
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
                     <attribute name="string">Orgranization Name</attribute>
                 </xpath>
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
+                    <field name="contact_name"/>
+                </xpath>
+                <xpath expr="//group[@name='lead_info']/label[@for='email_from_group_lead_info']" position="before">
+                <field name="partner_id" widget="res_partner_many2one"
+                                    context="{
+                                        'default_name': contact_name,
+                                        'default_title': title,
+                                        'default_street': street,
+                                        'default_street2': street2,
+                                        'default_city': city,
+                                        'default_state_id': state_id,
+                                        'default_zip': zip,
+                                        'default_country_id': country_id,
+                                        'default_function': function,
+                                        'default_phone': phone,
+                                        'default_mobile': mobile,
+                                        'default_email': email_from,
+                                        'default_user_id': user_id,
+                                        'default_team_id': team_id,
+                                        'default_website': website,
+                                        'default_lang': lang_code,
+                                        'show_vat': True
+                                    }" invisible="not is_partner_visible"/>
+            </xpath>
+                
                 <xpath expr="//field[@name='partner_name']" position="after">
                         <field name="school_type_id" invisible="lead_type_id != 3"/>
                 </xpath>
@@ -29,8 +52,8 @@
                             <field name="other_stakeholders_ids">
                                 <list editable="bottom">
                                     <field name="name"/>
-                                    <field name="mail" string="Email" widget="email"/>
-                                    <field name="phone" string="Phone" widget="phone"/>
+                                    <field name="mail" string="Email"/>
+                                    <field name="phone" string="Phone"/>
                                     <field name="designation_id" string="Designation"/>
                                     <field name="is_primary_bool" string="Is Primary?"/>
                                 </list>
@@ -38,9 +61,6 @@
                     </page>
 
                 </xpath>
-
-
-
 
                 <!-- Opportunity fields added here -->
 
@@ -56,7 +76,7 @@
                 </xpath>
 
                 <xpath expr="//field[@name='user_id']" position="before">
-                    <field name="visiting_center_id"/>
+                    <field name="visiting_center_id" string="Preferred Visiting Center"/>
                     <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2"/>
                     <field name="visiting_person" invisible = "visit != 'yes'"/>
                     
@@ -67,30 +87,32 @@
                     <field name="lead_source"/>
                 </xpath>
 
-                <!-- <field name="lead_type_id"/>
-                    <field name="lead_source"/> -->
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="before">
+                    <field name="lead_type_id"/>
+                    <field name="lead_source"/>
+                </xpath>
+
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="after">
                     <field name="school_type_id" invisible="lead_type_id != 3"/>
+                </xpath>
+                
+
+                <xpath expr="//group[@name='lead_info']/label[@for='contact_name']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//div[@class='o_row']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 
             </field>
 
         </record>
-
-
-
-        <!-- <record id="view_crm_lead2opportunity_partner_wizard_form_inherit" model="ir.ui.view">
-            <field name="name">crm.lead2opportunity.partner.form.inherit</field>
-        <field name="model">crm.lead2opportunity.partner</field>
-            <field name="inherit_id" ref="crm.view_crm_lead2opportunity_partner"/>
-            <field name="arch" type="xml">
-                
-                <xpath expr="//label[@for='contact_name']" position="before">
-                        <field name="lead_type_id"/>
-                        <field name="lead_source" string="Lead Source"/>
-                </xpath>
-</field>
-</record> -->
 
     </data>
 

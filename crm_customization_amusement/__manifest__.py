@@ -23,6 +23,7 @@
         'views/school_type_views.xml',
         'views/stakeholder_designation_views.xml',
         'views/crm_lead_inherit_view.xml',
+        'views/res_partner_inherit_view.xml',
         ],
     'assets': {
         'web.assets_backend': [],
