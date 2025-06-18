@@ -69,46 +69,56 @@
                         <field name="school_type_id" invisible="lead_type_id != 3"/>
                 </xpath>
 
-                <xpath expr="//group[@name='lead_info']/following-sibling::group[1]" position="replace">
+
+                <xpath expr="//group[@name='lead_info']/following-sibling::group[1]"
+                    position="replace">
                     <group name="school_information" string="School Information"
-                        invisible="lead_type_id != 3"
-                        style="background: #f2f6fc; border-radius: 10px; padding: 10px; margin:  1px 0; margin-top:-150px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <group name="school_information_1">
-                        <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2 and type=='opportunity' and stage_id == 3" />
-                    <field name="visiting_person" invisible = "visit != 'yes'"/>
-    
-                        <field name="school_type_id" invisible="lead_type_id != 3" style=" margin-right: 4%;"/>
-                            <field name="customer_visit_datetime" string="School Visit Datetime"/>
-                            <field name="number_of_students" style=" margin-right: 3%;"/>
-                            <field name="student_class" style=" margin-right: 3%;"/>
+                        invisible="lead_type_id != 3 or type !='opportunity'"
+                        style="background: #f2f6fc; border-radius: 10px; 
+                                padding: 10px; margin:  1px 0; margin-top:-150px !important; 
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+                        <group name="school_information_1"
+                            invisible="lead_type_id != 3 or type !='opportunity'">
+                            <field name="visit" string="Visit(Yes/No)"
+                                required="stage_id >= 2 and type=='opportunity' and stage_id == 3" />
+                            <field name="visiting_person" invisible="visit != 'yes'" />
+
+                            <field name="school_type_id" invisible="lead_type_id != 3"
+                                style=" margin-right: 4%;" />
+                            <field name="customer_visit_datetime" string="School Visit Datetime" />
+                            <field name="number_of_students" style=" margin-right: 3%;" />
+                            <field name="student_class" style=" margin-right: 3%;" />
                         </group>
-                        <group name="school_information_2">
-                            <field name="student_per_class" style=" margin-right: 3%;"/>
+
+                        <group name="school_information_2"
+                            invisible="lead_type_id != 3 or type !='opportunity'">
+                            <field name="student_per_class" style=" margin-right: 3%;" />
                             <field name="number_of_teachers" />
-                            <field name="school_strength" style=" margin-right: 4%;"/>
+                            <field name="school_strength" style=" margin-right: 4%;" />
                             <field name="total_trips" string="Total Trips Planned" />
                             <field name="average_fees" widget="monetory" />
                             <field name="budget_per_student" widget="monetory" />
                         </group>
+
                     </group>
-                    <group>
-                        </group>
-                        <group name="proposal_information" string="Proposal Information"
-                        invisible="stage_id == 1 or stage_id == 2 " 
-                        style="background: #f2f6fc; border-radius: 10px; padding: 10px; margin:  1px 0; margin-top:-50px !important;  box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <group name="proposal_information" string="Proposal Information"
+                        invisible="stage_id == 1 or stage_id == 2"
+                        style="background: #f2f6fc; border-radius: 10px; 
+                        padding: 10px; margin:  1px 0; 
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <group name="proposal_information_1">
-                    <field name="package_id" />
-                    <field name="included_activities_ids" widget="many2many_tags"/>
-                    <field name="proposal_addons_ids" widget="many2many_tags"/>
-                    </group>
-
-                    <group name="proposal_information_2">
-                        <field name="total_proposal_amount"/>
-                    <field name="discount"/>
-                    <field name="negotiated_amount"/>
-                    </group>
+                            <field name="package_id" />
+                            <field name="included_activities_ids" widget="many2many_tags" />
+                            <field name="proposal_addons_ids" widget="many2many_tags" />
                         </group>
 
+                        <group name="proposal_information_2">
+                            <field name="total_proposal_amount" />
+                            <field name="discount" />
+                            <field name="negotiated_amount" />
+                        </group>
+                    </group>
 
                 </xpath>
 
@@ -186,7 +196,6 @@
                 <xpath expr="//div[@class='o_row']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                
 
 
                 <!--  Opportunity Trip  -->

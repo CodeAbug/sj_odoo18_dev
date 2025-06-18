@@ -67,11 +67,11 @@
                     
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="lead_id"/>
-                            <field name="lead_type_id"/>
-                            <field name="partner_id" string="Contact"/>
-                            <field name="visiting_center_id"/>
+                            <field name="name" readonly="1"/>
+                            <field name="lead_id" readonly="1"/>
+                            <field name="lead_type_id" readonly="1"/>
+                            <field name="partner_id" string="Contact" readonly="1"/>
+                            <field name="visiting_center_id" readonly="1"/>
                             <field name="trip_count" invisible="1"/>
                             <field name="trip_poc"/>
                         </group>
