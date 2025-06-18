@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menu Item -->
+    
+    <!-- Action -->
+    <record id="action_opportunity_trip" model="ir.actions.act_window">
+        <field name="name">Opportunity Trips</field>
+        <field name="res_model">opportunity.trip</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Trip record!
+            </p>
+        </field>
+    </record>
+    
+    <!-- list View -->
+    <record id="view_opportunity_trip_list" model="ir.ui.view">
+        <field name="name">opportunity.trip.list</field>
+        <field name="model">opportunity.trip</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="lead_id"/>
+                <field name="partner_id"/>
+                <field name="trip_status"/>
+                <field name="visiting_center_id"/>
+                <field name="confirmed_number_of_students"/>
+                <field name="amount_paid"/>
+                <field name="due_amount"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Search View -->
+    <record id="view_opportunity_trip_search" model="ir.ui.view">
+        <field name="name">opportunity.trip.search</field>
+        <field name="model">opportunity.trip</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="lead_id"/>
+                <filter name="filter_confirmed" string="Confirmed" domain="[('trip_status', '=', 'confirmed')]"/>
+                <filter name="filter_cancelled" string="Cancelled" domain="[('trip_status', '=', 'cancelled')]"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Form View -->
+    <record id="view_opportunity_trip_form" model="ir.ui.view">
+        <field name="name">opportunity.trip.form</field>
+        <field name="model">opportunity.trip</field>
+        <field name="arch" type="xml">
+            <form string="Trip Details">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
+                    invisible="trip_status =='confirmed'"/>
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
+                            invisible="trip_status =='cancelled'"/>
+                    <field name="trip_status" widget="statusbar" statusbar_visible="confirmed,cancelled"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="trip_status" widget="badge"/>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="lead_id"/>
+                            <field name="lead_type_id"/>
+                            <field name="partner_id" string="Contact"/>
+                            <field name="visiting_center_id"/>
+                            <field name="trip_count" invisible="1"/>
+                            <field name="trip_poc"/>
+                        </group>
+
+                        <group>
+                            <field name="shift_time_slot"/>
+                            <field name="confirmed_number_of_students"/>
+                            <field name="confirmed_number_of_staff"/>
+                            <field name="meal_plan"/>
+                            <field name="advance_received"/>
+                            <field name="amount_paid"/>
+                            <!-- <field name="due_amount"/> -->
+                            <field name="assigned_event_manager_id"/>
+                            <field name="trip_rating" widget="priority"/>
+
+                            
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View (Optional) -->
+    <record id="view_opportunity_trip_kanban" model="ir.ui.view">
+        <field name="name">opportunity.trip.kanban</field>
+        <field name="model">opportunity.trip</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="trip_status"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <div class="o_kanban_card_header">
+                                <strong><field name="name"/></strong>
+                            </div>
+                            <div>
+                                <span>Status: <field name="trip_status" widget="badge"/></span>
+                            </div>
+                            <div>
+                                <span>Lead: <field name="lead_id"/></span><br/>
+                                <span>Amount Paid: ₹<field name="amount_paid"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    
+    <menuitem id="menu_opportunity_trip_root" name="Trips" sequence="20"/>
+
+    <!-- Submenu under Trips -->
+    <menuitem id="menu_opportunity_trip" name="Manage Trips"
+            parent="crm.crm_menu_sales" action="action_opportunity_trip"/>
+</odoo>

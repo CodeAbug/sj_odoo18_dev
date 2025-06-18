@@ -8,6 +8,24 @@ class ResPartnerInherit(models.Model):
     
     is_primary_stakeholder_bool = fields.Boolean('Primary Stakeholder',tracking=True)
     
+    trip_count = fields.Integer(string="Trips", compute="_compute_trip_count")
+
+    def _compute_trip_count(self):
+        for partner in self:
+            partner.trip_count = self.env['opportunity.trip'].search_count([('partner_id', '=', partner.id)])
+
+    def action_view_partner_trips(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Trips',
+            'res_model': 'opportunity.trip',
+            'view_mode': 'list,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {'default_partner_id': self.id},
+            'target': 'current',
+        }
+    
 class CrmLeadInherit(models.Model):
     _inherit = 'crm.lead'
     
@@ -40,8 +58,60 @@ class CrmLeadInherit(models.Model):
     student_class = fields.Char("Student's Class", tracking=True)
     total_trips = fields.Integer("Total Trips", tracking=True)
     number_of_teachers = fields.Integer("Number of Teachers", tracking=True)
+    school_strength = fields.Integer("School Strength", tracking=True)
+    student_per_class = fields.Integer(string="Student Per Class",tracking=True)
+    average_fees = fields.Float(tracking=True)
+    budget_per_student = fields.Float(tracking=True)
+    
+    ### Proposal Stage Fields 
+    package_id = fields.Many2one('package.request', string="Packages")
+    included_activities_ids = fields.Many2many('included.activities', string="Included Activities")
+    proposal_addons_ids = fields.Many2many('proposal.addons', string="Add-ons")
+    total_proposal_amount = fields.Float("Proposal Amount",tracking=True)
+    discount = fields.Float("Discount",tracking=True)
+    negotiated_amount = fields.Float("Negotiated Amount",tracking=True)
+    
+    #Trip 
     
     
+    opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
+    trip_count = fields.Integer(string="Trip Count", compute="_compute_trip_count")
+
+
+    @api.depends('opportunity_trip_ids')
+    def _compute_trip_count(self):
+        for rec in self:
+            rec.trip_count = len(rec.opportunity_trip_ids)
+            
+    
+    def action_view_opportunity_trips(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Opportunity Trips',
+            'res_model': 'opportunity.trip',
+            'view_mode': 'list,form',
+            'domain': [('lead_id', '=', self.id)],
+            'context': {'default_lead_id': self.id},
+            'target': 'current'
+        }
+        
+    def open_trip_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Add Trip',
+            'res_model': 'opportunity.trip',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_partner_id': self.partner_id.id,
+                'default_lead_type_id': self.lead_type_id.id,
+                'default_visiting_center_id': self.visiting_center_id.id,
+            }
+        }
     @api.constrains('phone','mobile')
     def _onchange_phone_mobile_validation(self):
         for rec in self:
@@ -98,8 +168,16 @@ class CrmLeadInherit(models.Model):
                     )
                     record.partner_id = contact.id
                     print("creaeted record is here - ",contact.name)
-
+    
+    def action_qualify(self):
+        if self.type == 'opportunity':
+            self.stage_id = 2 
+            
+    def action_proposal(self):
+        if self.type == 'opportunity':
+            self.stage_id = 3 
     # def write(self, values):
+    
     #     self.create_stakeholder_contact()
     #     result = super(CrmLeadInherit, self).write(values)
     #     return result

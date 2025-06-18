@@ -62,18 +62,26 @@ class OtherStakeholder(models.Model):
                         raise ValidationError("Please Enter Valid Stakholder's Phone Number")
                     
                 
+class IncludedActivities(models.Model):
+    _name = 'included.activities'
+    _order = 'id desc'
 
-# class IncludedActivities(models.Model):
-#     _name = 'included.activities'
-#     _order = 'id desc'
+    name = fields.Char(string="Name", copy=False,tracking=True)
 
-#     name = fields.Char(string="Name", copy=False,tracking=True)
+class ProposalAddons(models.Model):
+    _name = 'proposal.addons'
+    _order = 'id desc'
 
-# class OngroundrRequirements(models.Model):
-#     _name = 'onground.requirements'
-#     _order = 'id desc'
+    name = fields.Char(string="Name", copy=False,tracking=True)
+    
 
-#     name = fields.Char(string="Name", copy=False,tracking=True)
+class PackageRequest(models.Model):
+    _name = 'package.request'
+    _rec_name = 'name'
+    _order = 'id desc'
+
+    name = fields.Char(string="Name", copy=False)
+
 
 # class ResCompany(models.Model):
 #     _inherit = 'res.company'

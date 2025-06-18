@@ -9,7 +9,33 @@
             <field name="arch" type="xml">
                 
                 
+                <xpath expr="//header" position="inside">
+                    <button name="action_qualify" string="Qualify"
+                            type="object" class="oe_highlight" title="Qualify This Opportunity"
+                            invisible="type == 'lead' or stage_id != 1"/>
+                    <button name="action_proposal" string="Proposal"
+                            type="object" class="oe_highlight" title="Send To Proposition Stage"
+                            invisible="type == 'lead' or stage_id != 2"/>
+                    <button name="open_trip_wizard"
+                                string="Add Trip"
+                                type="object"
+                                class="btn-primary"
+                                invisible= "type  == 'lead' or stage_id != 4"/>
+                </xpath>
 
+                <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button type="object" name="action_view_opportunity_trips"
+                    class="oe_stat_button" invisible="type == 'lead'" icon="fa-suitcase">
+                    <field name="trip_count" widget="statinfo" string="Trips"/>
+                </button>
+            </xpath>
+                
+
+
+                <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="attributes">
+                    <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=3</attribute>
+                </xpath>
+                
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
                     <attribute name="string">Orgranization Name</attribute>
                 </xpath>
@@ -39,8 +65,51 @@
                                     }" invisible="not is_partner_visible"/>
             </xpath>
                 
-                <xpath expr="//field[@name='partner_name']" position="after">
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
                         <field name="school_type_id" invisible="lead_type_id != 3"/>
+                </xpath>
+
+                <xpath expr="//group[@name='lead_info']/following-sibling::group[1]" position="replace">
+                    <group name="school_information" string="School Information"
+                        invisible="lead_type_id != 3"
+                        style="background: #f2f6fc; border-radius: 10px; padding: 10px; margin:  1px 0; margin-top:-150px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <group name="school_information_1">
+                        <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2 and type=='opportunity' and stage_id == 3" />
+                    <field name="visiting_person" invisible = "visit != 'yes'"/>
+    
+                        <field name="school_type_id" invisible="lead_type_id != 3" style=" margin-right: 4%;"/>
+                            <field name="customer_visit_datetime" string="School Visit Datetime"/>
+                            <field name="number_of_students" style=" margin-right: 3%;"/>
+                            <field name="student_class" style=" margin-right: 3%;"/>
+                        </group>
+                        <group name="school_information_2">
+                            <field name="student_per_class" style=" margin-right: 3%;"/>
+                            <field name="number_of_teachers" />
+                            <field name="school_strength" style=" margin-right: 4%;"/>
+                            <field name="total_trips" string="Total Trips Planned" />
+                            <field name="average_fees" widget="monetory" />
+                            <field name="budget_per_student" widget="monetory" />
+                        </group>
+                    </group>
+                    <group>
+                        </group>
+                        <group name="proposal_information" string="Proposal Information"
+                        invisible="stage_id == 1 or stage_id == 2 " 
+                        style="background: #f2f6fc; border-radius: 10px; padding: 10px; margin:  1px 0; margin-top:-50px !important;  box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <group name="proposal_information_1">
+                    <field name="package_id" />
+                    <field name="included_activities_ids" widget="many2many_tags"/>
+                    <field name="proposal_addons_ids" widget="many2many_tags"/>
+                    </group>
+
+                    <group name="proposal_information_2">
+                        <field name="total_proposal_amount"/>
+                    <field name="discount"/>
+                    <field name="negotiated_amount"/>
+                    </group>
+                        </group>
+
+
                 </xpath>
 
                 <xpath expr="//field[1][@name='user_id']" position="attributes">
@@ -64,32 +133,40 @@
 
                 <!-- Opportunity fields added here -->
 
-                <xpath expr="//field[1][@name='partner_id']" position="after">
-                    <field name="customer_visit_datetime" string="School Visit Datetime" invisible="lead_type_id != 3"/>
-                    <field name="number_of_students" invisible="lead_type_id != 3"/>
-                    <field name="student_class" invisible="lead_type_id != 3"/>
-                    <field name="number_of_teachers" invisible="lead_type_id != 3"/>
+                <!-- <xpath expr="//field[1][@name='partner_id']" position="after">
+                    <field name="customer_visit_datetime" string="School Visit Datetime"/>
+                    <field name="number_of_students"/>
+                    <field name="student_class"/>
+                    <field name="number_of_teachers"/>
+                </xpath> -->
+                <!-- <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="total_trips"/>
+                </xpath> -->
 
-                </xpath>
-                <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="total_trips" invisible="lead_type_id != 3"/>
-                </xpath>
-
-                <xpath expr="//field[@name='user_id']" position="before">
+                <!-- <xpath expr="//field[@name='user_id']" position="before">
                     <field name="visiting_center_id" string="Preferred Visiting Center"/>
                     <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2 and type=='opportunity'"/>
                     <field name="visiting_person" invisible = "visit != 'yes'"/>
-                    
-                </xpath>
+                </xpath> -->
 
                 <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="before">
                     <field name="lead_type_id"/>
                     <field name="lead_source"/>
+                    <field name="visiting_center_id" string="Preferred Visiting Center"/>
                 </xpath>
-
+                <xpath expr="//group[@name='opportunity_partner']/div[2]" position="after">
+                        <field name="user_id" string="Lead Assigned To"
+                        context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user" invisible="type!= 'opportunity'"/>
+                    <label for="date_deadline" invisible="type!= 'opportunity'">Expected Closing</label>
+                    <div class="o_lead_opportunity_form_inline_fields">
+                        <field name="date_deadline" nolabel="1" class="oe_inline" invisible="type!= 'opportunity'"/>
+                        <field name="priority" widget="priority" nolabel="1" class="oe_inline align-top" invisible="type!= 'opportunity'"/>
+                    </div>
+                </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="before">
                     <field name="lead_type_id"/>
                     <field name="lead_source"/>
+                    <field name="visiting_center_id" string="Preferred Visiting Center"/>
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
@@ -110,6 +187,28 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 
+
+
+                <!--  Opportunity Trip  -->
+
+                <xpath expr="//page[@name='lead']" position="after">
+                    <page name="trips" string="Trips" invisible="type=='lead' or stage_id != 4">
+                            <field name="opportunity_trip_ids" context="{'default_partner_id': partner_id,
+                                                                            'default_lead_type_id':lead_type_id,
+                                                                            'default_visiting_center_id': visiting_center_id}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="lead_id"/>
+                                    <field name="trip_status"/>
+                                    <field name="confirmed_number_of_students"/>
+                                    <field name="amount_paid"/>
+                                    <field name="due_amount"/>
+                                </list>
+                                
+                            </field>
+                    </page>
+
+                </xpath>
             </field>
 
         </record>

@@ -23,6 +23,14 @@
                 <xpath expr="//field[@name='category_id']" position="before">
                     <field name="is_primary_stakeholder_bool"/>
                 </xpath>
+                <xpath expr="//div[@class='oe_button_box']" position="inside">
+                    <button name="action_view_partner_trips" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-suitcase">
+                        <field name="trip_count" widget="statinfo" string="Trips"/>
+                    </button>
+                </xpath>
             </field>
         </record>
 

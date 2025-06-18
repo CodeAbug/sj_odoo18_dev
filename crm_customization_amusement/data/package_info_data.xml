@@ -1,0 +1,53 @@
+<odoo>
+    <!-- Package Options -->
+
+    <data noupdate="0">
+    <record id="package_request_standard" model="package.request">
+        <field name="name">Standard Visit</field>
+    </record>
+    <record id="package_request_premium" model="package.request">
+        <field name="name">Premium Educational</field>
+    </record>
+    <record id="package_request_combo" model="package.request">
+        <field name="name">Full Day Combo</field>
+    </record>
+    <record id="package_request_exclusive" model="package.request">
+        <field name="name">Exclusive Tour Package</field>
+    </record>
+
+    <!-- Included Activities -->
+    <record id="included_trampoline" model="included.activities">
+        <field name="name">Trampoline Access</field>
+    </record>
+    <record id="included_games" model="included.activities">
+        <field name="name">Games</field>
+    </record>
+    <record id="included_lunch" model="included.activities">
+        <field name="name">Lunch</field>
+    </record>
+    <record id="included_team_building" model="included.activities">
+        <field name="name">Team Building Activities</field>
+    </record>
+    <record id="included_science_show" model="included.activities">
+        <field name="name">Science Show</field>
+    </record>
+
+    <!-- Proposal Add-ons -->
+    <record id="addon_certificates" model="proposal.addons">
+        <field name="name">Certificates</field>
+    </record>
+    <record id="addon_snacks" model="proposal.addons">
+        <field name="name">Snacks</field>
+    </record>
+    <record id="addon_group_photo" model="proposal.addons">
+        <field name="name">Group Photo</field>
+    </record>
+    <record id="addon_gift_packs" model="proposal.addons">
+        <field name="name">Gift Packs</field>
+    </record>
+    <record id="addon_tshirts" model="proposal.addons">
+        <field name="name">T-shirts</field>
+    </record>
+
+    </data>
+</odoo>
