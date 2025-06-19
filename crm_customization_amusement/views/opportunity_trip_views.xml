@@ -25,7 +25,7 @@
                 <field name="partner_id"/>
                 <field name="trip_status"/>
                 <field name="visiting_center_id"/>
-                <field name="confirmed_number_of_students"/>
+                <field name="planned_number_of_students"/>
                 <field name="amount_paid"/>
                 <field name="due_amount"/>
             </list>
@@ -40,61 +40,81 @@
             <search>
                 <field name="name"/>
                 <field name="lead_id"/>
-                <filter name="filter_confirmed" string="Confirmed" domain="[('trip_status', '=', 'confirmed')]"/>
+                <filter name="filter_planned" string="Planned" domain="[('trip_status', '=', 'planned')]"/>
                 <filter name="filter_cancelled" string="Cancelled" domain="[('trip_status', '=', 'cancelled')]"/>
             </search>
         </field>
     </record>
     
     <!-- Form View -->
-    <record id="view_opportunity_trip_form" model="ir.ui.view">
-        <field name="name">opportunity.trip.form</field>
-        <field name="model">opportunity.trip</field>
-        <field name="arch" type="xml">
-            <form string="Trip Details">
-                <header>
-                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
-                    invisible="trip_status =='confirmed'"/>
-                    <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
-                            invisible="trip_status =='cancelled'"/>
-                    <field name="trip_status" widget="statusbar" statusbar_visible="confirmed,cancelled"/>
-                </header>
+<record id="view_opportunity_trip_form" model="ir.ui.view">
+    <field name="name">opportunity.trip.form</field>
+    <field name="model">opportunity.trip</field>
+    <field name="arch" type="xml">
+        <form string="Trip Details">
+            <header>
+                <button name="action_plan" type="object" string="Plan" class="btn-primary"
+                    invisible="trip_status !='draft'"/>
+                <button name="action_visited" type="object" string="Visited" class="btn-primary"
+                    invisible="trip_status !='planned'"/>
+                <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
+                    invisible="trip_status =='cancelled'"/>
+                <button name="action_reset_draft" type="object" string="Reset to Draft" class="btn-secondary"
+                    invisible="trip_status == 'draft'"/>
+                <field name="trip_status" widget="statusbar" statusbar_visible="draft,planned,visited"/>
+            </header>
+            
 
-                <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <field name="trip_status" widget="badge"/>
-                    </div>
-                    
-                    <group>
-                        <group>
-                            <field name="name" readonly="1"/>
-                            <field name="lead_id" readonly="1"/>
-                            <field name="lead_type_id" readonly="1"/>
-                            <field name="partner_id" string="Contact" readonly="1"/>
-                            <field name="visiting_center_id" readonly="1"/>
-                            <field name="trip_count" invisible="1"/>
-                            <field name="trip_poc"/>
-                        </group>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <field name="trip_status" widget="badge"/>
+                </div>
 
-                        <group>
-                            <field name="shift_time_slot"/>
-                            <field name="confirmed_number_of_students"/>
-                            <field name="confirmed_number_of_staff"/>
-                            <field name="meal_plan"/>
-                            <field name="advance_received"/>
-                            <field name="amount_paid"/>
-                            <!-- <field name="due_amount"/> -->
-                            <field name="assigned_event_manager_id"/>
-                            <field name="trip_rating" widget="priority"/>
-
-                            
-                        </group>
+                <group col="3" style=" background: #f9f9f9; padding: 5px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+                    <!-- Column 1 -->
+                    <group col="1" style="border-right: 1px solid #ddd; padding-right: 10px;">
+                        <field name="name" readonly="1"/>
+                        <field name="lead_id" readonly="1"/>
+                        <field name="lead_type_id" readonly="1"/>
+                        <field name="partner_id" string="Contact" readonly="1"/>
+                        <field name="visiting_center_id" readonly="1"/>
+                        <field name="trip_count" invisible="1"/>
+                        <field name="trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
                     </group>
-                </sheet>
-                <chatter/>
-            </form>
-        </field>
-    </record>
+
+                    <!-- Column 2 -->
+                    <group col="1" style="border-right: 1px solid #ddd; padding: 0 10px;">
+                        <field name="shift_time_slot" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_planned_datetime" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="amount_paid" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="assigned_event_manager_id" required="trip_status=='draft'"/>
+                    </group>
+
+                    <!-- Column 3 (Visited Info) -->
+                    <group name="after_visiting_details" col="1" style="padding-left: 10px;" invisible="trip_status != 'visited'">
+                        <field name="trip_rating" widget="priority"/>
+                        <field name="number_of_visited_students"/>
+                        <field name="number_of_visited_staff"/>
+                        <field name="actual_visit_datetime"/>
+                        <field name="trampoline_park"/>
+                        <field name="laser_tag"/>
+                        <field name="soft_play"/>
+                        <field name="pos_invoice_number"/>
+                        <field name="pos_datetime"/>
+                        <field name="pos_amount"/>
+                    </group>
+
+                </group>
+            </sheet>
+
+            <chatter/>
+        </form>
+    </field>
+</record>
+
 
     <!-- Kanban View (Optional) -->
     <record id="view_opportunity_trip_kanban" model="ir.ui.view">

@@ -18,7 +18,7 @@ class ResPartnerInherit(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Trips',
+            'name': 'Add Trip',
             'res_model': 'opportunity.trip',
             'view_mode': 'list,form',
             'domain': [('partner_id', '=', self.id)],
@@ -55,7 +55,6 @@ class CrmLeadInherit(models.Model):
     
     customer_visit_datetime = fields.Datetime(tracking=True)
     number_of_students = fields.Integer(string="No. Of Students",tracking=True)
-    student_class = fields.Char("Student's Class", tracking=True)
     total_trips = fields.Integer("Total Trips", tracking=True)
     number_of_teachers = fields.Integer("Number of Teachers", tracking=True)
     school_strength = fields.Integer("School Strength", tracking=True)
@@ -76,13 +75,20 @@ class CrmLeadInherit(models.Model):
     
     opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
     trip_count = fields.Integer(string="Trip Count", compute="_compute_trip_count")
+    booked_or_not = fields.Selection([
+    ('contacted_with_booking', 'Contacted with Booking'),
+    ('contacted_but_no_booking', 'Contacted but No Booking'),
+], tracking=True, default='contacted_but_no_booking')
 
-
+    
     @api.depends('opportunity_trip_ids')
     def _compute_trip_count(self):
         for rec in self:
             rec.trip_count = len(rec.opportunity_trip_ids)
-            
+            if rec.trip_count > 0:
+                rec.booked_or_not = 'contacted_with_booking'
+            else:
+                rec.booked_or_not = 'contacted_but_no_booking'
     
     def action_view_opportunity_trips(self):
         self.ensure_one()

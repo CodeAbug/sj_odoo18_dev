@@ -31,6 +31,16 @@
                         <field name="trip_count" widget="statinfo" string="Trips"/>
                     </button>
                 </xpath>
+            <xpath expr="//field[@name='child_ids']/kanban/templates/t[@t-name='card']/main" position="inside">
+                <div t-if="record.is_primary_stakeholder_bool.raw_value">
+                        Primary Person<field name="is_primary_stakeholder_bool"/>
+                    </div>        
+                    </xpath>
+                <!-- <xpath expr="//field[@name='child_ids']/kanban/templates/t[@t-name='card']/main" position="inside">
+                    <div t-if="record.is_primary_stakeholder_bool" class="badge bg-success text-white mb-1">
+                        Primary Stakeholder
+                    </div>
+                </xpath> -->
             </field>
         </record>
 
