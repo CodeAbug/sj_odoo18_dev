@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_stage_form_view_inherit" model="ir.ui.view">
+        <field name="name">crm.stage.form.view.inherit</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <div class="mt-3">
+                    <button name="action_unlink_stage" type="object" string="Delete This Stage"
+                            class="btn btn-danger" invisible= "id == False"/>
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='is_won']" position="before">
+                <field name="id"/>
+                <field name="sequence"/>
+            </xpath>
+        </field>
+    </record>
+    
+
+    <record id="crm_stage_list_view_inherit" model="ir.ui.view">
+        <field name="name">crm.stage.list.view.inherit</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='sequence']" position="after">
+                <field name="id"/>
+                <field name="sequence"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

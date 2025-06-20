@@ -43,14 +43,8 @@ class CrmLeadInherit(models.Model):
                             ('ivr', 'IVR')],
                             string="Lead Source",tracking=True)
     
-    visit = fields.Selection(
-        [
-            ('yes', 'Yes'),
-            ('no', 'No')
-        ]
-        , tracking=True
-    )
-    visiting_person = fields.Char(tracking=True)
+    visit = fields.Selection([('yes', 'Yes'),('no', 'No')], )
+    visiting_person = fields.Char()
     other_stakeholders_ids = fields.One2many("other.stakeholder.line",'crm_lead_id',tracking=True)
     
     customer_visit_datetime = fields.Datetime(tracking=True)
@@ -63,22 +57,31 @@ class CrmLeadInherit(models.Model):
     budget_per_student = fields.Float(tracking=True)
     
     ### Proposal Stage Fields 
-    package_id = fields.Many2one('package.request', string="Packages")
-    included_activities_ids = fields.Many2many('included.activities', string="Included Activities")
-    proposal_addons_ids = fields.Many2many('proposal.addons', string="Add-ons")
-    total_proposal_amount = fields.Float("Proposal Amount",tracking=True)
+    total_proposal_amount = fields.Float("Proposal Amount",tracking=True,compute="_compute_total_proposal_amount")
     discount = fields.Float("Discount",tracking=True)
-    negotiated_amount = fields.Float("Negotiated Amount",tracking=True)
+    negotiated_amount = fields.Float("Negotiated Amount",tracking=True,compute="_compute_total_negotiated_amount")
+    
+    @api.depends('order_ids.quotation_valuation_amount')
+    def _compute_total_proposal_amount(self):
+        for record in self:
+            total = 0.0
+            for line in record.order_ids:
+                    total += line.quotation_valuation_amount
+            record.total_proposal_amount = total
+    
+    @api.depends('total_proposal_amount','discount')
+    def _compute_total_negotiated_amount(self):
+        for record in self:
+                record.negotiated_amount = record.total_proposal_amount - record.discount 
+    
     
     #Trip 
-    
     
     opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
     trip_count = fields.Integer(string="Trip Count", compute="_compute_trip_count")
     booked_or_not = fields.Selection([
     ('contacted_with_booking', 'Contacted with Booking'),
-    ('contacted_but_no_booking', 'Contacted but No Booking'),
-], tracking=True, default='contacted_but_no_booking')
+    ('contacted_but_no_booking', 'Contacted but No Booking'),], tracking=True, default='contacted_but_no_booking')
 
     
     @api.depends('opportunity_trip_ids')
@@ -174,14 +177,10 @@ class CrmLeadInherit(models.Model):
                     )
                     record.partner_id = contact.id
                     print("creaeted record is here - ",contact.name)
-    
-    def action_qualify(self):
-        if self.type == 'opportunity':
-            self.stage_id = 2 
             
     def action_proposal(self):
         if self.type == 'opportunity':
-            self.stage_id = 3 
+            self.stage_id = 2 
     # def write(self, values):
     
     #     self.create_stakeholder_contact()

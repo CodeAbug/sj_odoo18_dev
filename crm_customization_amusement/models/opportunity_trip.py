@@ -86,26 +86,12 @@ class OpportunityTrip(models.Model):
     def action_plan(self):
         for trip in self:
             trip.trip_status = 'planned'
-        return {
-        'type': 'ir.actions.act_window',
-        'res_model': 'opportunity.trip',
-        'res_id': self.id,
-        'view_type': 'form',
-        'view_mode': 'form',
-        'target': 'new',
-    }
+        
     
     def action_visited(self):
         for trip in self:
             trip.trip_status = 'visited'
-        return {
-        'type': 'ir.actions.act_window',
-        'res_model': 'opportunity.trip',
-        'res_id': self.id,
-        'view_type': 'form',
-        'view_mode': 'form',
-        'target': 'new',
-    }
+        
             
     def action_cancel(self):
         for trip in self:
@@ -114,11 +100,4 @@ class OpportunityTrip(models.Model):
     def action_reset_draft(self):
         for trip in self:
             trip.trip_status = 'draft'
-        return {
-        'type': 'ir.actions.act_window',
-        'res_model': 'opportunity.trip',
-        'res_id': self.id,
-        'view_type': 'form',
-        'view_mode': 'form',
-        'target': 'new',
-    }
+        

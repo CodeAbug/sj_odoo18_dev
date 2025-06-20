@@ -10,20 +10,18 @@
                 
                 
                 <xpath expr="//header" position="inside">
-                    <button name="action_qualify" string="Qualify"
-                            type="object" class="oe_highlight" title="Qualify This Opportunity"
-                            invisible="type == 'lead' or stage_id != 1"/>
                     <button name="action_proposal" string="Proposal"
                             type="object" class="oe_highlight" title="Send To Proposition Stage"
-                            invisible="type == 'lead' or stage_id != 2"/>
+                            invisible="type == 'lead' or stage_id != 1"/>
+                    
                     <button name="open_trip_wizard"
                                 string="Add Trip"
                                 type="object"
                                 class="btn-primary"
-                                invisible= "type  == 'lead' or stage_id != 4"/>
+                                invisible= "type  == 'lead' or stage_id != 3"/>
                 </xpath>
 
-                <xpath expr="//div[@class='oe_button_box']" position="inside">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button type="object" name="action_view_opportunity_trips"
                     class="oe_stat_button" invisible="type == 'lead'" icon="fa-suitcase">
                     <field name="trip_count" widget="statinfo" string="Trips"/>
@@ -37,12 +35,13 @@
                         decoration-warning="booked_or_not == 'contacted_but_no_booking'"/>
                 
             </xpath>
-            <xpath expr="//header/field[@name='stage_id']" position="attributes">
+            <!-- <xpath expr="//header/field[@name='stage_id']" position="attributes">
                 <attribute name="options">{'fold_field': 'fold'}</attribute>                
-            </xpath>
+            </xpath> -->
 
                 <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="attributes">
-                    <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=3</attribute>
+                    <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=2</attribute>
+                    <attribute name="class">btn-success</attribute>
                 </xpath>
                 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
@@ -89,10 +88,6 @@
 
                         <group name="school_information_1"
                             invisible="lead_type_id != 3 or type !='opportunity'">
-                            <field name="visit" string="Visit(Yes/No)"
-                                required="stage_id >= 2 and type=='opportunity' and lead_type_id == 3" />
-                            <field name="visiting_person" invisible="visit != 'yes'" />
-
                             <field name="school_type_id" invisible="lead_type_id != 3"
                                 style=" margin-right: 4%;" />
                             <field name="customer_visit_datetime" string="School Visit Datetime" />
@@ -105,27 +100,20 @@
                             <field name="number_of_teachers" />
                             <field name="school_strength" style=" margin-right: 4%;" />
                             <field name="total_trips" string="Total Trips Planned" />
-                            <field name="average_fees" widget="monetory" />
-                            <field name="budget_per_student" widget="monetory" />
+                            <field name="average_fees" widget="monetary" />
+                            <field name="budget_per_student" widget="monetary" />
                         </group>
 
                     </group>
-                    <group name="proposal_information" string="Proposal Information"
+                    <group name="quotation_summary" string="Quotation Summary"
                         invisible="stage_id == 1 or stage_id == 2"
                         style="background: #f2f6fc; border-radius: 10px; 
                         padding: 8px; margin:  1px 0; 
                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <group name="proposal_information_1">
-                            <field name="package_id" />
-                            <field name="included_activities_ids" widget="many2many_tags" />
-                            <field name="proposal_addons_ids" widget="many2many_tags" />
-                        </group>
-
-                        <group name="proposal_information_2">
-                            <field name="total_proposal_amount" />
-                            <field name="discount" />
-                            <field name="negotiated_amount" />
-                        </group>
+                    
+                            <field name="total_proposal_amount" widget="monetary"/>
+                            <field name="discount" widget="monetary"/>
+                            <field name="negotiated_amount" widget="monetary"/>
                     </group>
 
                 </xpath>
@@ -259,6 +247,16 @@
             </field>
         </record>
 
+        <record id="sale_crm_case_form_view_oppor_inherit" model="ir.ui.view">
+            <field name="name">sale.crm.lead.oppor.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                    <attribute name="invisible">stage_id != 3</attribute>
+                </xpath>
+            </field>
+        </record>
 
     </data>
 

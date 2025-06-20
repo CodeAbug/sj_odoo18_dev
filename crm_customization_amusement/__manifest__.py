@@ -10,7 +10,7 @@
     'website': '',
     'category': 'Leads Management',
     'version': "0.0.1",
-    'depends': ['base','crm'],
+    'depends': ['base','crm','sale_crm'],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
@@ -19,7 +19,7 @@
         'data/city_data.xml',
         'data/school_type_data.xml',
         'data/designation_data.xml',
-        'data/package_info_data.xml',
+        # 'data/package_info_data.xml',
         
         'views/city_view.xml',
         'views/lead_type_views.xml',
@@ -28,6 +28,8 @@
         'views/crm_lead_inherit_view.xml',
         'views/res_partner_inherit_view.xml',
         'views/opportunity_trip_views.xml',
+        'views/crm_stage_view_inherit.xml',
+        'views/sale_order_view_inherit.xml',
         ],
     'assets': {
         'web.assets_backend': [],

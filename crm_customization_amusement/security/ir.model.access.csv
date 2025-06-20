@@ -5,6 +5,3 @@ access_school_type,access_school_type,model_school_type,base.group_user,1,1,1,1
 access_stakeholder_designation,access_stakeholder_designation,model_stakeholder_designation,base.group_user,1,1,1,1
 access_other_stakeholder_line,access_other_stakeholder_line,model_other_stakeholder_line,base.group_user,1,1,1,1
 access_opportunity_trip,access_opportunity_trip,model_opportunity_trip,base.group_user,1,1,1,1
-access_included_activities,access_included_activities,model_included_activities,base.group_user,1,1,1,1
-access_proposal_addons,access_proposal_addons,model_proposal_addons,base.group_user,1,1,1,1
-access_package_request,access_package_request,model_package_request,base.group_user,1,1,1,1

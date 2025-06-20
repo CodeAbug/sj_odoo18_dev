@@ -62,26 +62,18 @@ class OtherStakeholder(models.Model):
                         raise ValidationError("Please Enter Valid Stakholder's Phone Number")
                     
                 
-class IncludedActivities(models.Model):
-    _name = 'included.activities'
-    _order = 'id desc'
 
-    name = fields.Char(string="Name", copy=False,tracking=True)
+from odoo import models, api
 
-class ProposalAddons(models.Model):
-    _name = 'proposal.addons'
-    _order = 'id desc'
+class CrmStage(models.Model):
+    _inherit = 'crm.stage'
 
-    name = fields.Char(string="Name", copy=False,tracking=True)
-    
-
-class PackageRequest(models.Model):
-    _name = 'package.request'
-    _rec_name = 'name'
-    _order = 'id desc'
-
-    name = fields.Char(string="Name", copy=False)
-
+    def action_unlink_stage(self):
+        for stage in self:
+            # Unlink all leads related to this stage first
+            leads = self.env['crm.lead'].search([('stage_id', '=', stage.id)])
+            leads.write({'stage_id': False})  # or move to another default stage if needed
+            stage.unlink()
 
 # class ResCompany(models.Model):
 #     _inherit = 'res.company'
