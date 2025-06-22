@@ -26,8 +26,6 @@
                 <field name="trip_status"/>
                 <field name="visiting_center_id"/>
                 <field name="planned_number_of_students"/>
-                <field name="amount_paid"/>
-                <field name="due_amount"/>
             </list>
         </field>
     </record>
@@ -51,7 +49,7 @@
     <field name="name">opportunity.trip.form</field>
     <field name="model">opportunity.trip</field>
     <field name="arch" type="xml">
-        <form string="Trip Details">
+        <form string="Trip Details" create="false">
             <header>
                 <button name="action_plan" type="object" string="Plan" class="btn-primary"
                     invisible="trip_status !='draft'"/>
@@ -80,17 +78,20 @@
                         <field name="visiting_center_id" readonly="1"/>
                         <field name="trip_count" invisible="1"/>
                         <field name="trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="create_uid" string="Booked By" />
                     </group>
 
                     <!-- Column 2 -->
                     <group col="1" style="border-right: 1px solid #ddd; padding: 0 10px;">
-                        <field name="shift_time_slot" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="trip_planned_datetime" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="amount_paid" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="assigned_event_manager_id" required="trip_status=='draft'"/>
+                        <field name="expected_amount"/>
+                        <field name="trip_planned_date" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_start_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_end_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_duration" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="advance_received" widget="monetary" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="assigned_event_manager_id" string="Trip Coordinator" required="trip_status=='draft'"/>
                     </group>
 
                     <!-- Column 3 (Visited Info) -->
@@ -98,15 +99,12 @@
                         <field name="trip_rating" widget="priority"/>
                         <field name="number_of_visited_students"/>
                         <field name="number_of_visited_staff"/>
+                        <field name="actual_trip_amount" widget="monetary"/>
                         <field name="actual_visit_datetime"/>
-                        <field name="trampoline_park"/>
-                        <field name="laser_tag"/>
-                        <field name="soft_play"/>
                         <field name="pos_invoice_number"/>
                         <field name="pos_datetime"/>
-                        <field name="pos_amount"/>
+                        <field name="pos_amount" widget="monetary"/>
                     </group>
-
                 </group>
             </sheet>
 
@@ -135,7 +133,6 @@
                             </div>
                             <div>
                                 <span>Lead: <field name="lead_id"/></span><br/>
-                                <span>Amount Paid: ₹<field name="amount_paid"/></span>
                             </div>
                         </div>
                     </t>

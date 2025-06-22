@@ -10,7 +10,7 @@
     'website': '',
     'category': 'Leads Management',
     'version': "0.0.1",
-    'depends': ['base','crm','sale_crm'],
+    'depends': ['base','crm','sale_crm','crm_sms'],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',

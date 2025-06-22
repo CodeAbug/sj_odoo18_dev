@@ -14,7 +14,7 @@ class OpportunityTrip(models.Model):
     
     partner_id = fields.Many2one('res.partner',tracking=True,string="Contact/Organization")
     
-    visiting_center_id = fields.Many2one('city.city')
+    visiting_center_id = fields.Many2one('city.city',tracking=True)
     
     trip_status = fields.Selection([
         ('draft', 'Draft'),
@@ -25,27 +25,8 @@ class OpportunityTrip(models.Model):
 
     trip_count  = fields.Char(tracking=True)
     
-    shift_time_slot = fields.Selection([
-        ('morning', 'Morning'),
-        ('afternoon', 'Afternoon'),
-        ('full_day', 'Full Day')
-    ], string="Shift Time Slot", help="Morning, Afternoon, or Full Day slot for the visit")
-    
     planned_number_of_students = fields.Integer(tracking=True,string="Planned No. Of Students")
     planned_number_of_staff = fields.Integer(tracking=True ,help="Teachers, helpers, bus drivers",string="Planned No. Of Staff")
-    
-    advance_received = fields.Float(tracking=True,help="Token payment")
-    
-    amount_paid = fields.Float(tracking=True)
-    
-    due_amount = fields.Float(tracking=True)
-    
-    assigned_event_manager_id =  fields.Many2one('res.users',tracking=True)
-    
-    trip_planned_datetime = fields.Datetime(tracking=True)
-    
-    trip_poc = fields.Char(string="Trip P.O.C",tracking=True)
-    
     
     @api.constrains('planned_number_of_students', 'planned_number_of_staff')
     def _check_non_zero_values(self):
@@ -55,14 +36,51 @@ class OpportunityTrip(models.Model):
             if record.planned_number_of_staff <= 0.0:
                 raise ValidationError("Planned number of Staff must be greater than 0.")
     
+    advance_received = fields.Float(tracking=True,help="Token payment")
+            
+    assigned_event_manager_id =  fields.Many2one('res.users',tracking=True)
+    
+    trip_planned_date = fields.Date(tracking=True)
+    trip_start_time = fields.Float(tracking=True)
+    trip_end_time = fields.Float(tracking=True)
+    trip_duration  = fields.Float(tracking=True,compute="_compute_trip_duration")
+    
+    @api.depends('trip_start_time', 'trip_end_time')
+    def _compute_trip_duration(self):
+        for rec in self:
+            start = rec.trip_start_time or 0.0
+            end = rec.trip_end_time or 0.0
+
+            # handle overnight case
+            duration = end - start
+            if duration < 0:
+                duration += 24
+
+            rec.trip_duration = round(duration, 2)
+    
+    trip_poc = fields.Char(string="Trip P.O.C",tracking=True)
+    expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
+    actual_trip_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
+            
+            
     #After visit fields 
     number_of_visited_students = fields.Integer(tracking=True,string="No. Of Visited Students")
     number_of_visited_staff = fields.Integer(tracking=True , help="Teachers, helpers, bus drivers",string="No. Of Visited Staff")
     actual_visit_datetime = fields.Datetime(tracking=True)
-    meal_plan = fields.Selection([('yes', 'Yes'),('no', 'No')],tracking=True,string="Meal Plan(Yes/No)")
-    trampoline_park = fields.Selection([('yes', 'Yes'),('no', 'No')],tracking=True ,string="Trampoline Park(Yes/No)")
-    laser_tag = fields.Selection([('yes', 'Yes'),('no', 'No')],tracking=True ,string="Laser Tag(Yes/No)")
-    soft_play = fields.Selection([('yes', 'Yes'),('no', 'No')],tracking=True,string="Soft Play(Yes/No)")
+    @api.depends('planned_number_of_staff','planned_number_of_students','lead_id.discount',
+                    'number_of_visited_staff',
+        'number_of_visited_students',
+                'lead_id.negotiated_amount','lead_id.total_proposal_amount')
+    def _compute_trip_amount(self):
+        for record in self:
+            expected = 0.0
+            actual = 0.0
+            rate = record.lead_id.negotiated_amount
+            expected = (record.planned_number_of_students + record.planned_number_of_staff) * rate
+            actual = (record.number_of_visited_students  + record.number_of_visited_staff ) * rate
+            record.expected_amount = expected
+            record.actual_trip_amount = actual
+
     pos_invoice_number = fields.Char(tracking=True,string="POS Invoice No.")
     pos_amount = fields.Float(tracking=True,string="POS Amount")
     pos_datetime = fields.Datetime(tracking=True)
@@ -75,6 +93,8 @@ class OpportunityTrip(models.Model):
     ('3', 'Three Start'),
     ('4', 'Four Start'),
     ('5', 'Five Start'),])
+
+
     @api.model
     def create(self, vals):
         date_str = datetime.today().strftime('%d%m%y')

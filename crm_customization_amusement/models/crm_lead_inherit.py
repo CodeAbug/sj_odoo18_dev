@@ -29,11 +29,18 @@ class ResPartnerInherit(models.Model):
 class CrmLeadInherit(models.Model):
     _inherit = 'crm.lead'
     
+    def action_custom_save(self):
+        """ Ha Ha Ha it worked...."""
+        return True
     
     lead_type_id = fields.Many2one('lead.type' , string="Lead Type" ,tracking=True)
     
     school_type_id = fields.Many2one('school.type', string="School Type" ,tracking=True)
-    
+    country_id = fields.Many2one(
+        'res.country',
+        string='Country',
+        default=lambda self: self.env.ref('base.in', raise_if_not_found=False)
+    )
     visiting_center_id = fields.Many2one('city.city',tracking=True,string="Visiting Center")
     
     lead_source = fields.Selection([
@@ -42,14 +49,24 @@ class CrmLeadInherit(models.Model):
                             ('walkin', 'Walk-in'),
                             ('ivr', 'IVR')],
                             string="Lead Source",tracking=True)
+    organization_id = fields.Many2one('res.partner',tracking=True)
+    
+    @api.onchange('partner_id')
+    def fetch_organization_id(self):
+        for rec in self:
+            rec.organization_id = rec.partner_id.parent_id.id
+            
+    other_stakeholders_ids = fields.One2many("other.stakeholder.line",'crm_lead_id',tracking=True,copy=True)
+    ##POC details 
+    poc_email = fields.Char(tracking=True,string="P.O.C. Email")
+    poc_mobile = fields.Char(tracking=True,string="P.O.C. Mobile No.")
+    poc_role = fields.Char(tracking=True,string="P.O.C. Role")
     
     
-    other_stakeholders_ids = fields.One2many("other.stakeholder.line",'crm_lead_id',tracking=True)
-    
-    customer_visit_datetime = fields.Datetime(tracking=True)
-    number_of_students = fields.Integer(string="No. Of Students",tracking=True)
+    first_visit_datetime = fields.Datetime(tracking=True)
+    students_planned_for_visit = fields.Integer(string="Students Planned For Visit",tracking=True)
+    number_of_teachers  = fields.Char()
     total_trips = fields.Integer("Total Trips", tracking=True)
-    number_of_teachers = fields.Integer("Number of Teachers", tracking=True)
     school_strength = fields.Integer("School Strength", tracking=True)
     student_per_class = fields.Integer(string="Student Per Class",tracking=True)
     average_fees = fields.Float(tracking=True)
@@ -59,6 +76,22 @@ class CrmLeadInherit(models.Model):
     total_proposal_amount = fields.Float("Proposal Amount",tracking=True,compute="_compute_total_proposal_amount")
     discount = fields.Float("Discount",tracking=True)
     negotiated_amount = fields.Float("Negotiated Amount",tracking=True,compute="_compute_total_negotiated_amount")
+    total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
+    total_package_count = fields.Integer(tracking=True,string="Total Packages",compute='_total_package_count')
+    
+    @api.depends('order_ids.order_line')
+    def _total_package_count(self):
+        for rec in self:
+            total = 0 
+            for order in rec.order_ids:
+                total += len(order.order_line)                
+            rec.total_package_count = total
+    
+    @api.depends('negotiated_amount','total_proposal_amount','students_planned_for_visit','discount')
+    def _compute_deal_value(self):
+        for record in self:
+            record.total_deal_value = record.students_planned_for_visit * record.negotiated_amount
+            record.expected_revenue = record.total_deal_value
     
     @api.depends('order_ids.quotation_valuation_amount')
     def _compute_total_proposal_amount(self):
@@ -81,12 +114,23 @@ class CrmLeadInherit(models.Model):
     booked_or_not = fields.Selection([
     ('contacted_with_booking', 'Contacted with Booking'),
     ('contacted_but_no_booking', 'Contacted but No Booking'),], tracking=True, default='contacted_but_no_booking')
-
+    total_trips_revenue = fields.Float(tracking=True,compute='_compute_total_trips_revenue')
+    total_visited_trips = fields.Integer(tracking=True,compute= '_compute_trip_count')
     
-    @api.depends('opportunity_trip_ids')
+    @api.depends('discount','negotiated_amount','order_ids','opportunity_trip_ids','opportunity_trip_ids.actual_trip_amount')
+    def _compute_total_trips_revenue(self):
+        for record in self:
+            revenue = 0.0
+            for trip in record.opportunity_trip_ids:
+                if trip.trip_status == 'visited':
+                    revenue += trip.actual_trip_amount
+            record.total_trips_revenue = revenue
+    
+    @api.depends('opportunity_trip_ids','opportunity_trip_ids.trip_status')
     def _compute_trip_count(self):
         for rec in self:
             rec.trip_count = len(rec.opportunity_trip_ids)
+            rec.total_visited_trips = len(rec.opportunity_trip_ids.filtered(lambda t: t.trip_status=='visited'))
             if rec.trip_count > 0:
                 rec.booked_or_not = 'contacted_with_booking'
             else:
@@ -120,7 +164,7 @@ class CrmLeadInherit(models.Model):
                 'default_visiting_center_id': self.visiting_center_id.id,
             }
         }
-    @api.constrains('phone','mobile')
+    @api.constrains('phone','mobile','poc_mobile')
     def _onchange_phone_mobile_validation(self):
         for rec in self:
             if rec.phone:
@@ -144,6 +188,17 @@ class CrmLeadInherit(models.Model):
                     except ValueError:
                         raise ValidationError("Please Enter Valid Mobile Number")
             
+            if rec.poc_mobile:
+                
+                    try:
+                        without_chars = int(rec.poc_mobile)
+                        if len(str(without_chars)) != 10:
+                            raise ValidationError("Please Enter 10 Digit POC Mobile Number")
+                            
+                    except ValueError:
+                        raise ValidationError("Please Enter Valid POC Mobile Number")
+            
+            
     
     @api.constrains('email_from','email_cc')
     def validate_email_fields(self):
@@ -156,6 +211,11 @@ class CrmLeadInherit(models.Model):
                 valid = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', rec.email_from)
                 if not valid:
                     raise ValidationError("Please Enter a Valid Email Handle.")
+                
+            if rec.poc_email:
+                valid = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', rec.poc_email)
+                if not valid:
+                    raise ValidationError("Please Enter a Valid POC Email Handle.")
                 
                 
     def create_stakeholder_contact(self):
@@ -175,30 +235,69 @@ class CrmLeadInherit(models.Model):
                         }
                     )
                     record.partner_id = contact.id
-                    print("creaeted record is here - ",contact.name)
+                    
+                    
+    def create_poc_with_different_creds(self):
+        for record in self:
+            if record.contact_name and record.partner_id:
+                
+                contact = self.env['res.partner'].search([
+                    ('id', '=', record.partner_id.id),
+                    ('name', '=', record.contact_name)
+                ], limit=1)
+
+                if contact:
+                    contact.write({
+                        'email': record.poc_email,
+                        'mobile': record.poc_mobile,
+                        'function': record.poc_role,
+                        'phone': ""
+                    })
             
     def action_proposal(self):
         if self.type == 'opportunity':
             self.stage_id = 2 
-    # def write(self, values):
     
-    #     self.create_stakeholder_contact()
-    #     result = super(CrmLeadInherit, self).write(values)
-    #     return result
+    
+    @api.onchange('partner_name')
+    def _onchange_partner_name(self):
+        for rec in self:
+            rec.name = rec.partner_name
+
+
+
                 
 class Lead2OpportunityPartnerInherit(models.TransientModel):
     _inherit = 'crm.lead2opportunity.partner'
 
+    name = fields.Selection([
+        ('convert', 'Convert to opportunity'),
+        ('merge', 'Merge with existing opportunities')
+    ], string='Conversion Action', default='convert',
+    readonly=False, store=True, compute_sudo=False)
+
     action = fields.Selection([
         ('create', 'Create a new Contact'),
         ('exist', 'Link to an existing Contact'),
-        ('nothing', 'Do not link to a Contact')
     ], string='Related Contact', compute='_compute_action', readonly=False, store=True, compute_sudo=False,tracking=True)
+
+    
+    @api.depends('lead_id')
+    def _compute_action(self):
+        for convert in self:
+            if convert.lead_id:
+                partner = convert.lead_id._find_matching_partner()
+                if partner:
+                    convert.action = 'exist'
+                else:
+                    convert.action = 'create'
+            else:
+                convert.action = 'create'
 
     def action_apply(self):
         result = super(Lead2OpportunityPartnerInherit, self).action_apply()
-        print("Here is our lead Id = ",self.lead_id)
         if self.lead_id:
             self.lead_id.create_stakeholder_contact()
+            self.lead_id.create_poc_with_different_creds()
         return result
     

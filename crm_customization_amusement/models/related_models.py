@@ -63,18 +63,6 @@ class OtherStakeholder(models.Model):
                     
                 
 
-from odoo import models, api
-
-class CrmStage(models.Model):
-    _inherit = 'crm.stage'
-
-    def action_unlink_stage(self):
-        for stage in self:
-            # Unlink all leads related to this stage first
-            leads = self.env['crm.lead'].search([('stage_id', '=', stage.id)])
-            leads.write({'stage_id': False})  # or move to another default stage if needed
-            stage.unlink()
-
 # class ResCompany(models.Model):
 #     _inherit = 'res.company'
 
