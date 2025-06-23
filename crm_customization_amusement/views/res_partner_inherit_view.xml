@@ -21,7 +21,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml"> 
                 <xpath expr="//field[@name='category_id']" position="before">
-                    <field name="is_primary_stakeholder_bool"/>
+                    <field name="is_primary_stakeholder_bool" invisible="company_type =='company'" />
                 </xpath>
                 <xpath expr="//div[@class='oe_button_box']" position="inside">
                     <button name="action_view_partner_trips" 

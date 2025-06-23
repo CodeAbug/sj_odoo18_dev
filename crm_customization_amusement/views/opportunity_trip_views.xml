@@ -78,6 +78,8 @@
                         <field name="visiting_center_id" readonly="1"/>
                         <field name="trip_count" invisible="1"/>
                         <field name="trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="secondary_trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+
                         <field name="create_uid" string="Booked By" />
                     </group>
 
@@ -106,6 +108,19 @@
                         <field name="pos_amount" widget="monetary"/>
                     </group>
                 </group>
+
+                    <notebook>
+                        <page name="package_lines" string="Package Lines">
+                            <field name="package_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="quantity" />
+                                    <field name="price_unit" />
+                                    <field name="subtotal" readonly="1" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
             </sheet>
 
             <chatter/>

@@ -198,22 +198,31 @@
                         </group>
                     </group>
                     <group string="Trips Summary" name="trip_summary"
-                        invisible="lead_type_id != 3 or type !='opportunity'"
+                        invisible="stage_id != 3 or type !='opportunity'"
                         style="background: #f2f6fc; border-radius: 10px; width:47% !important;
-                                                    padding: 10px; margin: 1px 0; margin-top:0px !important; 
-                                                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                padding: 10px; margin: 1px 0; margin-top:0px !important; 
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <field name="total_visited_trips" />
                         <field name="total_trips_revenue" widget="monetary" />
                     </group>
                 </xpath>
-                
+
                 <xpath expr="//group[@name='lead_info']" position="replace">
-                    <group name="lead_contact_info" invisible="type=='opportunity'">
-                        <field name="contact_name" string="P.O.C. Name"/>
-                        <field name="poc_email"/>
-                        <field name="poc_mobile"/>
-                        <field name="poc_role"/>
-                    </group>
+                    <div>
+                        <group name="lead_primary_poc_info" string="Primary P.O.C. Details">
+                            <field name="contact_name" string="P.O.C. Name" />
+                            <field name="poc_mobile" />
+                            <field name="poc_role" />
+                            <field name="poc_email" />
+                        </group>
+
+                        <group name="lead_secondary_poc_info" string="Secondary P.O.C Details">
+                            <field name="secondary_poc_name" />
+                            <field name="secondary_poc_mobile" />
+                            <field name="secondary_poc_role" />
+                            <field name="secondary_poc_email" />
+                        </group>
+                    </div>
                 </xpath>
                 
 
@@ -229,7 +238,7 @@
                                     <field name="name"/>
                                     <field name="designation_id" string="Designation"/>
                                     <field name="mail" string="Email"/>
-                                    <field name="phone" string="Phone"/>
+                                    <field name="mobile"/>
                                     <field name="is_primary_bool" string="Is Primary?"/>
                                 </list>
                             </field>
@@ -284,8 +293,6 @@
                 </group>
 
                 </xpath>
-
-
                 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -391,7 +398,6 @@
                     <field name="students_planned_for_visit"/>
                     <field name="total_deal_value" widget="monetary"/>
                 </xpath>
-
 
             </field>
         </record>

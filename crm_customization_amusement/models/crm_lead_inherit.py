@@ -62,6 +62,13 @@ class CrmLeadInherit(models.Model):
     poc_mobile = fields.Char(tracking=True,string="P.O.C. Mobile No.")
     poc_role = fields.Char(tracking=True,string="P.O.C. Role")
     
+    secondary_poc_name = fields.Char(tracking=True ,string="Secondary P.O.C. Name")
+    secondary_poc_mobile = fields.Char(tracking=True ,string="Secondary P.O.C. Mobile No.")
+    secondary_poc_role = fields.Char(tracking=True ,string="Secondary P.O.C. Role")
+    secondary_poc_email = fields.Char(tracking=True,string="Secondary P.O.C. Email")
+
+    
+    
     
     first_visit_datetime = fields.Datetime(tracking=True)
     students_planned_for_visit = fields.Integer(string="Students Planned For Visit",tracking=True)
@@ -162,6 +169,9 @@ class CrmLeadInherit(models.Model):
                 'default_partner_id': self.partner_id.id,
                 'default_lead_type_id': self.lead_type_id.id,
                 'default_visiting_center_id': self.visiting_center_id.id,
+                'default_trip_poc': self.contact_name,
+                'default_secondary_trip_poc': self.secondary_poc_name,
+                
             }
         }
     @api.constrains('phone','mobile','poc_mobile')
@@ -228,13 +238,13 @@ class CrmLeadInherit(models.Model):
                             'company_type':'person',
                             'name':record.name,
                             'email':record.mail,
-                            'phone':record.phone,
+                            'mobile':record.mobile,
                             'function':record.designation_id.name,
                             'parent_id': rec.partner_id.parent_id.id,
-                            'is_primary_stakeholder_bool': record.is_primary_bool
+                            'is_primary_stakeholder_bool': record.is_primary_bool,
+                            'phone': None
                         }
                     )
-                    record.partner_id = contact.id
                     
                     
     def create_poc_with_different_creds(self):
@@ -251,8 +261,22 @@ class CrmLeadInherit(models.Model):
                         'email': record.poc_email,
                         'mobile': record.poc_mobile,
                         'function': record.poc_role,
-                        'phone': ""
+                        'phone': None
                     })
+            if record.secondary_poc_name:
+                contact = self.env['res.partner'].create(
+                        {
+                            'company_type':'person',
+                            'name':record.secondary_poc_name,
+                            'email':record.secondary_poc_email,
+                            'mobile':record.secondary_poc_mobile,
+                            'function':record.secondary_poc_role,
+                            'parent_id': record.partner_id.parent_id.id,
+                            'phone': None
+                        }
+                    )
+            if not record.organization_id:
+                record.organization_id = record.partner_id.parent_id.id
             
     def action_proposal(self):
         if self.type == 'opportunity':

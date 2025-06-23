@@ -8,6 +8,8 @@ class City(models.Model):
 
     name = fields.Char(string="City Name", copy=False,tracking=True)
 
+
+
 class LeadType(models.Model):
     _name = 'lead.type'
     _order = 'id desc'
@@ -36,7 +38,7 @@ class OtherStakeholder(models.Model):
     name = fields.Char(string="Name",tracking=True)
     crm_lead_id = fields.Many2one('crm.lead',tracking=True)
     mail = fields.Char("Mail", tracking=True)
-    phone = fields.Char("Phone", tracking= True)
+    mobile = fields.Char("Mobile", tracking= True)
     designation_id = fields.Many2one('stakeholder.designation', string="Designation",tracking=True)
     is_primary_bool = fields.Boolean("Is Primary Person",tracking=True)
     partner_id = fields.Many2one('res.partner',tracking=True)
@@ -49,17 +51,17 @@ class OtherStakeholder(models.Model):
                 if not valid:
                     raise ValidationError("Please Enter a Valid Stakeholder's Email Handle.")
                 
-    @api.constrains('phone')
-    def _onchange_stakeholder_phone_validation(self):
+    @api.constrains('mobile')
+    def _onchange_stakeholder_mobile_validation(self):
         for rec in self:
-            if rec.phone:
+            if rec.mobile:
                     try:
-                        without_chars = int(rec.phone)
+                        without_chars = int(rec.mobile)
                         if len(str(without_chars)) != 10:
-                            raise ValidationError("Please Enter 10 Digit Stakholder's Phone Number")
+                            raise ValidationError("Please Enter 10 Digit Stakholder's Mobile Number")
                             
                     except ValueError:
-                        raise ValidationError("Please Enter Valid Stakholder's Phone Number")
+                        raise ValidationError("Please Enter Valid Stakholder's Mobile Number")
                     
                 
 

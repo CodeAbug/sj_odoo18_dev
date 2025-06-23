@@ -3,6 +3,23 @@ from datetime import datetime
 from odoo.exceptions import ValidationError
 
 
+
+class OpportunityPackageLine(models.Model):
+    _name = 'opportunity.package.line'
+    _description = 'Opportunity Package Line'
+
+    opportunity_trip_id = fields.Many2one('opportunity.trip',tracking=True)
+    product_id = fields.Many2one('product.product', string="Product", required=True)
+    quantity = fields.Float(string="Quantity", default=1.0)
+    price_unit = fields.Float(string="Unit Price")
+    subtotal = fields.Float(string="Subtotal", compute="_compute_subtotal", store=True)
+
+
+    @api.depends('quantity', 'price_unit')
+    def _compute_subtotal(self):
+        for line in self:
+            line.subtotal = line.quantity * line.price_unit
+
 class OpportunityTrip(models.Model):
     _name='opportunity.trip'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -59,10 +76,11 @@ class OpportunityTrip(models.Model):
             rec.trip_duration = round(duration, 2)
     
     trip_poc = fields.Char(string="Trip P.O.C",tracking=True)
+    secondary_trip_poc = fields.Char(string="Secondary P.O.C",tracking=True)
+    
     expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
     actual_trip_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
-            
-            
+    
     #After visit fields 
     number_of_visited_students = fields.Integer(tracking=True,string="No. Of Visited Students")
     number_of_visited_staff = fields.Integer(tracking=True , help="Teachers, helpers, bus drivers",string="No. Of Visited Staff")
@@ -94,6 +112,9 @@ class OpportunityTrip(models.Model):
     ('4', 'Four Start'),
     ('5', 'Five Start'),])
 
+    package_line_ids = fields.One2many(
+        'opportunity.package.line','opportunity_trip_id', string="Package Lines"
+    )
 
     @api.model
     def create(self, vals):
@@ -121,3 +142,5 @@ class OpportunityTrip(models.Model):
         for trip in self:
             trip.trip_status = 'draft'
         
+        
+    
