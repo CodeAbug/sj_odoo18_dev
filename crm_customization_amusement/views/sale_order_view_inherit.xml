@@ -10,13 +10,41 @@
                 <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']" position="before">
                     <field name="is_primary_valuation_product" />
                 </xpath>
-
-
-                <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="quotation_valuation_amount" widget="monetary" />
+                    <xpath expr="//button[@name='action_quotation_send']" position="after">
+                        <button name="action_mark_as_sent_custom"
+                        type="object"
+                        string="Mark as Sent"
+                        class="btn-primary"
+                        invisible="state != 'draft'"/>
+                        </xpath>
+                <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
+
+                <xpath expr="//button[@name='513']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="deal_value" widget="monetary" />
+                </xpath>
+
             </field>
         </record>    
+
+    <record id="sale_crm_case_form_view_oppor_inherit" model="ir.ui.view">
+            <field name="name">sale.crm.lead.oppor.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                    <attribute name="invisible">stage_id != 2</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
+                    <attribute name="icon">fa-inr</attribute>
+                </xpath>
+                
+            </field>
+        </record>
 
 <record id="sale_order_list_view_inherit_for_lead_quotation" model="ir.ui.view">
             <field name="name">sale.order.list.view.inherit.for.lead.quotation</field>
@@ -27,7 +55,7 @@
 
 
                 <xpath expr="//field[@name='amount_total']" position="before">
-                    <field name="quotation_valuation_amount" widget="monetary" />
+                    <field name="deal_value" widget="monetary" />
                 </xpath>
             </field>
         </record>    

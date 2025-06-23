@@ -18,12 +18,16 @@
                                 type="object"
                                 class="btn-primary"
                                 invisible= "type  == 'lead' or stage_id != 3"/>
-                    </xpath>
 
+                    <button name="action_revert_to_stage_one"
+                                    type="object"
+                                    string="Revert to Stage 1"
+                                    class="btn btn-warning"
+                                    invisible="stage_id != 3 or type != 'opportunity'" />
+                    </xpath>
                 <xpath expr="//field[@name='stage_id']" position="attributes">
                     <attribute name="options">{'fold_field': 'fold'}</attribute>
                     <attribute name="widget">statusbar</attribute>
-
                 </xpath>
             <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button type="object" name="action_view_opportunity_trips"
@@ -31,7 +35,15 @@
                     <field name="trip_count" widget="statinfo" string="Trips"/>
                 </button>
 
+                <button class="oe_stat_button" type="object" invisible="type == 'lead'" name="action_view_opportunity_trips" icon="fa-inr">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value"><field name="total_trips_revenue" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
+                            <span class="o_stat_text"> Trips Revenue</span>
+                        </div>
+                </button>
+
             </xpath>
+
             <!-- <xpath expr="//div[@class='oe_button_box']/button[@name='action_schedule_meeting']" position="before">
                 <button name="action_custom_save"
                         string="Save"
@@ -112,6 +124,7 @@
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
                     <attribute name="string">Orgranization Name</attribute>
+                    <attribute name="required">stage_id == 1</attribute>
                 </xpath>
 
                 <!-- this is a page of  name="lead" string="Extra Information"  -->
@@ -150,7 +163,7 @@
                 
                 <!--this invisible will be applied later in schoo_type_id -  invisible="lead_type_id != 3" -->
                 
-                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="before">
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="before">
                         <field name="lead_type_id"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
@@ -160,6 +173,9 @@
 
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
                         <field name="visiting_center_id"/>
+                        <field name="user_id" context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user"/>
+                        <field name="priority" widget="priority" class="oe_inline align-top"/>
+
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']/label[@for='street']" position="attributes">
@@ -222,8 +238,6 @@
                                 </group>
                                 <group name="quotation_summary_2" col="2">
                                     <field name="total_proposal_amount" widget="monetary" />
-                                    <field name="discount" widget="monetary" />
-                                    <field name="negotiated_amount" widget="monetary" />
                                 </group>
                             </group>
 
@@ -298,9 +312,8 @@
 
                 <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="replace">
                     <field name="lead_type_id"/>
-                    <!-- <field name="organization_id" string="Org. Name"/> -->
-                    <field name="partner_name" string="Org. Name"/>
-                    
+                    <field name="organization_id" readonly="stage_id != 1" string="Org. Name"/>
+                    <!-- <field name="partner_name" readonly="stage_id != 1" string="Org. Name"/> -->
                     <field name="contact_name" string="P.O.C. Name" />
                 </xpath>
 
@@ -344,15 +357,14 @@
                                                                             'default_visiting_center_id': visiting_center_id}">
                                 <list>
                                     <field name="name"/>
-                                    <field name="trip_poc"/>
+                                    <field name="trip_poc_id"/>
                                     <field name="planned_number_of_students"/>
                                     <field name="planned_number_of_staff"/>
                                     <field name="expected_amount" widget="monetary"/>
-
+                                    <field name="revised_amount" widget="monetary"/>
                                     <field name="number_of_visited_students"/>
                                     <field name="number_of_visited_staff"/>
-                                    <field name="actual_trip_amount" widget="monetary"/>
-                                    
+                                    <field name="pos_amount"/>
                                     <field name="trip_status" widget="badge"
                                         decoration-success="trip_status == 'visited'"
                                         decoration-warning="trip_status == 'planned'"/>
@@ -467,16 +479,7 @@
             </field>
         </record>
 
-        <record id="sale_crm_case_form_view_oppor_inherit" model="ir.ui.view">
-            <field name="name">sale.crm.lead.oppor.inherit</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
-            <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
-                    <attribute name="invisible">stage_id != 2</attribute>
-                </xpath>
-            </field>
-        </record>
+
 
     <record id="crm_sms_list_view_oppor_inherit" model="ir.ui.view">
                 <field name="name">crm.sms.list.view.oppor.inherit</field>

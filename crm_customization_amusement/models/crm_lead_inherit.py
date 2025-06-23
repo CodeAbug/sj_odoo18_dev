@@ -1,5 +1,5 @@
 from odoo import models,fields,api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError,UserError
 import re
 
 
@@ -69,7 +69,6 @@ class CrmLeadInherit(models.Model):
 
     
     
-    
     first_visit_datetime = fields.Datetime(tracking=True)
     students_planned_for_visit = fields.Integer(string="Students Planned For Visit",tracking=True)
     number_of_teachers  = fields.Char()
@@ -80,57 +79,60 @@ class CrmLeadInherit(models.Model):
     budget_per_student = fields.Float(tracking=True)
     
     ### Proposal Stage Fields 
-    total_proposal_amount = fields.Float("Proposal Amount",tracking=True,compute="_compute_total_proposal_amount")
-    discount = fields.Float("Discount",tracking=True)
-    negotiated_amount = fields.Float("Negotiated Amount",tracking=True,compute="_compute_total_negotiated_amount")
+    total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
     total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
     total_package_count = fields.Integer(tracking=True,string="Total Packages",compute='_total_package_count')
+    negotiated_amount = fields.Float()
+    discount = fields.Float()
     
-    @api.depends('order_ids.order_line')
+    @api.depends('order_ids.order_line','order_ids.state')
     def _total_package_count(self):
         for rec in self:
             total = 0 
             for order in rec.order_ids:
-                total += len(order.order_line)                
+                if order.state =='sale':
+                    total += len(order.order_line)                
             rec.total_package_count = total
     
-    @api.depends('negotiated_amount','total_proposal_amount','students_planned_for_visit','discount')
+    @api.depends('order_ids.deal_value','order_ids.order_line.product_uom_qty','order_ids','order_ids.state')
     def _compute_deal_value(self):
         for record in self:
-            record.total_deal_value = record.students_planned_for_visit * record.negotiated_amount
-            record.expected_revenue = record.total_deal_value
+            total = 0.0
+            for line in record.order_ids:
+                if line.state == 'sale':
+                    total += line.deal_value
+            record.total_deal_value = total
     
-    @api.depends('order_ids.quotation_valuation_amount')
+    
+    @api.depends('order_ids.deal_value','order_ids.order_line','order_ids.order_line.price_unit','order_ids.state')
     def _compute_total_proposal_amount(self):
         for record in self:
             total = 0.0
             for line in record.order_ids:
-                    total += line.quotation_valuation_amount
+                if line.state == 'sale':
+                    for order_line in line.order_line:
+                        if order_line.is_primary_valuation_product:
+                            total += order_line.price_unit
+                        
             record.total_proposal_amount = total
-    
-    @api.depends('total_proposal_amount','discount')
-    def _compute_total_negotiated_amount(self):
-        for record in self:
-                record.negotiated_amount = record.total_proposal_amount - record.discount 
-    
-    
+
     #Trip 
     
     opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
     trip_count = fields.Integer(string="Trip Count", compute="_compute_trip_count")
     booked_or_not = fields.Selection([
-    ('contacted_with_booking', 'Contacted with Booking'),
-    ('contacted_but_no_booking', 'Contacted but No Booking'),], tracking=True, default='contacted_but_no_booking')
+    ('contacted_with_booking', 'Trip Booked'),
+    ('contacted_but_no_booking', 'No Trip Booked Yet'),], tracking=True, default='contacted_but_no_booking')
     total_trips_revenue = fields.Float(tracking=True,compute='_compute_total_trips_revenue')
     total_visited_trips = fields.Integer(tracking=True,compute= '_compute_trip_count')
     
-    @api.depends('discount','negotiated_amount','order_ids','opportunity_trip_ids','opportunity_trip_ids.actual_trip_amount')
+    @api.depends('order_ids','opportunity_trip_ids','opportunity_trip_ids.pos_amount','opportunity_trip_ids.trip_status')
     def _compute_total_trips_revenue(self):
         for record in self:
             revenue = 0.0
             for trip in record.opportunity_trip_ids:
                 if trip.trip_status == 'visited':
-                    revenue += trip.actual_trip_amount
+                    revenue += trip.pos_amount
             record.total_trips_revenue = revenue
     
     @api.depends('opportunity_trip_ids','opportunity_trip_ids.trip_status')
@@ -169,10 +171,16 @@ class CrmLeadInherit(models.Model):
                 'default_partner_id': self.partner_id.id,
                 'default_lead_type_id': self.lead_type_id.id,
                 'default_visiting_center_id': self.visiting_center_id.id,
-                'default_trip_poc': self.contact_name,
-                'default_secondary_trip_poc': self.secondary_poc_name,
-                'default_assigned_event_manager_id':self.user_id.id
-                
+                'default_trip_poc_id': self.env['res.partner'].search([
+                    ('parent_id', '=', self.partner_id.parent_id.id),
+                    ('name', '=', self.contact_name)
+                ], limit=1).id,
+                'default_secondary_trip_poc_id': self.env['res.partner'].search([
+                    ('parent_id', '=', self.partner_id.parent_id.id),
+                    ('name', '=', self.secondary_poc_name)
+                ], limit=1).id,
+                'default_assigned_event_manager_id':self.user_id.id,
+                'default_organization_id' : self.partner_id.parent_id.id
             }
         }
     @api.constrains('phone','mobile','poc_mobile')
@@ -289,7 +297,26 @@ class CrmLeadInherit(models.Model):
         for rec in self:
             rec.name = rec.partner_name
 
+    def action_revert_to_stage_one(self):
+        for lead in self:
+            if lead.stage_id.id != 3:
+                raise UserError("This action is only allowed when stage is 3.")
+            # Find stage 1
+            stage_1 = self.env['crm.stage'].search([('id', '=', 1)], limit=1)
+            if not stage_1:
+                raise UserError("Stage with ID 1 not found.")
 
+            # Update stage
+            lead.stage_id = stage_1
+
+            # Move related sale orders to draft if in 'sale' state
+            sale_orders = self.env['sale.order'].search([
+                ('opportunity_id', '=', lead.id),
+                ('state', '=', 'sale')
+            ])
+            for so in sale_orders:
+                so.action_cancel()  # Cancel first
+                so.write({'state': 'draft'})  # Then draft
 
                 
 class Lead2OpportunityPartnerInherit(models.TransientModel):

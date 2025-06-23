@@ -30,7 +30,8 @@ class OpportunityTrip(models.Model):
     lead_type_id = fields.Many2one('lead.type',tracking=True)
     
     partner_id = fields.Many2one('res.partner',tracking=True,string="Contact/Organization")
-    
+    organization_id = fields.Many2one('res.partner',tracking=True,string="Organization")
+
     visiting_center_id = fields.Many2one('city.city',tracking=True)
     
     trip_status = fields.Selection([
@@ -61,45 +62,70 @@ class OpportunityTrip(models.Model):
     trip_start_time = fields.Float(tracking=True)
     trip_end_time = fields.Float(tracking=True)
     trip_duration  = fields.Float(tracking=True,compute="_compute_trip_duration")
+    # Remove this field in next deployment
+    actual_trip_amount = fields.Float()
     
+    
+    
+    @api.constrains('trip_start_time', 'trip_end_time')
+    def _check_time_validity(self):
+        for rec in self:
+            if rec.trip_start_time <= 0:
+                raise ValidationError("Trip Start Time is required.")
+
+
+            if not (0 <= rec.trip_start_time <= 24):
+                raise ValidationError("Trip Start Time must be between 0 and 24 hours.")
+            if not (0 <= rec.trip_end_time <= 24):
+                raise ValidationError("Trip End Time must be between 0 and 24 hours.")
+            
     @api.depends('trip_start_time', 'trip_end_time')
     def _compute_trip_duration(self):
         for rec in self:
             start = rec.trip_start_time or 0.0
             end = rec.trip_end_time or 0.0
 
-            # handle overnight case
+            # Normalize times within 0–24
+            start = max(0.0, min(24.0, start))
+            end = max(0.0, min(24.0, end))
+
+            # Handle overnight case: e.g. 22 to 2 should be 4 hours
             duration = end - start
             if duration < 0:
                 duration += 24
 
             rec.trip_duration = round(duration, 2)
+
     
-    trip_poc = fields.Char(string="Trip P.O.C",tracking=True)
-    secondary_trip_poc = fields.Char(string="Secondary P.O.C",tracking=True)
+    trip_poc_id = fields.Many2one('res.partner',string="Trip P.O.C",tracking=True)
+    secondary_trip_poc_id = fields.Many2one('res.partner',string="Secondary P.O.C",tracking=True)
     
-    expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
-    actual_trip_amount = fields.Float(tracking=True,compute='_compute_trip_amount')
+    expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount',string="Contracted Amount")
+    revised_amount = fields.Float(tracking=True)
     
     #After visit fields 
     number_of_visited_students = fields.Integer(tracking=True,string="No. Of Visited Students")
     number_of_visited_staff = fields.Integer(tracking=True , help="Teachers, helpers, bus drivers",string="No. Of Visited Staff")
     actual_visit_datetime = fields.Datetime(tracking=True)
-    @api.depends('planned_number_of_staff','planned_number_of_students','lead_id.discount',
+    
+    
+    @api.depends('planned_number_of_staff','planned_number_of_students',
                     'number_of_visited_staff',
         'number_of_visited_students',
-                'lead_id.negotiated_amount','lead_id.total_proposal_amount')
+                'lead_id','lead_id.total_proposal_amount')
     def _compute_trip_amount(self):
         for record in self:
             expected = 0.0
             actual = 0.0
-            rate = record.lead_id.negotiated_amount
+            rate = record.lead_id.total_proposal_amount
             expected = (record.planned_number_of_students + record.planned_number_of_staff) * rate
-            actual = (record.number_of_visited_students  + record.number_of_visited_staff ) * rate
             record.expected_amount = expected
-            record.actual_trip_amount = actual
+
+
 
     pos_invoice_number = fields.Char(tracking=True,string="POS Invoice No.")
+    pos_attachment = fields.Binary(string="POS Attachment", attachment=True)
+    file_name = fields.Char(string="Filename")
     pos_amount = fields.Float(tracking=True,string="POS Amount")
     pos_datetime = fields.Datetime(tracking=True)
     
