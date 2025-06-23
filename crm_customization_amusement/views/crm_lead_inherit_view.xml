@@ -82,7 +82,29 @@
 
                 <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="attributes">
                     <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=2</attribute>
-                    <attribute name="class">btn-success</attribute>
+                    <attribute name="class">btn-force-green</attribute>
+                    <style>
+                            .btn-force-green {
+                background-color: #28a745 !important;
+                color: white !important;
+                border-color: #28a745 !important;
+                font-weight: bold !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            </style>
+                </xpath>
+
+
+                <xpath expr="//header" position="inside">
+                    <style>
+                            .btn-force-green {
+                background-color: #28a745 !important;
+                color: white !important;
+                border-color: #28a745 !important;
+                font-weight: bold !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            </style>
                 </xpath>
                 
                 <xpath expr="//group[@name='lead_partner']" position="attributes">
@@ -127,16 +149,18 @@
                 </xpath>
                 
                 <!--this invisible will be applied later in schoo_type_id -  invisible="lead_type_id != 3" -->
-                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
-                        <field name="school_type_id"/>
+                
+                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="before">
                         <field name="lead_type_id"/>
+                </xpath>
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
+                        <field name="school_type_id" invisible="lead_type_id != 3"/>
                         <field name="lead_source"/>
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
                         <field name="visiting_center_id"/>
                 </xpath>
-
 
                 <xpath expr="//group[@name='lead_partner']/label[@for='street']" position="attributes">
                     <attribute name="string">Organization Address</attribute>
@@ -449,7 +473,7 @@
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
-                    <attribute name="invisible">stage_id != 3</attribute>
+                    <attribute name="invisible">stage_id != 2</attribute>
                 </xpath>
             </field>
         </record>

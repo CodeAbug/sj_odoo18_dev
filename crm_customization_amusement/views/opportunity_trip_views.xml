@@ -51,7 +51,7 @@
     <field name="arch" type="xml">
         <form string="Trip Details" create="false">
             <header>
-                <button name="action_plan" type="object" string="Plan" class="btn-success" 
+                <button name="action_plan" type="object" string="Plan" class="btn-force-green"
                     invisible="trip_status !='draft'"/>
                 <button name="action_visited" type="object" string="Visited" class="btn-success"
                     invisible="trip_status !='planned'"/>
@@ -60,6 +60,15 @@
                 <button name="action_reset_draft" type="object" string="Reset to Draft" class="btn-secondary"
                     invisible="trip_status == 'draft'"/>
                 <field name="trip_status" widget="statusbar" statusbar_visible="draft,planned,visited"/>
+            <style>
+                            .btn-force-green {
+                background-color: #28a745 !important;
+                color: white !important;
+                border-color: #28a745 !important;
+                font-weight: bold !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            </style>
             </header>
             
 
