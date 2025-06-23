@@ -13,6 +13,19 @@ SALE_ORDER_STATE = [
 class SaleOrderInherit(models.Model):
     _inherit='sale.order'
     
+    
+    def action_custom_save(self):
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Record Saved Successfully!',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
     deal_value = fields.Float(tracking=True,compute='_compute_deal_value' ,string="Deal Value")
     
     quotation_valuation_amount = fields.Float(string="Deal Value")

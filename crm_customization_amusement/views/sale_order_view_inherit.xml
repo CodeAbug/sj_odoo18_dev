@@ -1,66 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<record id="sale_order_form_view_inherit_for_lead_quotation" model="ir.ui.view">
-            <field name="name">sale.order.form.view.inherit.for.lead.quotation</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
+    <record id="sale_order_form_view_inherit_for_lead_quotation" model="ir.ui.view">
+        <field name="name">sale.order.form.view.inherit.for.lead.quotation</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
 
-                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']" position="before">
-                    <field name="is_primary_valuation_product" />
-                </xpath>
-                    <xpath expr="//button[@name='action_quotation_send']" position="after">
-                        <button name="action_mark_as_sent_custom"
-                        type="object"
-                        string="Mark as Sent"
-                        class="btn-primary"
-                        invisible="state != 'draft'"/>
-                        </xpath>
-                <xpath expr="//button[@name='action_quotation_send']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+            <xpath
+                expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']"
+                position="before">
+                <field name="is_primary_valuation_product" />
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="after">
+                <button name="action_mark_as_sent_custom"
+                    type="object"
+                    string="Mark as Sent"
+                    class="btn-primary"
+                    invisible="state != 'draft'" />
+            </xpath>
 
-                <xpath expr="//button[@id='create_invoice']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_custom_save"
+                    string="Save"
+                    type="object"
+                    class="btn-primary"
+                    icon="fa-save" />
+            </xpath>
 
-                <xpath expr="//button[@id='send_by_email']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="deal_value" widget="monetary" />
-                </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
 
-            </field>
-        </record>    
+            <xpath expr="//button[@id='create_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='send_by_email']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="deal_value" widget="monetary" />
+            </xpath>
+
+        </field>
+    </record>
 
     <record id="sale_crm_case_form_view_oppor_inherit" model="ir.ui.view">
-            <field name="name">sale.crm.lead.oppor.inherit</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
-            <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
-                    <attribute name="invisible">stage_id != 2</attribute>
-                </xpath>
-                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
-                    <attribute name="icon">fa-inr</attribute>
-                </xpath>
-                
-            </field>
-        </record>
+        <field name="name">sale.crm.lead.oppor.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                <attribute name="invisible">stage_id != 2</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
+                <attribute name="icon">fa-inr</attribute>
+            </xpath>
 
-<record id="sale_order_list_view_inherit_for_lead_quotation" model="ir.ui.view">
-            <field name="name">sale.order.list.view.inherit.for.lead.quotation</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_tree"/>
-            <field name="arch" type="xml">
+        </field>
+    </record>
+
+    <record id="sale_order_list_view_inherit_for_lead_quotation" model="ir.ui.view">
+        <field name="name">sale.order.list.view.inherit.for.lead.quotation</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree" />
+        <field name="arch" type="xml">
 
 
-
-                <xpath expr="//field[@name='amount_total']" position="before">
-                    <field name="deal_value" widget="monetary" />
-                </xpath>
-            </field>
-        </record>    
+            <xpath expr="//field[@name='amount_total']" position="before">
+                <field name="deal_value" widget="monetary" />
+            </xpath>
+        </field>
+    </record>
 </odoo>

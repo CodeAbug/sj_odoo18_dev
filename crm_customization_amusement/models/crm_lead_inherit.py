@@ -31,7 +31,6 @@ class CrmLeadInherit(models.Model):
     
     
     def action_custom_save(self):
-        """Save and show success message, then hide the button"""
 
         return {
             'type': 'ir.actions.client',
