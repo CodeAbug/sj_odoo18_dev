@@ -20,6 +20,11 @@
                                 invisible= "type  == 'lead' or stage_id != 3"/>
                     </xpath>
 
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="options">{'fold_field': 'fold'}</attribute>
+                    <attribute name="widget">statusbar</attribute>
+
+                </xpath>
             <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button type="object" name="action_view_opportunity_trips"
                     class="oe_stat_button" invisible="type == 'lead'" icon="fa-suitcase">
@@ -27,22 +32,20 @@
                 </button>
 
             </xpath>
-            <xpath expr="//div[@class='oe_button_box']/button[@name='action_schedule_meeting']" position="before">
+            <!-- <xpath expr="//div[@class='oe_button_box']/button[@name='action_schedule_meeting']" position="before">
                 <button name="action_custom_save"
                         string="Save"
                         type="object"
                         class="btn-primary"
                         data-hotkey="s"/>
 
-            </xpath>
+            </xpath> -->
             <!-- <xpath expr="//field[@name='name']" position="attributes">
                             <attribute name="invisible">True</attribute>
                         </xpath> -->
 
                 <xpath expr="//div[@class='oe_title']" position="replace">
-                <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead'">
-                        <label for="expected_revenue" class="oe_edit_only"/>   
-                        <div class="d-flex align-items-baseline">
+                <group invisible="1">
                             <field name="company_currency" invisible="1"/>
                             <field name="expected_revenue" class="o_input_13ch" widget='monetary' options="{'currency_field': 'company_currency'}"/>
                             <span class="oe_grey p-2" groups="crm.group_use_recurring_revenues"> + </span>
@@ -54,9 +57,8 @@
                                         required="recurring_revenue != 0" options="{'no_create': True, 'no_open': True}"/>
                                     <span class="oe_grey p-2 text-nowrap"> at </span>
                                 </div>
-                            </div>
                         </div>
-                    </div>
+                    </group>
                     
                         </xpath>
             
@@ -84,6 +86,9 @@
                     <attribute name="class">btn-success</attribute>
                 </xpath>
                 
+                <xpath expr="//group[@name='lead_partner']" position="attributes">
+                    <attribute name="string">Orgranization Details</attribute>
+                </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
                     <attribute name="string">Orgranization Name</attribute>
                 </xpath>
@@ -167,8 +172,8 @@
                     position="replace">
                     <group name="school_information" string="School Information"
                         invisible="lead_type_id != 3 or type !='opportunity'"
-                        style="background: #f2f6fc; border-radius: 10px; 
-                                padding: 10px; margin:  1px 0; margin-top:-10px !important; 
+                        style="background: #f2f6fc; border-radius: 10px;  width:49% !important;
+                                padding: 10px; margin:  1px 0; margin-top:0px !important; 
                                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
 
@@ -183,7 +188,7 @@
                     <group name="quotation_summary" string="Quotation Summary"
                         invisible="stage_id == 1"
                         style="background: #f2f6fc; border-radius: 10px; 
-                        padding: 8px; margin:  1px 0; 
+                        padding: 8px; margin:  1px 0;  width:49% !important;
                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <group name="quotation_summary_1">
                             <field name="students_planned_for_visit" style=" margin-right: 4%;" />
@@ -199,8 +204,8 @@
                     </group>
                     <group string="Trips Summary" name="trip_summary"
                         invisible="stage_id != 3 or type !='opportunity'"
-                        style="background: #f2f6fc; border-radius: 10px; width:47% !important;
-                                padding: 10px; margin: 1px 0; margin-top:0px !important; 
+                        style="background: #f2f6fc; border-radius: 10px; width:49% !important;
+                                padding: 10px; margin: 1px 0; margin-top:10px !important; 
                                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <field name="total_visited_trips" />
                         <field name="total_trips_revenue" widget="monetary" />
@@ -266,8 +271,6 @@
 
                 <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="replace">
                     <field name="lead_type_id"/>
-                    <field name="lead_source"/>
-                    <field name="visiting_center_id" string="Preferred Visiting Center"/>
                     <!-- <field name="organization_id" string="Org. Name"/> -->
                     <field name="partner_name" string="Org. Name"/>
                     
@@ -278,12 +281,11 @@
                 <xpath expr="//group[@name='opportunity_partner']/div[2]" position="after">
                         <field name="user_id" string="Lead Assigned To"
                         context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user" invisible="type!= 'opportunity'"/>
-                    <label for="date_deadline" invisible="type!= 'opportunity'">Expected Closing</label>
-                    <div class="o_lead_opportunity_form_inline_fields">
-                        <field name="date_deadline" nolabel="1" class="oe_inline" invisible="type!= 'opportunity'"/>
-                        <field name="priority" widget="priority" nolabel="1" class="oe_inline align-top" invisible="type!= 'opportunity'"/>
-                    </div>
-                </xpath>
+                        <field name="lead_source" invisible="type!= 'opportunity'"/>
+                    <field name="visiting_center_id" string="Preferred Visiting Center" invisible="type!= 'opportunity'"/>
+                        <field name="priority" widget="priority" class="oe_inline align-top" invisible="type!= 'opportunity'"/>
+                    
+                    </xpath>
                 
 
                 <xpath expr="//page[@name='extra']//group[1]" position="before">
@@ -450,7 +452,7 @@
         </record>
 
     <record id="crm_sms_list_view_oppor_inherit" model="ir.ui.view">
-                <field name="name">crm.sms.list..view.oppor.inherit</field>
+                <field name="name">crm.sms.list.view.oppor.inherit</field>
                 <field name="model">crm.lead</field>
                 <field name="inherit_id" ref="crm_sms.crm_case_tree_view_oppor"/>
                 <field name="arch" type="xml">
@@ -491,7 +493,10 @@
                             <xpath expr="//field[@name='partner_id']" position="attributes">
                                 <attribute name="string">Contact</attribute>
                             </xpath>
-
+                            <xpath expr="//field[@name='user_id']" position="attributes">
+                                <attribute name="string">Sales Person</attribute>
+                            </xpath>
+                            
                             <xpath expr="//field[@name='action']" position="replace">
                                     <field name="action" nolabel="1" options="{'no_nothing': True}"/>
                             </xpath>

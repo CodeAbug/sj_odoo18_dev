@@ -171,6 +171,7 @@ class CrmLeadInherit(models.Model):
                 'default_visiting_center_id': self.visiting_center_id.id,
                 'default_trip_poc': self.contact_name,
                 'default_secondary_trip_poc': self.secondary_poc_name,
+                'default_assigned_event_manager_id':self.user_id.id
                 
             }
         }

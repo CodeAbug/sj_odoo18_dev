@@ -78,7 +78,7 @@
                         <field name="visiting_center_id" readonly="1"/>
                         <field name="trip_count" invisible="1"/>
                         <field name="trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
-                        <field name="secondary_trip_poc" required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="secondary_trip_poc" readonly="trip_status != 'draft'" />
 
                         <field name="create_uid" string="Booked By" />
                     </group>
@@ -92,7 +92,7 @@
                         <field name="trip_start_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_end_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_duration" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="advance_received" widget="monetary" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="assigned_event_manager_id" string="Trip Coordinator" required="trip_status=='draft'"/>
                     </group>
 
@@ -109,7 +109,7 @@
                     </group>
                 </group>
 
-                    <notebook>
+                    <!-- <notebook>
                         <page name="package_lines" string="Package Lines">
                             <field name="package_line_ids">
                                 <list editable="bottom">
@@ -120,7 +120,7 @@
                                 </list>
                             </field>
                         </page>
-                    </notebook>
+                    </notebook> -->
             </sheet>
 
             <chatter/>
