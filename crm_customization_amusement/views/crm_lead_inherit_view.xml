@@ -13,6 +13,7 @@
                             type="object" class="oe_highlight" title="Send To Proposition Stage"
                             invisible="type == 'lead' or stage_id != 1"/>
                     
+
                     <button name="open_trip_wizard"
                                 string="Add Trip"
                                 type="object"
@@ -24,6 +25,12 @@
                                     string="Revert to Stage 1"
                                     class="btn btn-warning"
                                     invisible="stage_id != 3 or type != 'opportunity'" />
+                    <button name="action_custom_save"
+                    string="Save"
+                    type="object"
+                    class="btn-primary"
+                    icon="fa-save"/>
+                                
                     </xpath>
                 <xpath expr="//field[@name='stage_id']" position="attributes">
                     <attribute name="options">{'fold_field': 'fold'}</attribute>
@@ -44,14 +51,6 @@
 
             </xpath>
 
-            <!-- <xpath expr="//div[@class='oe_button_box']/button[@name='action_schedule_meeting']" position="before">
-                <button name="action_custom_save"
-                        string="Save"
-                        type="object"
-                        class="btn-primary"
-                        data-hotkey="s"/>
-
-            </xpath> -->
             <!-- <xpath expr="//field[@name='name']" position="attributes">
                             <attribute name="invisible">True</attribute>
                         </xpath> -->

@@ -29,9 +29,20 @@ class ResPartnerInherit(models.Model):
 class CrmLeadInherit(models.Model):
     _inherit = 'crm.lead'
     
+    
     def action_custom_save(self):
-        """ Ha Ha Ha it worked...."""
-        return True
+        """Save and show success message, then hide the button"""
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Record Saved Successfully!',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
     
     lead_type_id = fields.Many2one('lead.type' , string="Lead Type" ,tracking=True)
     
