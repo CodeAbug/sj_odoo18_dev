@@ -21,7 +21,11 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-                <xpath expr="//button[@name='513']" position="attributes">
+                <xpath expr="//button[@id='create_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@id='send_by_email']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
