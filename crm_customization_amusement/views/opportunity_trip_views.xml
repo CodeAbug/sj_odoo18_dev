@@ -51,9 +51,9 @@
     <field name="arch" type="xml">
         <form string="Trip Details" create="false">
             <header>
-                <button name="action_plan" type="object" string="Plan" class="btn-primary"
+                <button name="action_plan" type="object" string="Plan" class="btn-success" 
                     invisible="trip_status !='draft'"/>
-                <button name="action_visited" type="object" string="Visited" class="btn-primary"
+                <button name="action_visited" type="object" string="Visited" class="btn-success"
                     invisible="trip_status !='planned'"/>
                 <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
                     invisible="trip_status =='cancelled'"/>

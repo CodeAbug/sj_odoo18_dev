@@ -74,10 +74,9 @@
             </xpath>
 
             <xpath expr="//header/field[@name='stage_id']" position="before">
-                    <field name="booked_or_not" widget="badge" invisible="type=='lead'"
+                    <field name="booked_or_not" widget="badge" invisible="type=='lead'" style="font-size: 18px; font-weight: bold;"
                         decoration-success="booked_or_not == 'contacted_with_booking'"
                         decoration-warning="booked_or_not == 'contacted_but_no_booking'"/>
-                
             </xpath>
             
 
@@ -168,49 +167,53 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-                <xpath expr="//group[@name='lead_info']/following-sibling::group[1]"
-                    position="replace">
-                    <group name="school_information" string="School Information"
-                        invisible="lead_type_id != 3 or type !='opportunity'"
-                        style="background: #f2f6fc; border-radius: 10px;  width:49% !important;
-                                padding: 10px; margin:  1px 0; margin-top:0px !important; 
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <xpath expr="//group[@name='lead_info']/following-sibling::group[1]" position="replace">
+                        <!-- School Info Block -->
+                        
+                        <group name="school_information" string="School Information"
+                            invisible="lead_type_id != 3 or type !='opportunity'"
+                            style="background: #f2f6fc; border-radius: 10px; width:49%;
+                                    padding: 10px; margin: 1px 0; margin-top:0px !important;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
-
-                        <field name="school_type_id" invisible="lead_type_id != 3"
-                            style=" margin-right: 4%;" />
-                        <field name="school_strength" style=" margin-right: 4%;" />
-                        <field name="student_per_class" style=" margin-right: 3%;" />
-                        <field name="average_fees" widget="monetary" />
-                        <field name="first_visit_datetime" string="First Visit Datetime" />
-
-                    </group>
-                    <group name="quotation_summary" string="Quotation Summary"
-                        invisible="stage_id == 1"
-                        style="background: #f2f6fc; border-radius: 10px; 
-                        padding: 8px; margin:  1px 0;  width:49% !important;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <group name="quotation_summary_1">
-                            <field name="students_planned_for_visit" style=" margin-right: 4%;" />
-                            <field name="total_deal_value" widget="monetary" />
-                            <field name="total_package_count" string="Total No. Of Packages" />
+                            <field name="school_type_id" invisible="lead_type_id != 3" style="margin-right: 4%;" />
+                            <field name="school_strength" style="margin-right: 4%;" />
+                            <field name="student_per_class" style="margin-right: 3%;" />
+                            <field name="average_fees" widget="monetary" />
+                            <field name="first_visit_datetime" string="First Visit Datetime" />
                         </group>
 
-                        <group name="quotation_summary_2">
-                            <field name="total_proposal_amount" widget="monetary" />
-                            <field name="discount" widget="monetary" />
-                            <field name="negotiated_amount" widget="monetary" />
+                        <!-- Quotations & Trips - Stack Vertically -->
+                        <group>
+                            <!-- Quotation Summary -->
+                            <group name="quotation_summary" string="Quotation Summary"
+                                invisible="stage_id == 1"
+                                style="background: #f2f6fc; border-radius: 10px; 
+                                        padding: 8px; margin: 10px 0; width:100%;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <group name="quotation_summary_1" col="2">
+                                    <field name="students_planned_for_visit" style="margin-right: 4%;" />
+                                    <field name="total_deal_value" widget="monetary" />
+                                    <field name="total_package_count" string="Total No. Of Packages" />
+                                </group>
+                                <group name="quotation_summary_2" col="2">
+                                    <field name="total_proposal_amount" widget="monetary" />
+                                    <field name="discount" widget="monetary" />
+                                    <field name="negotiated_amount" widget="monetary" />
+                                </group>
+                            </group>
+
+                            <!-- Trips Summary (Stacked Below Quotation Summary) -->
+                            <group string="Trips Summary" name="trip_summary"
+                                invisible="stage_id != 3 or type !='opportunity'"
+                                style="background: #f2f6fc; border-radius: 10px; width:100%;
+                                        padding: 10px; margin: 1px 0; margin-top: 10px;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <field name="total_visited_trips" />
+                                <field name="total_trips_revenue" widget="monetary" />
+                            </group>
                         </group>
-                    </group>
-                    <group string="Trips Summary" name="trip_summary"
-                        invisible="stage_id != 3 or type !='opportunity'"
-                        style="background: #f2f6fc; border-radius: 10px; width:49% !important;
-                                padding: 10px; margin: 1px 0; margin-top:10px !important; 
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <field name="total_visited_trips" />
-                        <field name="total_trips_revenue" widget="monetary" />
-                    </group>
-                </xpath>
+                    </xpath>
 
                 <xpath expr="//group[@name='lead_info']" position="replace">
                     <div>
