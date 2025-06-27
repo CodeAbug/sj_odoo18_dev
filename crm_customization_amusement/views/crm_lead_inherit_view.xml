@@ -18,24 +18,51 @@
                                 string="Add Trip"
                                 type="object"
                                 class="btn-primary"
-                                invisible= "type  == 'lead' or stage_id != 3"/>
+                                invisible= "type  == 'lead' or stage_id in (1,2) "/>
 
                     <button name="action_revert_to_stage_one"
                                     type="object"
                                     string="Revert to Stage 1"
                                     class="btn btn-warning"
                                     invisible="stage_id != 3 or type != 'opportunity'" />
+
+                    <field name="is_editable_bool" invisible="1"/>
+
                     <button name="action_custom_save"
                     string="Save"
                     type="object"
                     class="btn-primary"
                     icon="fa-save"/>
+
+                    <button name="enable_editing"
+                                    type="object"
+                                    string="Edit"
+                                    icon="fa-edit"
+                                    invisible="type=='lead' and stage_id == 1"
+                                    class="btn btn-danger"/>
+                                </xpath>
                                 
-                    </xpath>
+
+                <!--  Dev Config  chagne this after dev phase -->
                 <xpath expr="//field[@name='stage_id']" position="attributes">
                     <attribute name="options">{'fold_field': 'fold'}</attribute>
-                    <attribute name="widget">statusbar</attribute>
+                    <attribute name="invisible">not active or type == 'lead'</attribute>
                 </xpath>
+
+
+                <xpath expr="//sheet/notebook" position="inside">
+                    <page name="developer_debug_page" string="Dev Tools" invisible="1">
+                            <group>
+                                <field name="is_editable_bool"/>
+                                <field name="type"/>
+                            </group>
+                        </page>
+                </xpath>
+                <!--  -->
+
+
+
+
             <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button type="object" name="action_view_opportunity_trips"
                     class="oe_stat_button" invisible="type == 'lead'" icon="fa-suitcase">
@@ -54,8 +81,7 @@
             <!-- <xpath expr="//field[@name='name']" position="attributes">
                             <attribute name="invisible">True</attribute>
                         </xpath> -->
-
-                <xpath expr="//div[@class='oe_title']" position="replace">
+            <xpath expr="//div[@class='oe_title']" position="replace">
                 <group invisible="1">
                             <field name="company_currency" invisible="1"/>
                             <field name="expected_revenue" class="o_input_13ch" widget='monetary' options="{'currency_field': 'company_currency'}"/>
@@ -70,9 +96,7 @@
                                 </div>
                         </div>
                     </group>
-                    
-                        </xpath>
-            
+            </xpath>
 
             <xpath expr="//div[@class='d-flex align-items-baseline gap-3']" position="attributes">
                 <attribute name="invisible">True</attribute>
@@ -92,7 +116,7 @@
             
 
                 <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="attributes">
-                    <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=2</attribute>
+                    <attribute name="invisible">not active or probability == 100 or type == 'lead' or stage_id!=3</attribute>
                     <attribute name="class">btn-force-green</attribute>
                     <style>
                             .btn-force-green {
@@ -121,6 +145,7 @@
                 <xpath expr="//group[@name='lead_partner']" position="attributes">
                     <attribute name="string">Orgranization Details</attribute>
                 </xpath>
+                
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
                     <attribute name="string">Orgranization Name</attribute>
                     <attribute name="required">stage_id == 1</attribute>
@@ -128,14 +153,82 @@
 
                 <!-- this is a page of  name="lead" string="Extra Information"  -->
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="after">
-                    <field name="school_type_id" invisible="lead_type_id != 3"/>
-                    <field name="partner_id"/>
+                    <field name="school_type_id" invisible="lead_type_id != 3" readonly="is_editable_bool==False and type=='opportunity'"/>
+                    <field name="partner_id" readonly="1"/>
+                </xpath>
+
+                <xpath expr="//page[@name='internal_notes']" position="before">
+                    <xpath expr="//page[@name='lead']" position="move"/>
+                </xpath>
+                
+                <xpath expr="//page[@name='lead']" position="attributes">
+                    <attribute name="string">Organization Info</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="before">
+                        <field name="organization_id" string="Organization Master Link" readonly="1"/>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='street']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='street2']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='city']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='state_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='zip']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='country_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                
+                <xpath expr="//page[@name='lead']//field[@name='mobile']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='website']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='function']" position="attributes">
+                    <attribute name="readonly">1</attribute>
                 </xpath>
 
 
-                <xpath expr="//page[@name='lead']//field[@name='mobile']" position="after">
-                    <group>
-                    <field name="organization_id"/></group>
+                <xpath expr="//page[@name='lead']//group[@name='Misc']/field[@name='company_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//group[@name='Misc']/field[@name='team_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='campaign_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='medium_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='source_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='referred']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='type']" position="attributes">
+                    <attribute name="readonly">1</attribute>
                 </xpath>
                 <xpath expr="//group[@name='lead_info']/label[@for='email_from_group_lead_info']" position="before">
                 <field name="partner_id" widget="res_partner_many2one"
@@ -159,22 +252,21 @@
                                         'show_vat': True
                                     }" invisible="not is_partner_visible"/>
                 </xpath>
-                
-                <!--this invisible will be applied later in schoo_type_id -  invisible="lead_type_id != 3" -->
-                
+                <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
+                        <field name="lead_type_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="before">
-                        <field name="lead_type_id"/>
+                        <field name="lead_type_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
-                        <field name="school_type_id" invisible="lead_type_id != 3"/>
-                        <field name="lead_source"/>
+                        <field name="school_type_id" invisible="lead_type_id != 3" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="lead_source"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
-
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
-                        <field name="visiting_center_id"/>
-                        <field name="user_id" context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user"/>
+                        <field name="visiting_center_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="user_id" context="{'default_sales_team_id': team_id}" 
+                        widget="many2one_avatar_user" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                         <field name="priority" widget="priority" class="oe_inline align-top"/>
-
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']/label[@for='street']" position="attributes">
@@ -183,21 +275,43 @@
 
                 <xpath expr="//field[@name='street']" position="attributes">
                     <attribute name="placeholder">Address Line 1</attribute>
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
                 </xpath>
                 
                 <xpath expr="//field[@name='street2']" position="attributes">
                     <attribute name="placeholder">Address Line 2</attribute>
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
                 </xpath>
 
-                <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="attributes">
-                    <attribute name="string">Organization Website</attribute>
+                <xpath expr="//field[@name='city']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
                 </xpath>
-                <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
-                    <field name="email_from" string="Org. Email" widget="email"/>
-                    <field name="phone" string="Org. Phone" widget="phone"/>
-                    <field name="mobile" string="Org. Mobile" widget="pohne"/>
+                <xpath expr="//field[@name='state_id']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='zip']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
                 </xpath>
                 
+                <xpath expr="//field[@name='country_id']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
+                </xpath>
+                
+                <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="attributes">
+                    <attribute name="string">Organization Website</attribute>
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity' and  stage_id != 1</attribute>
+                    <attribute name="required">stage_id==1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
+                    <field name="email_from" string="Org. Email" widget="email"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                    <field name="phone" string="Org. Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                    <field name="mobile" string="Org. Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
+                </xpath>
                 <xpath expr="//group[field[@name='user_id'] and field[@name='team_id']]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -214,15 +328,15 @@
                             style="background: #f2f6fc; border-radius: 10px; width:49%;
                                     padding: 10px; margin: 1px 0; margin-top:0px !important;
                                     box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-
-                            <field name="school_type_id" invisible="lead_type_id != 3" style="margin-right: 4%;" />
-                            <field name="school_strength" style="margin-right: 4%;" />
-                            <field name="student_per_class" style="margin-right: 3%;" />
-                            <field name="average_fees" widget="monetary" />
-                            <field name="first_visit_datetime" string="First Visit Datetime" />
+                            <field name="school_type_id" invisible="lead_type_id != 3" style="margin-right: 4%;" 
+                            readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1" required="stage_id >= 1 and type=='opportunity'"/>
+                            <field name="school_strength" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="student_per_class" style="margin-right: 3%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="average_fees" widget="monetary" string="Average Fees Per Month"  readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="first_visit_datetime" string="First Visit Datetime" required="stage_id >= 1 and type=='opportunity' and lead_type_id ==3 " readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                         </group>
 
-                        <!-- Quotations & Trips - Stack Vertically -->
+                        <!-- Quotations & Trips  -->
                         <group>
                             <!-- Quotation Summary -->
                             <group name="quotation_summary" string="Quotation Summary"
@@ -231,7 +345,7 @@
                                         padding: 8px; margin: 10px 0; width:100%;
                                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                                 <group name="quotation_summary_1" col="2">
-                                    <field name="students_planned_for_visit" style="margin-right: 4%;" />
+                                    <field name="students_planned_for_visit" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 2" />
                                     <field name="total_deal_value" widget="monetary" />
                                     <field name="total_package_count" string="Total No. Of Packages" />
                                 </group>
@@ -240,9 +354,9 @@
                                 </group>
                             </group>
 
-                            <!-- Trips Summary (Stacked Below Quotation Summary) -->
+                            <!-- Trips Summary -->
                             <group string="Trips Summary" name="trip_summary"
-                                invisible="stage_id != 3 or type !='opportunity'"
+                                invisible="stage_id in (1,2) or type !='opportunity'"
                                 style="background: #f2f6fc; border-radius: 10px; width:100%;
                                         padding: 10px; margin: 1px 0; margin-top: 10px;
                                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -255,17 +369,17 @@
                 <xpath expr="//group[@name='lead_info']" position="replace">
                     <div>
                         <group name="lead_primary_poc_info" string="Primary P.O.C. Details">
-                            <field name="contact_name" string="P.O.C. Name" />
-                            <field name="poc_mobile" />
-                            <field name="poc_role" />
-                            <field name="poc_email" />
+                            <field name="contact_name" string="P.O.C. Name"  readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
+                            <field name="poc_mobile" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
+                            <field name="poc_designation_id" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
+                            <field name="poc_email" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
                         </group>
 
                         <group name="lead_secondary_poc_info" string="Secondary P.O.C Details">
-                            <field name="secondary_poc_name" />
-                            <field name="secondary_poc_mobile" />
-                            <field name="secondary_poc_role" />
-                            <field name="secondary_poc_email" />
+                            <field name="secondary_poc_name"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_mobile"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_designation_id"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_email"  readonly="is_editable_bool==False and type=='opportunity'"/>
                         </group>
                     </div>
                 </xpath>
@@ -278,9 +392,9 @@
 
                 <xpath expr="//page[@name='internal_notes']" position="before">
                     <page name="other_stakeholders" string="Other Stakeholders">
-                            <field name="other_stakeholders_ids">
+                            <field name="other_stakeholders_ids"  readonly="is_editable_bool==False and type=='opportunity'">
                                 <list editable="bottom">
-                                    <field name="name"/>
+                                    <field name="name" string="Full Name"/>
                                     <field name="designation_id" string="Designation"/>
                                     <field name="mail" string="Email"/>
                                     <field name="mobile"/>
@@ -288,69 +402,52 @@
                                 </list>
                             </field>
                     </page>
-
                 </xpath>
 
-                <!-- Opportunity fields added here -->
-
-                <!-- <xpath expr="//field[1][@name='partner_id']" position="after">
-                    <field name="customer_visit_datetime" string="School Visit Datetime"/>
-                    <field name="number_of_students"/>
-                    <field name="student_class"/>
-                    <field name="number_of_teachers"/>
-                </xpath> -->
-                <!-- <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="total_trips"/>
-                </xpath> -->
-
-                <!-- <xpath expr="//field[@name='user_id']" position="before">
-                    <field name="visiting_center_id" string="Preferred Visiting Center"/>
-                    <field name="visit" string="Visit(Yes/No)" required = "stage_id >= 2 and type=='opportunity'"/>
-                    <field name="visiting_person" invisible = "visit != 'yes'"/>
-                </xpath> -->
-
-                <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="replace">
-                    <field name="lead_type_id"/>
-                    <field name="organization_id" readonly="stage_id != 1" string="Org. Name"/>
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="replace">
+                    <field name="lead_type_id" readonly="is_editable_bool==False and type!='lead'"/>
+                    <field name="organization_id" string="Org. Name" readonly="is_editable_bool==False and type!='lead'"/>
                     <!-- <field name="partner_name" readonly="stage_id != 1" string="Org. Name"/> -->
-                    <field name="contact_name" string="P.O.C. Name" />
+                    <field name="contact_name" string="P.O.C. Name" readonly="is_editable_bool==False and type!='lead'"/>
                 </xpath>
 
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='email_from']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity'</attribute>
+                </xpath>
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='phone']" position="attributes">
+                    <attribute name="readonly">is_editable_bool==False and type=='opportunity'</attribute>
+                </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']/div[2]" position="after">
-                        <field name="user_id" string="Lead Assigned To"
+                        <field name="user_id" string="Lead Assigned To" readonly="is_editable_bool==False and type!='lead'"
                         context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user" invisible="type!= 'opportunity'"/>
-                        <field name="lead_source" invisible="type!= 'opportunity'"/>
-                    <field name="visiting_center_id" string="Preferred Visiting Center" invisible="type!= 'opportunity'"/>
-                        <field name="priority" widget="priority" class="oe_inline align-top" invisible="type!= 'opportunity'"/>
+                        <field name="lead_source" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
+                    <field name="visiting_center_id" string="Preferred Visiting Center" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
+                        <field name="priority" widget="priority" class="oe_inline align-top" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
                     
                     </xpath>
                 
 
                 <xpath expr="//page[@name='extra']//group[1]" position="before">
                 <group> 
-                    <field name="name" string="Orgnization Name"/>
-                    <field name="user_id" context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user"/>
+                    <field name="name" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" />
+                    <field name="user_id" context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user"
+                                    readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
                 </group>
-
                 </xpath>
                 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
 
-                
-
-
                 <xpath expr="//div[@class='o_row']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
 
-
                 <!--  Opportunity Trip  -->
 
                 <xpath expr="//page[@name='lead']" position="after">
-                    <page name="trips" string="Trips" invisible="type=='lead' or stage_id != 3">
+                    <page name="trips" string="Trips" invisible="type=='lead' or stage_id in (1,2)">
                             <field name="opportunity_trip_ids" context="{'default_partner_id': partner_id,
                                                                             'default_lead_type_id':lead_type_id,
                                                                             'default_visiting_center_id': visiting_center_id}">
@@ -374,7 +471,6 @@
 
                 </xpath>
             </field>
-
         </record>
 
 
@@ -437,8 +533,9 @@
                     <field name="total_package_count"/>
                     <field name="students_planned_for_visit"/>
                     <field name="total_deal_value" widget="monetary"/>
+                    <field name="last_activity_info" optional="show"/>
+                    <field name="last_activity_deadline" optional="show"/> 
                 </xpath>
-
             </field>
         </record>
 
@@ -474,6 +571,8 @@
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="write_date"/>
+                    <field name="last_activity_info"/>
+                    <field name="last_activity_deadline"/> 
                 </xpath>
             </field>
         </record>
@@ -485,7 +584,6 @@
                 <field name="model">crm.lead</field>
                 <field name="inherit_id" ref="crm_sms.crm_case_tree_view_oppor"/>
                 <field name="arch" type="xml">
-
                     <xpath expr="//button[@name='%(crm_sms.crm_lead_act_window_sms_composer_multi)d']" position="attributes">
                         <attribute name="invisible">True</attribute>
                     </xpath>
@@ -532,7 +630,6 @@
                             
                     </field>
             </record>
-
     </data>
 
 </odoo>

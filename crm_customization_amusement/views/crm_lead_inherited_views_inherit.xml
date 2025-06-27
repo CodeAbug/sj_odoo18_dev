@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="crm_iap_enrich_crm_lead_view_form_inherit" model="ir.ui.view">
+                <field name="name">crm.iap.enrich.crm.lead.view.form.inherit.inherit</field>
+                <field name="model">crm.lead</field>
+                <field name="inherit_id" ref="crm_iap_enrich.crm_lead_view_form"/>
+                <field name="arch" type="xml">
+
+                    <xpath expr="//button[@name='iap_enrich'][2]" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                    </xpath>
+                    <xpath expr="//button[@name='iap_enrich'][1]" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                    </xpath>
+
+            </field>
+    </record>
+
+</odoo>

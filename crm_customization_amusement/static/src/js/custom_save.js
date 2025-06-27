@@ -1,19 +1,24 @@
-odoo.define('crm_customization_amusement.custom_save_button', function (require) {
-    'use strict';
 
-    var FormController = require('web.FormController');
 
-    FormController.include({
-        renderButtons: function () {
-            this._super.apply(this, arguments);
-            if (this.$buttons) {
-                this.$buttons.find('.o_custom_save_btn').on('click', this._onCustomSave.bind(this));
-            }
-        },
+/** @odoo-module **/
+import { registry } from "@web/core/registry";
+const { onMounted } = owl;
+const { Component } = owl;
+const { useRef } = owl;
 
-        _onCustomSave: function () {
-            // This triggers the actual save logic
-            this.saveRecord();
-        }
-    });
-});
+class EnableEditingButton extends Component {
+    setup() {
+        this.button = useRef("enableEditBtn");
+        onMounted(() => {
+            const btn = this.button.el;
+            btn.addEventListener("click", () => {
+                // Set boolean field true directly in UI
+                const field = this.props.record.data;
+                field.is_editable_bool = true;
+            });
+        });
+    }
+}
+
+EnableEditingButton.template = "crm_customizations.EnableEditingButton";
+registry.category("view_widgets").add("enable_edit_button", EnableEditingButton);

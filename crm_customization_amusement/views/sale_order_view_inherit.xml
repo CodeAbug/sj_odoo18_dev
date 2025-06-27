@@ -20,6 +20,13 @@
                     invisible="state != 'draft'" />
             </xpath>
 
+            <xpath expr="//button[@name='action_confirm' and not(@id)]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_preview_sale_order']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//header" position="inside">
                 <button name="action_custom_save"
                     string="Save"
@@ -41,6 +48,11 @@
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="deal_value" widget="monetary" />
+            </xpath>
+            <xpath expr="//page[@name='other_information']" position="inside">
+                <group name="quoation_cancellation_info" string="Quotation Cancellation Info">
+                    <field name="quotation_cancellation_reason" readonly="1"/>
+                </group>
             </xpath>
 
         </field>
@@ -71,6 +83,36 @@
             <xpath expr="//field[@name='amount_total']" position="before">
                 <field name="deal_value" widget="monetary" />
             </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_cancel_view_form_inherit_for_crm" model="ir.ui.view">
+        <field name="name">sale.order.cancel.view.form.inherit.for.crm</field>
+        <field name="model">sale.order.cancel</field>
+        <field name="inherit_id" ref="sale.sale_order_cancel_view_form" />
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='recipient_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='subject']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='body']" position="after">
+                <field name="cancellation_reason" placeholder="Cancellation Reason Required" required="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='body']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+            <xpath expr="//button[@name='action_send_mail_and_cancel']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
         </field>
     </record>
 </odoo>

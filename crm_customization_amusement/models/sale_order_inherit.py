@@ -27,8 +27,9 @@ class SaleOrderInherit(models.Model):
             }
         }
     deal_value = fields.Float(tracking=True,compute='_compute_deal_value' ,string="Deal Value")
-    
     quotation_valuation_amount = fields.Float(string="Deal Value")
+    quotation_cancellation_reason = fields.Text(string="Quotation Cancellation Reason")
+    
     state = fields.Selection(
         selection=SALE_ORDER_STATE,
         string="Status",
@@ -46,15 +47,15 @@ class SaleOrderInherit(models.Model):
             
     @api.model
     def create(self, vals):
-        order = super().create(vals)
-        order._update_lead_stage_on_sale()
-        return order
+        record = super(SaleOrderInherit, self).create(vals)
+        record._update_lead_stage_on_sale()
+        return record
 
     def write(self, vals):
-        res = super().write(vals)
+        res = super(SaleOrderInherit, self).write(vals)
         self._update_lead_stage_on_sale()
         return res
-
+    
     def _update_lead_stage_on_sale(self):
         for order in self:
             if order.state == 'sale' and order.opportunity_id:
@@ -82,3 +83,23 @@ class SaleOrderLineInherit(models.Model):
     
     
     is_primary_valuation_product = fields.Boolean('Is Primary',tracking=True)
+    
+    opportunity_trip_id = fields.Many2one('opportunity.trip',tracking=True)
+
+
+
+                
+class SaleOrderCancelInherit(models.TransientModel):
+    _inherit = 'sale.order.cancel'
+    
+    cancellation_reason = fields.Text(string="Cancellation Reason")
+    
+    
+    def action_cancel(self):
+        self.ensure_one()
+        self.order_id.write({
+            'quotation_cancellation_reason': self.cancellation_reason,
+        })
+        return self.order_id.with_context(disable_cancel_warning=True).action_cancel()
+
+    

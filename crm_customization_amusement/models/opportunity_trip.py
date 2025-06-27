@@ -4,21 +4,22 @@ from odoo.exceptions import ValidationError
 
 
 
-class OpportunityPackageLine(models.Model):
-    _name = 'opportunity.package.line'
-    _description = 'Opportunity Package Line'
+class OpportunityTripPackageLine(models.Model):
+    _name = 'opportunity.trip.package.line'
+    _description = 'Trip Package Line'
 
-    opportunity_trip_id = fields.Many2one('opportunity.trip',tracking=True)
+    opportunity_trip_id = fields.Many2one('opportunity.trip', string="Trip")
     product_id = fields.Many2one('product.product', string="Product", required=True)
-    quantity = fields.Float(string="Quantity", default=1.0)
-    price_unit = fields.Float(string="Unit Price")
-    subtotal = fields.Float(string="Subtotal", compute="_compute_subtotal", store=True)
+    product_uom_qty = fields.Float(string="Quantity", default=1.0)
+    price_unit = fields.Float(string="Unit Price" ,related='product_id.lst_price',readonly=False)
+    price_subtotal = fields.Float(string="Subtotal", compute='_compute_price_subtotal', store=True)
 
-
-    @api.depends('quantity', 'price_unit')
-    def _compute_subtotal(self):
+    discount = fields.Float(string="Discount (%)", default=0.0)  # New discount field
+    @api.depends('product_uom_qty', 'price_unit', 'discount')
+    def _compute_price_subtotal(self):
         for line in self:
-            line.subtotal = line.quantity * line.price_unit
+            discounted_price = line.price_unit * (1 - (line.discount / 100.0))
+            line.price_subtotal = line.product_uom_qty * discounted_price
 
 class OpportunityTrip(models.Model):
     _name='opportunity.trip'
@@ -28,7 +29,13 @@ class OpportunityTrip(models.Model):
     name = fields.Char(tracking=True,default=lambda self: ('New'))
     lead_id = fields.Many2one('crm.lead',tracking=True,string="Lead/Opportunity")
     lead_type_id = fields.Many2one('lead.type',tracking=True)
-    
+    package_line_ids = fields.One2many(
+        'opportunity.trip.package.line',
+        'opportunity_trip_id',
+        string="Trip Packages",
+        copy=True
+    )
+
     partner_id = fields.Many2one('res.partner',tracking=True,string="Contact/Organization")
     organization_id = fields.Many2one('res.partner',tracking=True,string="Organization")
 
@@ -63,7 +70,7 @@ class OpportunityTrip(models.Model):
     trip_end_time = fields.Float(tracking=True)
     trip_duration  = fields.Float(tracking=True,compute="_compute_trip_duration")
     # Remove this field in next deployment
-    actual_trip_amount = fields.Float()
+    # actual_trip_amount = fields.Float()
     
     
     
@@ -101,12 +108,40 @@ class OpportunityTrip(models.Model):
     secondary_trip_poc_id = fields.Many2one('res.partner',string="Secondary P.O.C",tracking=True)
     
     expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount',string="Contracted Amount")
-    revised_amount = fields.Float(tracking=True)
+    revised_amount = fields.Float(tracking=True , compute='_compute_revised_amount',readonly=False)
+    
+    total_package_qty = fields.Float(string="Total Quantity", compute="_compute_package_summary", store=True)
+    total_package_discount_amount = fields.Float(string="Total Discount Amount", compute="_compute_package_summary", store=True)
+    total_package_amount = fields.Float(string="Total Amount", compute="_compute_package_summary", store=True)
+
+    @api.depends('package_line_ids.product_uom_qty', 'package_line_ids.price_subtotal', 'package_line_ids.discount', 'package_line_ids.price_unit')
+    def _compute_package_summary(self):
+        for rec in self:
+            rec.total_package_qty = sum(line.product_uom_qty for line in rec.package_line_ids)
+            rec.total_package_amount = sum(line.price_subtotal for line in rec.package_line_ids)
+
+            discount_amount = 0.0
+            for line in rec.package_line_ids:
+                if line.discount:
+                    line_total_without_discount = line.product_uom_qty * line.price_unit
+                    line_discount_amt = line_total_without_discount * (line.discount / 100)
+                    discount_amount += line_discount_amt
+            rec.total_package_discount_amount = discount_amount
     
     #After visit fields 
     number_of_visited_students = fields.Integer(tracking=True,string="No. Of Visited Students")
     number_of_visited_staff = fields.Integer(tracking=True , help="Teachers, helpers, bus drivers",string="No. Of Visited Staff")
     actual_visit_datetime = fields.Datetime(tracking=True)
+    
+    
+    @api.depends('package_line_ids','package_line_ids.discount','package_line_ids.price_subtotal')
+    def _compute_revised_amount(self):
+        for record in self:
+            total = 0.0
+            for line in record.package_line_ids:
+                total += line.price_subtotal
+                    
+            record.revised_amount = total
     
     
     @api.depends('planned_number_of_staff','planned_number_of_students',
@@ -129,7 +164,6 @@ class OpportunityTrip(models.Model):
     pos_amount = fields.Float(tracking=True,string="POS Amount")
     pos_datetime = fields.Datetime(tracking=True)
     
-    
     trip_rating = fields.Selection([
     ('0', 'No Ratings'),
     ('1', 'One Star'),
@@ -138,17 +172,55 @@ class OpportunityTrip(models.Model):
     ('4', 'Four Start'),
     ('5', 'Five Start'),])
 
-    package_line_ids = fields.One2many(
-        'opportunity.package.line','opportunity_trip_id', string="Package Lines"
-    )
+    def action_fetch_packages_from_deal(self):
+        for trip in self:
+            if not trip.lead_id:
+                raise ValidationError("No lead linked to the trip.")
+            
+            quotations = self.env['sale.order'].search([
+                ('opportunity_id', '=', trip.lead_id.id),
+                ('state', '=', 'sale')
+            ])
+            
+            if not quotations:
+                raise ValidationError("No confirmed quotations found for this opportunity.")
 
+            trip.package_line_ids = [(5, 0, 0)]  
+            
+            values = []
+            for order in quotations:
+                for line in order.order_line:
+                    values.append((0, 0, {
+                        'product_id': line.product_id.id,
+                        'product_uom_qty': line.product_uom_qty,
+                        'price_unit': line.price_unit,
+                    }))
+            
+            trip.package_line_ids = values
+            
+    def _update_lead_stage_on_sale(self):
+        for trip in self:
+            if trip.trip_status == 'visited' and trip.lead_id:
+                lead = trip.lead_id
+                stage_5 = self.env['crm.stage'].search([('id', '=', 5)], limit=1)
+                if stage_5 and lead.stage_id.id != 5:
+                    lead.stage_id = stage_5.id
+            
     @api.model
     def create(self, vals):
         date_str = datetime.today().strftime('%d%m%y')
         sequence = self.env['ir.sequence'].next_by_code('opportunity.trip') or '0001'
         vals['name'] = f"TRIP-{date_str}-{sequence}"
-        return super().create(vals)
+        
+        record = super(OpportunityTrip, self).create(vals)
+        record._update_lead_stage_on_sale()
+        return record
     
+    def write(self, vals):
+        res = super().write(vals)
+        self._update_lead_stage_on_sale()
+        return res
+
     
     def action_plan(self):
         for trip in self:

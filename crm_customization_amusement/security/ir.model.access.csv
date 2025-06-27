@@ -5,4 +5,4 @@ access_school_type,access_school_type,model_school_type,base.group_user,1,1,1,1
 access_stakeholder_designation,access_stakeholder_designation,model_stakeholder_designation,base.group_user,1,1,1,1
 access_other_stakeholder_line,access_other_stakeholder_line,model_other_stakeholder_line,base.group_user,1,1,1,1
 access_opportunity_trip,access_opportunity_trip,model_opportunity_trip,base.group_user,1,1,1,1
-access_opportunity_package_line,access_opportunity_package_line,model_opportunity_package_line,base.group_user,1,1,1,1
+access_opportunity_trip_package_line,access_opportunity_trip_package_line,model_opportunity_trip_package_line,base.group_user,1,1,1,1

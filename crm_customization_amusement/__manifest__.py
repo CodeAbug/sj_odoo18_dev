@@ -10,7 +10,7 @@
     'website': '',
     'category': 'Leads Management',
     'version': "0.0.1",
-    'depends': ['base','crm','sale_crm','crm_sms'],
+    'depends': ['base','crm','sale_crm','crm_sms','crm_iap_enrich'],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
@@ -30,9 +30,14 @@
         'views/opportunity_trip_views.xml',
         'views/crm_stage_view_inherit.xml',
         'views/sale_order_view_inherit.xml',
+        'views/crm_lead_inherited_views_inherit.xml'
         ],
     'assets': {
-        'web.assets_backend': [],
+        'web.assets_backend': [
+            # 'crm_customization_amusement/static/src/js/custom_save.js',
+            #                     'crm_customization_amusement/static/src/xml/enable_edit_button.xml'
+                                ],
+        
     },
     'license': 'LGPL-3',
     'installable': True,

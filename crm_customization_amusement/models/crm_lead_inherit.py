@@ -13,6 +13,7 @@ class ResPartnerInherit(models.Model):
     def _compute_trip_count(self):
         for partner in self:
             partner.trip_count = self.env['opportunity.trip'].search_count([('partner_id', '=', partner.id)])
+            
 
     def action_view_partner_trips(self):
         self.ensure_one()
@@ -45,6 +46,21 @@ class CrmLeadInherit(models.Model):
     
     lead_type_id = fields.Many2one('lead.type' , string="Lead Type" ,tracking=True)
     
+    is_editable_bool = fields.Boolean(tracking=True,default=False)
+    
+    
+    def enable_editing(self):
+        self.with_context(skip_write_check=True).write({
+            'is_editable_bool': True,
+        })
+        
+        
+    def write(self, vals):
+        if not self.env.context.get('skip_write_check'):
+            vals['is_editable_bool'] = False
+        return super().write(vals)
+
+    
     school_type_id = fields.Many2one('school.type', string="School Type" ,tracking=True)
     country_id = fields.Many2one(
         'res.country',
@@ -70,30 +86,56 @@ class CrmLeadInherit(models.Model):
     ##POC details 
     poc_email = fields.Char(tracking=True,string="P.O.C. Email")
     poc_mobile = fields.Char(tracking=True,string="P.O.C. Mobile No.")
-    poc_role = fields.Char(tracking=True,string="P.O.C. Role")
+    poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string="P.O.C. Designation")
     
     secondary_poc_name = fields.Char(tracking=True ,string="Secondary P.O.C. Name")
     secondary_poc_mobile = fields.Char(tracking=True ,string="Secondary P.O.C. Mobile No.")
-    secondary_poc_role = fields.Char(tracking=True ,string="Secondary P.O.C. Role")
+    secondary_poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string=" Secondary P.O.C. Designation")
     secondary_poc_email = fields.Char(tracking=True,string="Secondary P.O.C. Email")
-
     
     
     first_visit_datetime = fields.Datetime(tracking=True)
     students_planned_for_visit = fields.Integer(string="Students Planned For Visit",tracking=True)
-    number_of_teachers  = fields.Char()
+    # number_of_teachers  = fields.Char()
     total_trips = fields.Integer("Total Trips", tracking=True)
     school_strength = fields.Integer("School Strength", tracking=True)
     student_per_class = fields.Integer(string="Student Per Class",tracking=True)
     average_fees = fields.Float(tracking=True)
-    budget_per_student = fields.Float(tracking=True)
+    #remove this field in next deploy
+    budget_per_student = fields.Float()
+    secondary_poc_role = fields.Char()
+    poc_role = fields.Char()
+    
+    
+    @api.constrains('stage_id', 'students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
+    def _check_fields_if_stage_one(self):
+        for rec in self:
+            if rec.stage_id and rec.type=='opportunity' and rec.lead_type_id.id == 3:
+                errors = []
+                if rec.students_planned_for_visit <= 0 and rec.stage_id.name == 'Proposition':
+                    raise ValidationError(
+                        "The following fields must be greater than 0:\n- " +
+                        "\n- Students Planned For Visit"
+                    )
+                if rec.school_strength <= 0 and rec.stage_id.id == 2:
+                    errors.append("School Strength")
+                if rec.student_per_class <= 0 and rec.stage_id.id == 2 and rec.stage_id.id == 2:
+                    errors.append("Student Per Class")
+                if rec.average_fees <= 0 and rec.stage_id.id == 2:
+                    errors.append("Average Fees")
+
+                if errors:
+                    raise ValidationError(
+                        "The following fields must be greater than 0:\n- " +
+                        "\n- ".join(errors)
+                    )
     
     ### Proposal Stage Fields 
     total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
     total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
     total_package_count = fields.Integer(tracking=True,string="Total Packages",compute='_total_package_count')
-    negotiated_amount = fields.Float()
-    discount = fields.Float()
+    # negotiated_amount = fields.Float()
+    # discount = fields.Float()
     
     @api.depends('order_ids.order_line','order_ids.state')
     def _total_package_count(self):
@@ -113,7 +155,40 @@ class CrmLeadInherit(models.Model):
                     total += line.deal_value
             record.total_deal_value = total
     
-    
+    @api.depends('team_id', 'type','opportunity_trip_ids.trip_status','order_ids.state')
+    def _compute_stage_id(self):
+        for lead in self:
+            if not lead.stage_id:
+                lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
+                
+            if lead.stage_id.id >= 2:
+
+            # ------------------------
+            # Trip Status Evaluation
+            # ------------------------
+                trip_visited = any(trip.trip_status == 'visited' for trip in lead.opportunity_trip_ids)
+                # print('   trip  visited - -----------',trip_visited )
+                
+                if trip_visited:
+                    visited_stage = self.env['crm.stage'].search([('id', '=', 5)], limit=1)
+                    if visited_stage and lead.stage_id.id != visited_stage.id:
+                        lead.stage_id = visited_stage.id
+                    
+                    
+                elif not trip_visited and lead.stage_id.id ==5 :
+                    # print('ELIF entered by trip not visited')
+                    lead.stage_id = 3 
+                        
+                # ------------------------
+                # Sale Order Evaluation
+                # ------------------------
+                any_confirmed = any(order.state == 'sale' for order in lead.order_ids)
+                stage_to_set = 3 if any_confirmed else 2
+
+                target_stage = self.env['crm.stage'].search([('id', '=', stage_to_set)], limit=1)
+                if target_stage and lead.stage_id.id != target_stage.id:
+                    lead.stage_id = target_stage.id
+                
     @api.depends('order_ids.deal_value','order_ids.order_line','order_ids.order_line.price_unit','order_ids.state')
     def _compute_total_proposal_amount(self):
         for record in self:
@@ -154,6 +229,7 @@ class CrmLeadInherit(models.Model):
                 rec.booked_or_not = 'contacted_with_booking'
             else:
                 rec.booked_or_not = 'contacted_but_no_booking'
+                
     
     def action_view_opportunity_trips(self):
         self.ensure_one()
@@ -226,9 +302,18 @@ class CrmLeadInherit(models.Model):
                             
                     except ValueError:
                         raise ValidationError("Please Enter Valid POC Mobile Number")
+                    
+            if rec.secondary_poc_mobile:
+                
+                    try:
+                        without_chars = int(rec.secondary_poc_mobile)
+                        if len(str(without_chars)) != 10:
+                            raise ValidationError("Please Enter 10 Digit Secondary POC Mobile Number")
+                            
+                    except ValueError:
+                        raise ValidationError("Please Enter Valid Secondary POC Mobile Number")
             
             
-    
     @api.constrains('email_from','email_cc')
     def validate_email_fields(self):
         for rec in self:
@@ -245,6 +330,11 @@ class CrmLeadInherit(models.Model):
                 valid = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', rec.poc_email)
                 if not valid:
                     raise ValidationError("Please Enter a Valid POC Email Handle.")
+                
+            if rec.secondary_poc_email:
+                valid = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', rec.poc_email)
+                if not valid:
+                    raise ValidationError("Please Enter a Valid Secondary POC Email Handle.")
                 
                 
     def create_stakeholder_contact(self):
@@ -301,7 +391,37 @@ class CrmLeadInherit(models.Model):
         if self.type == 'opportunity':
             self.stage_id = 2 
     
-    
+    last_activity_info = fields.Html(string="Last Activity", compute="_compute_last_activity")
+    last_activity_deadline = fields.Date(string="Activity Deadline", compute="_compute_last_activity")
+
+    @api.depends('activity_ids')
+    def _compute_last_activity(self):
+        for lead in self:
+            # use with_context to include archived/inactive activities
+            all_activities = self.env['mail.activity'].with_context(active_test=False).search([
+                ('res_model', '=', 'crm.lead'),
+                ('res_id', '=', lead.id),
+            ], order='create_date desc', limit=1)
+            if all_activities:
+                act = all_activities[0]
+                summary = act.activity_type_id.name or 'Activity'
+                state = act.state
+                color = {
+                    'planned': 'orange',
+                    'done': 'green',
+                    'cancelled': 'grey',
+                    'overdue' : 'red'
+                }.get(state, 'gray')
+                if state == 'planned':
+                    state = 'Scheduled'
+                state = state.capitalize()
+                lead.last_activity_info = f"{summary} - <span style='color:{color}; font-weight:bold'>{state}</span>"
+                lead.last_activity_deadline = act.date_deadline
+            else:
+                lead.last_activity_info = 'No Activity'
+                lead.last_activity_deadline = False
+
+                
     @api.onchange('partner_name')
     def _onchange_partner_name(self):
         for rec in self:
@@ -327,7 +447,6 @@ class CrmLeadInherit(models.Model):
             for so in sale_orders:
                 so.action_cancel()  # Cancel first
                 so.write({'state': 'draft'})  # Then draft
-
                 
 class Lead2OpportunityPartnerInherit(models.TransientModel):
     _inherit = 'crm.lead2opportunity.partner'
