@@ -55,6 +55,8 @@
                             <group>
                                 <field name="is_editable_bool"/>
                                 <field name="type"/>
+                                <field name="stage_id" readonly="0"/>
+                                
                             </group>
                         </page>
                 </xpath>

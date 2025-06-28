@@ -110,19 +110,19 @@ class CrmLeadInherit(models.Model):
     @api.constrains('stage_id', 'students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
     def _check_fields_if_stage_one(self):
         for rec in self:
-            if rec.stage_id and rec.type=='opportunity' and rec.lead_type_id.id == 3:
+            if rec.stage_id and rec.type == 'opportunity' and rec.lead_type_id.id == 3:
                 errors = []
-                if rec.students_planned_for_visit <= 0 and rec.stage_id.name == 'Proposition':
-                    raise ValidationError(
-                        "The following fields must be greater than 0:\n- " +
-                        "\n- Students Planned For Visit"
-                    )
-                if rec.school_strength <= 0 and rec.stage_id.id == 2:
-                    errors.append("School Strength")
-                if rec.student_per_class <= 0 and rec.stage_id.id == 2 and rec.stage_id.id == 2:
-                    errors.append("Student Per Class")
-                if rec.average_fees <= 0 and rec.stage_id.id == 2:
-                    errors.append("Average Fees")
+
+                if rec.stage_id.name == 'Proposition' and rec.students_planned_for_visit <= 0:
+                    errors.append("Students Planned For Visit")
+
+                if rec.stage_id.id == 2:
+                    if rec.school_strength <= 0:
+                        errors.append("School Strength")
+                    if rec.student_per_class <= 0:
+                        errors.append("Student Per Class")
+                    if rec.average_fees <= 0:
+                        errors.append("Average Fees")
 
                 if errors:
                     raise ValidationError(
@@ -163,9 +163,7 @@ class CrmLeadInherit(models.Model):
                 
             if lead.stage_id.id >= 2:
 
-            # ------------------------
             # Trip Status Evaluation
-            # ------------------------
                 trip_visited = any(trip.trip_status == 'visited' for trip in lead.opportunity_trip_ids)
                 # print('   trip  visited - -----------',trip_visited )
                 
@@ -179,9 +177,7 @@ class CrmLeadInherit(models.Model):
                     # print('ELIF entered by trip not visited')
                     lead.stage_id = 3 
                         
-                # ------------------------
                 # Sale Order Evaluation
-                # ------------------------
                 any_confirmed = any(order.state == 'sale' for order in lead.order_ids)
                 stage_to_set = 3 if any_confirmed else 2
 
