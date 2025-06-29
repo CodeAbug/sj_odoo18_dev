@@ -8,7 +8,9 @@ class City(models.Model):
 
     name = fields.Char(string="City Name", copy=False,tracking=True)
 
-
+    center_manager_name = fields.Char(tracking=True)
+    
+    manager_phone_number = fields.Char('Manager Phone Number',tracking=True)
 
 class LeadType(models.Model):
     _name = 'lead.type'
@@ -27,7 +29,7 @@ class SchoolType(models.Model):
 class StakeholderDesignation(models.Model):
     _name = 'stakeholder.designation'
     _order = 'id desc'
-
+    
     name = fields.Char(copy=False,tracking=True)
 
     

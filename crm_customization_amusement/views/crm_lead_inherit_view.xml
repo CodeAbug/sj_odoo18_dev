@@ -51,12 +51,13 @@
 
 
                 <xpath expr="//sheet/notebook" position="inside">
-                    <page name="developer_debug_page" string="Dev Tools" invisible="1">
+                    <page name="developer_debug_page" string="Dev Tools" invisible="0">
                             <group>
                                 <field name="is_editable_bool"/>
                                 <field name="type"/>
                                 <field name="stage_id" readonly="0"/>
-                                
+                                <!-- <field name="is_proposition_stage" readonly="0"/> -->
+                            
                             </group>
                         </page>
                 </xpath>

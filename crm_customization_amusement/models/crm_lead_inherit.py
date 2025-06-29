@@ -107,28 +107,50 @@ class CrmLeadInherit(models.Model):
     poc_role = fields.Char()
     
     
-    @api.constrains('stage_id', 'students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
+    ### sale crm function overwrite #######
+    def action_sale_quotations_new(self):
+        if not self.partner_id:
+            return self.env["ir.actions.actions"]._for_xml_id("sale_crm.crm_quotation_partner_action")
+        else:
+            self.compute_student_planned_for_visit_validation()
+            return self.action_new_quotation()
+    
+    @api.constrains('stage_id','students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
     def _check_fields_if_stage_one(self):
         for rec in self:
-            if rec.stage_id and rec.type == 'opportunity' and rec.lead_type_id.id == 3:
-                errors = []
+            if rec.type != 'opportunity' or rec.lead_type_id.id != 3:
+                continue
+            errors = []
 
-                if rec.stage_id.name == 'Proposition' and rec.students_planned_for_visit <= 0:
-                    errors.append("Students Planned For Visit")
+            stage_sequence = rec.stage_id.sequence if rec.stage_id else 0
+            # print(f"--------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
 
-                if rec.stage_id.id == 2:
-                    if rec.school_strength <= 0:
-                        errors.append("School Strength")
-                    if rec.student_per_class <= 0:
-                        errors.append("Student Per Class")
-                    if rec.average_fees <= 0:
-                        errors.append("Average Fees")
-
-                if errors:
+            if stage_sequence == 1 or stage_sequence == 2:
+                # print(f"--if no. 1 ------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
+                
+                if rec.school_strength <= 0:
+                    errors.append("School Strength")
                     raise ValidationError(
-                        "The following fields must be greater than 0:\n- " +
-                        "\n- ".join(errors)
-                    )
+                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
+                )
+
+                if rec.student_per_class <= 0:
+                    errors.append("Student Per Class")
+                    raise ValidationError(
+                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
+                )
+
+                if rec.average_fees <= 0:
+                    errors.append("Average Fees")
+                    raise ValidationError(
+                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
+                )
+            
+    @api.constrains('students_planned_for_visit')
+    def compute_student_planned_for_visit_validation(self):
+        for rec in self:
+            if rec.stage_id.id == 2 and rec.students_planned_for_visit <= 0:                
+                raise ValidationError("Please enter a value for 'Students Planned For Visit' before moving to this stage.")
     
     ### Proposal Stage Fields 
     total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
@@ -196,7 +218,6 @@ class CrmLeadInherit(models.Model):
                             total += order_line.price_unit
                         
             record.total_proposal_amount = total
-
     #Trip 
     
     opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
@@ -351,7 +372,6 @@ class CrmLeadInherit(models.Model):
                         }
                     )
                     
-                    
     def create_poc_with_different_creds(self):
         for record in self:
             if record.contact_name and record.partner_id:
@@ -385,8 +405,8 @@ class CrmLeadInherit(models.Model):
             
     def action_proposal(self):
         if self.type == 'opportunity':
-            self.stage_id = 2 
-    
+            self.stage_id = 2
+            
     last_activity_info = fields.Html(string="Last Activity", compute="_compute_last_activity")
     last_activity_deadline = fields.Date(string="Activity Deadline", compute="_compute_last_activity")
 

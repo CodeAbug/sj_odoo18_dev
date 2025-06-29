@@ -113,6 +113,9 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="string">Quotation Cancel</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>

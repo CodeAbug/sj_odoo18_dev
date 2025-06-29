@@ -5,7 +5,10 @@
         <field name="model">city.city</field>
         <field name="arch" type="xml">
             <list>
+                <field name="id"/>
                 <field name="name"/>
+                <field name="center_manager_name"/>
+                <field name="manager_phone_number"/>
             </list>
         </field>
     </record>
@@ -18,6 +21,8 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="center_manager_name"/>
+                        <field name="manager_phone_number"/>
                     </group>
                 </sheet>
             </form>
