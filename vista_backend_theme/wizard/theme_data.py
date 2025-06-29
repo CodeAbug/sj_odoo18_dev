@@ -34,7 +34,7 @@ class ThemeData(models.TransientModel):
 
     name = fields.Selection([
         ('default', 'Default'),
-        ('two', 'Green'),
+        ('two', 'Orange'),
         ('three', 'Black'),
     ], 'Theme', required=True, default=_get_current_theme)
 
