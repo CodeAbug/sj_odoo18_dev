@@ -125,33 +125,34 @@ class CrmLeadInherit(models.Model):
             stage_sequence = rec.stage_id.sequence if rec.stage_id else 0
             # print(f"--------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
 
-            if stage_sequence == 1 or stage_sequence == 2:
+            if stage_sequence == 2:
                 # print(f"--if no. 1 ------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
                 
                 if rec.school_strength <= 0:
                     errors.append("School Strength")
-                    raise ValidationError(
-                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
-                )
+                    
 
                 if rec.student_per_class <= 0:
                     errors.append("Student Per Class")
-                    raise ValidationError(
-                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
-                )
+                    
 
                 if rec.average_fees <= 0:
                     errors.append("Average Fees")
+                    
+                    
+                if errors:
                     raise ValidationError(
                     "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
                 )
+                
             
     @api.constrains('students_planned_for_visit')
     def compute_student_planned_for_visit_validation(self):
         for rec in self:
             if rec.stage_id.id == 2 and rec.students_planned_for_visit <= 0:                
-                raise ValidationError("Please enter a value for 'Students Planned For Visit' before moving to this stage.")
-    
+                raise ValidationError(
+                    "The following fields must be greater than 0:\n- Students Planned For Visit "
+                )
     ### Proposal Stage Fields 
     total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
     total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
