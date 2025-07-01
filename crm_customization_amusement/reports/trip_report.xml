@@ -1,0 +1,111 @@
+<odoo>
+    <!-- Report Action (unchanged) -->
+    <record id="action_report_opportunity_trip" model="ir.actions.report">
+        <field name="name">Trip Report</field>
+        <field name="model">opportunity.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">crm_customization_amusement.report_opportunity_trip_template</field>
+        <field name="report_file">crm_customization_amusement.report_opportunity_trip_template</field>
+        <field name="print_report_name">'Trip Report - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_opportunity_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- QWeb Template - FIXED -->
+    <template id="report_opportunity_trip_template">
+        <t t-call="web.external_layout">
+            <main>  <!-- Added main tag to fix layout error -->
+                <t t-set="doc" t-value="docs[0]"/>
+                <!-- <t t-set="currency" t-value="doc.currency_id or doc.company_id.currency_id"/>  Currency context -->
+                
+                <div class="page" style="font-family:'Arial'; color:#2c3e50; padding:30px;">
+                    <div style="background:#f39c12; color:white; padding:15px 20px; border-radius:6px; margin-bottom:25px;">
+                        <h2 style="margin:0;">Trip Summary - <span t-esc="doc.name"/></h2>
+                    </div>
+
+                    <table style="width:100%; margin-bottom:25px; border: none; border-collapse:separate;  font-size:14.5px;">
+                        <tr><td style="width:35%; font-weight:bold;">Trip Number:</td><td t-esc="doc.name"/></tr>
+                        <tr><td>Lead ID:</td><td t-esc="doc.lead_id.id"/></tr>
+                        <tr><td>Organization:</td><td t-esc="doc.organization_id.name"/></tr>
+                        <tr><td>Primary Contact:</td><td t-esc="doc.partner_id.name"/></tr>
+                        <t t-if="doc.secondary_trip_poc_id">
+                            <tr><td>Secondary POC:</td><td t-esc="doc.secondary_trip_poc_id.name"/></tr>
+                        </t>
+                        <tr><td>Organization Address:</td><td t-esc="doc.organization_id.contact_address"/></tr>
+                        <tr><td>Trip Planned Date:</td><td t-esc="doc.trip_planned_date"/></tr>
+                        <tr><td>Trip Time:</td><td><t t-esc="doc.trip_start_time"/> to <t t-esc="doc.trip_end_time"/></td></tr>
+                        <tr><td>No. of Visiting Students:</td><td t-esc="doc.planned_number_of_students"/></tr>
+                        <tr><td>No. of Visiting Staff:</td><td t-esc="doc.planned_number_of_staff"/></tr>
+                        <tr><td>Contracted Amount:</td><td>₹<t t-esc="doc.expected_amount"/></td></tr>
+                        <tr><td>Revised Amount:</td><td>₹<t t-esc="doc.revised_amount"/></td></tr>
+                        <tr><td>Trip Coordinator:</td><td t-esc="doc.assigned_event_manager_id.name"/></tr>
+                    </table>
+
+                    <div style="margin-bottom:10px;">
+                        <h3 style="color:#2980b9; border-bottom:1px solid #eee; padding-bottom:5px;">Package Details</h3>
+                    </div>
+
+                    <table style="width:100%; border:1px solid #ccc; border-collapse:collapse; font-size:14px;">
+                        <thead style="background-color:#3498db; color:white;">
+                            <tr>
+                                <th style="padding:8px; border:1px solid #ccc;">Product</th>
+                                <th style="padding:8px; border:1px solid #ccc;">Quantity</th>
+                                <th style="padding:8px; border:1px solid #ccc;">Unit Price</th>
+                                <th style="padding:8px; border:1px solid #ccc;">Discount (%)</th>
+                                <th style="padding:8px; border:1px solid #ccc;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.package_line_ids" t-as="line">
+                                <tr>
+                                    <td style="padding:6px; border:1px solid #ccc;" t-esc="line.product_id.name"/>
+                                    <td style="padding:6px; border:1px solid #ccc;" t-esc="line.product_uom_qty"/>
+                                    <td style="padding:6px; border:1px solid #ccc;">₹<t t-esc="line.price_unit"/></td>
+                                    <td style="padding:6px; border:1px solid #ccc;" t-esc="line.discount"/>
+                                    <td style="padding:6px; border:1px solid #ccc;">₹<t t-esc="line.price_subtotal"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top:20px; text-align:right;">
+                        <p><strong>Total Quantity:</strong> <t t-esc="doc.total_package_qty"/></p>
+                        <p><strong>Total Discount Amount:</strong>₹<t t-esc="doc.total_package_discount_amount"/></p>
+                        <p><strong>Total Package Amount:</strong>₹<t t-esc="doc.total_package_amount"/></p>
+                    </div>
+                </div>
+            </main>  <!-- Closing main tag -->
+        </t>
+    </template>
+
+
+
+    <template id="crm_customization_amusement.custom_external_layout_standard" inherit_id="web.external_layout_standard">
+        
+        <!-- 🧾 Custom Header -->
+        <xpath expr="//div[1]" position="replace">
+            <div class="header" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <!-- <div>
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 60px;" />
+                    </div>
+                    <div style="text-align: right;">
+                        <h2 style="margin: 0;" t-out="company.name"/>
+                        <p style="margin: 0;" t-out="company.website"/>
+                        <p style="margin: 0;" t-out="company.email"/>
+                    </div> -->
+                </div>
+            </div>
+        </xpath>
+
+        <!-- 🧾 Custom Footer
+        <xpath expr="//div/div[hasclass('text-center')]" position="replace">
+            <div class="footer" style="border-top: 1px solid #ccc; padding-top: 10px; font-size: 10px; color: #777; text-align: center;">
+                <p>Report generated by Odoo | <t t-out="company.name"/> | <t t-out="company.email"/> | <t t-out="company.phone"/></p>
+            </div>
+        </xpath> -->
+
+    </template>
+
+
+</odoo>

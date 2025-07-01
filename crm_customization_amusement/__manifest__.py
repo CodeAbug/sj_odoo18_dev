@@ -20,6 +20,7 @@
         'data/school_type_data.xml',
         'data/designation_data.xml',
         # 'data/package_info_data.xml',
+        'reports/trip_report.xml',
         
         'views/city_view.xml',
         'views/lead_type_views.xml',
@@ -30,7 +31,11 @@
         'views/opportunity_trip_views.xml',
         'views/crm_stage_view_inherit.xml',
         'views/sale_order_view_inherit.xml',
-        'views/crm_lead_inherited_views_inherit.xml'
+        'views/crm_lead_inherited_views_inherit.xml',
+        
+        
+        
+        
         ],
     'assets': {
         'web.assets_backend': [
