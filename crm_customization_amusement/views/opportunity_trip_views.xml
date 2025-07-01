@@ -59,7 +59,7 @@
                     invisible="trip_status =='cancelled'"/>
                 <button name="action_reset_draft" type="object" string="Reset to Draft" class="btn-secondary"
                     invisible="trip_status == 'draft'"/>
-                <button name="%(crm_customization_amusement.action_report_opportunity_trip)d" string="Print Trip Report"
+                <button name="%(crm_customization_amusement.action_report_opportunity_trip)d" string="Print Trip Summary"
                     type="action" class="btn btn-primary" />
                 <field name="trip_status" widget="statusbar" statusbar_visible="draft,planned,visited"/>
             <style>

@@ -6,7 +6,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">crm_customization_amusement.report_opportunity_trip_template</field>
         <field name="report_file">crm_customization_amusement.report_opportunity_trip_template</field>
-        <field name="print_report_name">'Trip Report - %s' % object.name</field>
+        <field name="print_report_name">'Trip Summary - %s' % object.name</field>
         <field name="binding_model_id" ref="model_opportunity_trip"/>
         <field name="binding_type">report</field>
     </record>
