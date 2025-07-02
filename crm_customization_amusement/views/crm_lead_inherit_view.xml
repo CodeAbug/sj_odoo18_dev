@@ -132,7 +132,6 @@
             </style>
                 </xpath>
 
-
                 <xpath expr="//header" position="inside">
                     <style>
                             .btn-force-green {

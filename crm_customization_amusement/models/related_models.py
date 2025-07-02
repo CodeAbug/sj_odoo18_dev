@@ -4,6 +4,8 @@ import re
 
 class City(models.Model):
     _name = 'city.city'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
     _order = 'id desc'
 
     name = fields.Char(string="City Name", copy=False,tracking=True)
@@ -11,9 +13,27 @@ class City(models.Model):
     center_manager_name = fields.Char(tracking=True)
     
     manager_phone_number = fields.Char('Manager Phone Number',tracking=True)
+    
+    center_phone = fields.Char(tracking=True)
 
+    manager_email = fields.Char(tracking=True)
+    
+    address_line_1 = fields.Char('Center Address Line 1',tracking=True)
+    address_line_2 = fields.Char('Center Address Line 2',tracking=True)
+    city = fields.Char(tracking=True)
+    state_id = fields.Many2one('res.country.state',tracking=True)
+    country_id = fields.Many2one(
+            'res.country',
+            string='Country',
+            default=lambda self: self.env.ref('base.in', raise_if_not_found=False)
+        ) 
+    
+    
+    
+    
 class LeadType(models.Model):
     _name = 'lead.type'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
 
     name = fields.Char(string="Lead Type", copy=False,tracking=True)
@@ -21,6 +41,7 @@ class LeadType(models.Model):
 
 class SchoolType(models.Model):
     _name = 'school.type'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
 
     name = fields.Char(string="School Type", copy=False,tracking=True)
@@ -28,6 +49,7 @@ class SchoolType(models.Model):
 
 class StakeholderDesignation(models.Model):
     _name = 'stakeholder.designation'
+    _inherit = ['mail.thread', 'mail.activity.mixin']    
     _order = 'id desc'
     
     name = fields.Char(copy=False,tracking=True)
@@ -35,6 +57,7 @@ class StakeholderDesignation(models.Model):
     
 class OtherStakeholder(models.Model):
     _name = 'other.stakeholder.line'
+    _inherit = ['mail.thread', 'mail.activity.mixin']    
     _order = 'id desc'
 
     name = fields.Char(string="Name",tracking=True)
@@ -67,7 +90,16 @@ class OtherStakeholder(models.Model):
                     
                 
 
-# class ResCompany(models.Model):
-#     _inherit = 'res.company'
+class ProductTemplateInherit(models.Model):
+    _inherit = 'product.template'
 
-#     city_id = fields.Many2one('city.city', string="City" ,tracking=True)
+    city_center_id = fields.Many2one('city.city', string="Center" ,tracking=True)
+    
+    
+class ResUserInherit(models.Model):
+    _inherit = 'res.users'
+
+    city_center_ids = fields.Many2many('city.city', string="Center")
+    
+    
+    

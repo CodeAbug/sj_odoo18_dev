@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError
 
 class OpportunityTripPackageLine(models.Model):
     _name = 'opportunity.trip.package.line'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Trip Package Line'
 
     opportunity_trip_id = fields.Many2one('opportunity.trip', string="Trip")
@@ -172,6 +173,31 @@ class OpportunityTrip(models.Model):
     ('4', 'Four Start'),
     ('5', 'Five Start'),])
 
+
+    last_trip_rating = fields.Selection([
+    ('0', 'No Ratings'),
+    ('1', 'One Star'),
+    ('2', 'Two Star'),
+    ('3', 'Three Star'),
+    ('4', 'Four Star'),
+    ('5', 'Five Star'),
+    ], string="Last Trip Rating", compute="_compute_last_trip_rating", store=False)
+        
+    @api.depends('organization_id', 'trip_planned_date')
+    def _compute_last_trip_rating(self):
+        for rec in self:
+            rec.last_trip_rating = False
+            if not rec.organization_id:
+                continue
+            last_trip = self.env['opportunity.trip'].search([
+                ('organization_id', '=', rec.organization_id.id),
+                ('id', '!=', rec.id),
+                ('trip_planned_date', '<', rec.trip_planned_date),
+            ], order='trip_planned_date desc', limit=1)
+            if last_trip:
+                rec.last_trip_rating = last_trip.trip_rating
+
+        
     def action_fetch_packages_from_deal(self):
         for trip in self:
             if not trip.lead_id:

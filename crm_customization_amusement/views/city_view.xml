@@ -38,9 +38,16 @@
         </field>
     </record>
 
+
+    <menuitem id="crm_masters_root"
+            name="Masters"
+            parent="crm.crm_menu_root"
+            sequence="50"/>
+
     <menuitem id="menu_city"
-            name="Cities"
-            parent="crm.crm_menu_config"
+            name="Centers"
+            parent="crm_masters_root"
             action="action_city"
             sequence="50"/>
+
 </odoo>

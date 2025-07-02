@@ -32,7 +32,7 @@
 
     <menuitem id="menu_school_type"
             name="School Types"
-            parent="crm.crm_menu_config"
+            parent="crm_masters_root"
             action="action_school_type"
             sequence="53"/>
 </odoo>

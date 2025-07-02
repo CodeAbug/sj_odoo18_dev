@@ -13,6 +13,7 @@
     'depends': ['base','crm','sale_crm','crm_sms','crm_iap_enrich'],
     'data': [
         'security/ir.model.access.csv',
+        'security/city_center_record_rules.xml',
         'data/ir_sequence_data.xml',
         
         'data/lead_type_data.xml',
@@ -32,6 +33,9 @@
         'views/crm_stage_view_inherit.xml',
         'views/sale_order_view_inherit.xml',
         'views/crm_lead_inherited_views_inherit.xml',
+        'views/product_template_view_inherit.xml',
+        'views/res_users_view_inherit.xml',
+        
         
         
         

@@ -82,9 +82,9 @@ class SaleOrderLineInherit(models.Model):
     _inherit='sale.order.line'
     
     
-    is_primary_valuation_product = fields.Boolean('Is Primary',tracking=True)
+    is_primary_valuation_product = fields.Boolean('Is Primary')
     
-    opportunity_trip_id = fields.Many2one('opportunity.trip',tracking=True)
+    opportunity_trip_id = fields.Many2one('opportunity.trip')
 
 
 

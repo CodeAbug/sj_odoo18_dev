@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="base_res_users_form_view_inherit" model="ir.ui.view">
+        <field name="name">base.res.users.form.view.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='company_ids']" position="before">
+                <field name="city_center_ids" widget="many2many_tags" options="{'no_create': True}"/>
+            </xpath>
+
+        </field>
+    </record>
+    
+</odoo>

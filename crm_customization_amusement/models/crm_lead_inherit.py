@@ -12,7 +12,8 @@ class ResPartnerInherit(models.Model):
 
     def _compute_trip_count(self):
         for partner in self:
-            partner.trip_count = self.env['opportunity.trip'].search_count([('partner_id', '=', partner.id)])
+            partner.trip_count = self.env['opportunity.trip'].search_count([('partner_id.parent_id', '=', partner.id),
+                                                                            ('trip_status','=','visited')])
             
 
     def action_view_partner_trips(self):
@@ -112,47 +113,46 @@ class CrmLeadInherit(models.Model):
         if not self.partner_id:
             return self.env["ir.actions.actions"]._for_xml_id("sale_crm.crm_quotation_partner_action")
         else:
-            self.compute_student_planned_for_visit_validation()
             return self.action_new_quotation()
     
-    @api.constrains('stage_id','students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
-    def _check_fields_if_stage_one(self):
-        for rec in self:
-            if rec.type != 'opportunity' or rec.lead_type_id.id != 3:
-                continue
-            errors = []
+    # @api.constrains('stage_id','students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
+    # def _check_fields_if_stage_one(self):
+    #     for rec in self:
+    #         if rec.type != 'opportunity' or rec.lead_type_id.id != 3:
+    #             continue
+    #         errors = []
 
-            stage_sequence = rec.stage_id.sequence if rec.stage_id else 0
-            # print(f"--------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
+    #         stage_sequence = rec.stage_id.sequence if rec.stage_id else 0
+    #         # print(f"--------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
 
-            if stage_sequence == 2:
-                # print(f"--if no. 1 ------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
+    #         if stage_sequence == 2:
+    #             # print(f"--if no. 1 ------------Current stage: {rec.stage_id.name},--------Sequence: {rec.stage_id.sequence}")
                 
-                if rec.school_strength <= 0:
-                    errors.append("School Strength")
+    #             if rec.school_strength <= 0:
+    #                 errors.append("School Strength")
                     
 
-                if rec.student_per_class <= 0:
-                    errors.append("Student Per Class")
+    #             if rec.student_per_class <= 0:
+    #                 errors.append("Student Per Class")
                     
 
-                if rec.average_fees <= 0:
-                    errors.append("Average Fees")
+    #             if rec.average_fees <= 0:
+    #                 errors.append("Average Fees")
                     
                     
-                if errors:
-                    raise ValidationError(
-                    "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
-                )
+    #             if errors:
+    #                 raise ValidationError(
+    #                 "The following fields must be greater than 0:\n- " + "\n- ".join(errors)
+    #             )
                 
             
-    @api.constrains('students_planned_for_visit')
-    def compute_student_planned_for_visit_validation(self):
-        for rec in self:
-            if rec.stage_id.id == 2 and rec.students_planned_for_visit <= 0:                
-                raise ValidationError(
-                    "The following fields must be greater than 0:\n- Students Planned For Visit "
-                )
+    # @api.constrains('students_planned_for_visit')
+    # def compute_student_planned_for_visit_validation(self):
+    #     for rec in self:
+    #         if rec.stage_id.id == 2 and rec.students_planned_for_visit <= 0:                
+    #             raise ValidationError(
+    #                 "The following fields must be greater than 0:\n- Students Planned For Visit "
+    #             )
     ### Proposal Stage Fields 
     total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
     total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
@@ -468,6 +468,7 @@ class CrmLeadInherit(models.Model):
 class Lead2OpportunityPartnerInherit(models.TransientModel):
     _inherit = 'crm.lead2opportunity.partner'
 
+
     name = fields.Selection([
         ('convert', 'Convert to opportunity'),
         ('merge', 'Merge with existing opportunities')
@@ -477,7 +478,7 @@ class Lead2OpportunityPartnerInherit(models.TransientModel):
     action = fields.Selection([
         ('create', 'Create a new Contact'),
         ('exist', 'Link to an existing Contact'),
-    ], string='Related Contact', compute='_compute_action', readonly=False, store=True, compute_sudo=False,tracking=True)
+    ], string='Related Contact', compute='_compute_action', readonly=False, store=True, compute_sudo=False)
 
     
     @api.depends('lead_id')

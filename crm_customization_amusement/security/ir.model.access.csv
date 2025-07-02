@@ -6,3 +6,6 @@ access_stakeholder_designation,access_stakeholder_designation,model_stakeholder_
 access_other_stakeholder_line,access_other_stakeholder_line,model_other_stakeholder_line,base.group_user,1,1,1,1
 access_opportunity_trip,access_opportunity_trip,model_opportunity_trip,base.group_user,1,1,1,1
 access_opportunity_trip_package_line,access_opportunity_trip_package_line,model_opportunity_trip_package_line,base.group_user,1,1,1,1
+
+
+access_crm_lead_crm_user_custom,crm.lead,model_crm_lead,crm_customization_amusement.group_crm_user_custom,1,1,1,1
