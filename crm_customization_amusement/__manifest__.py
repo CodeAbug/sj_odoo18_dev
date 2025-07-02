@@ -12,8 +12,8 @@
     'version': "0.0.1",
     'depends': ['base','crm','sale_crm','crm_sms','crm_iap_enrich'],
     'data': [
-        'security/ir.model.access.csv',
         'security/city_center_record_rules.xml',
+        'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
         
         'data/lead_type_data.xml',
