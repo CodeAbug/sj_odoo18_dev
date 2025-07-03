@@ -18,27 +18,38 @@
                 <t t-set="doc" t-value="docs[0]"/>
                 <!-- <t t-set="currency" t-value="doc.currency_id or doc.company_id.currency_id"/>  Currency context -->
                 
-                <div class="page" style="font-family:'Arial'; color:#2c3e50; padding:30px;">
+                <div class="page" style="font-family:'Arial'; color:#2c3e50; padding:30px; margin-top:-30px !important;">
                     <div style="background:#f39c12; color:white; padding:15px 20px; border-radius:6px; margin-bottom:25px;">
                         <h2 style="margin:0;">Trip Summary - <span t-esc="doc.name"/></h2>
                     </div>
 
-                    <table style="width:100%; margin-bottom:25px; border: none; border-collapse:separate;  font-size:14.5px;">
-                        <!-- <tr><td>Lead Type:</td><td t-esc="doc.lead_type_id.name"/></tr> -->
-                        
+                <table style="width:100%; margin-bottom:25px; border: none; border-collapse:separate; font-size:14.5px;">
+
+                        <!-- Section: Organization Details -->
+                        <tr>
+                            <td colspan="2" style="font-weight:bold; background:#f0f0f0; padding:5px;">Organization Details</td>
+                        </tr>
                         <tr><td style="font-weight:bold;">Organization:</td><td style="font-weight:bold;" t-esc="doc.organization_id.name"/></tr>
                         <tr><td>Organization Address:</td><td t-esc="doc.organization_id.contact_address"/></tr>
-                        <tr><td style="width:35%; font-weight:bold;">Trip Number:</td><td t-esc="doc.name"/></tr>
-                        <tr><td>Organization Trip Count:</td><td t-esc="doc.organization_id.trip_count"/></tr>
+                        <tr><td>Organization Trip Count:</td><td t-esc="doc.trip_cycle"/></tr>
+                        <tr><td>Center:</td><td t-esc="doc.visiting_center_id.name"/></tr>
+                        <tr><td>Center Manager:</td><td t-esc="doc.visiting_center_id.center_manager_name"/></tr>
+                        <tr><td>Manager Phone No. :</td><td t-esc="doc.visiting_center_id.manager_phone_number"/></tr>
+
+                        <!-- Section: Trip Details -->
+                        <tr>
+                            <td colspan="2" style="font-weight:bold; background:#f0f0f0; padding:5px;">Trip Details</td>
+                        </tr>
+                        <tr><td>Trip Number:</td><td t-esc="doc.name"/></tr>
                         <tr><td>Lead ID:</td><td t-esc="doc.lead_id.id"/></tr>
-                        <tr><td>Trip P.O.C. :</td><td><t t-esc="doc.partner_id.name"/>,<t t-esc="doc.partner_id.function"/></td></tr>
-                        <tr><td>Trip P.O.C. Number:</td><td t-esc="doc.secondary_trip_poc_id.mobile"/></tr>
+                        <tr><td>Trip P.O.C. :</td><td><t t-esc="doc.partner_id.name"/>, <t t-esc="doc.partner_id.function"/></td></tr>
+                        <tr><td>Trip P.O.C. Number:</td><td t-esc="doc.partner_id.mobile"/></tr>
                         <t t-if="doc.secondary_trip_poc_id">
-                            <tr><td>Trip Secondary P.O.C. :</td><td><t t-esc="doc.secondary_trip_poc_id.name"/>,<t t-esc="doc.secondary_trip_poc_id.function"/></td></tr>
+                            <tr><td>Trip Secondary P.O.C. :</td><td><t t-esc="doc.secondary_trip_poc_id.name"/>, <t t-esc="doc.secondary_trip_poc_id.function"/></td></tr>
                             <tr><td>Trip Secondary P.O.C. Number:</td><td t-esc="doc.secondary_trip_poc_id.mobile"/></tr>
                         </t>
                         <tr><td>Trip Planned Date:</td><td t-esc="doc.trip_planned_date"/></tr>
-                        <tr><td>Trip Time:</td><td><t t-esc="doc.trip_start_time"/> to <t t-esc="doc.trip_end_time"/></td></tr>
+                        <tr><td>Trip Time(24H):</td><td><t t-esc="doc.trip_start_time"/> to <t t-esc="doc.trip_end_time"/></td></tr>
                         <tr><td>No. of Visiting Students:</td><td t-esc="doc.planned_number_of_students"/></tr>
                         <tr><td>No. of Visiting Staff:</td><td t-esc="doc.planned_number_of_staff"/></tr>
                         <tr><td>Contracted Amount:</td><td>₹<t t-esc="doc.expected_amount"/></td></tr>
@@ -46,12 +57,13 @@
                         <tr><td>Trip Coordinator:</td><td t-esc="doc.assigned_event_manager_id.name"/></tr>
                         <tr>
                             <td>Last Trip Rating:</td>
-                            <td>
-                                <span t-field="doc.last_trip_rating" t-options='{"widget": "priority"}'/>
-                            </td>
+                            <td><span t-field="doc.last_trip_rating" t-options='{"widget": "priority"}'/></td>
                         </tr>
+
                     </table>
-                    <div style="margin-bottom:10px;">
+
+
+                                        <div style="margin-bottom:10px;">
                         <h3 style="color:#2980b9; border-bottom:1px solid #eee; padding-bottom:5px;">Package Details</h3>
                     </div>
 
@@ -68,7 +80,7 @@
                         <tbody>
                             <t t-foreach="doc.package_line_ids" t-as="line">
                                 <tr>
-                                    <td style="padding:6px; border:1px solid #ccc;" t-esc="line.product_id.name"/>
+                                    <td style="padding:6px; border:1px solid #ccc;" t-esc="line.product_id.display_name"/>
                                     <td style="padding:6px; border:1px solid #ccc;" t-esc="line.product_uom_qty"/>
                                     <td style="padding:6px; border:1px solid #ccc;">₹<t t-esc="line.price_unit"/></td>
                                     <td style="padding:6px; border:1px solid #ccc;" t-esc="line.discount"/>

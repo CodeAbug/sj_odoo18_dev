@@ -28,15 +28,6 @@
             <field name="domain_force">[('city_center_id', 'in', user.city_center_ids.ids)]</field>
         </record>
 
-
-
-        <record id="crm.crm_rule_all_lead" model="ir.rule">
-            <field name="name">All Leads</field>
-            <field name="active">False</field>
-            <field ref="model_crm_lead" name="model_id"/>
-            <field name="domain_force">[(1,'=',1)]</field>
-            <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
-        </record>
-
+        
     </data>
 </odoo>

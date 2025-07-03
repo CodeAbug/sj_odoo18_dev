@@ -66,7 +66,7 @@
 
 
 
-            <xpath expr="//div[@class='oe_button_box']" position="inside">
+            <xpath expr="//div[@class='oe_button_box']/button[@name='action_show_potential_duplicates']" position="before">
                 <button type="object" name="action_view_opportunity_trips"
                     class="oe_stat_button" invisible="type == 'lead'" icon="fa-suitcase">
                     <field name="trip_count" widget="statinfo" string="Trips"/>
@@ -78,8 +78,13 @@
                             <span class="o_stat_text"> Trips Revenue</span>
                         </div>
                 </button>
-
             </xpath>
+
+            <xpath expr="//div[@class='oe_button_box']/button[@name='action_schedule_meeting']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+
+
 
             <!-- <xpath expr="//field[@name='name']" position="attributes">
                             <attribute name="invisible">True</attribute>
@@ -311,8 +316,8 @@
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
                     <field name="email_from" string="Org. Email" widget="email"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
-                    <field name="phone" string="Org. Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
-                    <field name="mobile" string="Org. Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
+                    <field name="phone" string="Org. Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
+                    <field name="mobile" string="Org. Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[field[@name='user_id'] and field[@name='team_id']]" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -347,11 +352,12 @@
                                         padding: 8px; margin: 10px 0; width:100%;
                                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                                 <group name="quotation_summary_1" col="2">
-                                    <field name="students_planned_for_visit" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 2" />
-                                    <field name="total_deal_value" widget="monetary" />
+                                    <field name="students_planned_for_visit" string="Pax Students" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 2" />
+                                    <field name="total_deal_value" widget="monetary"/>
                                     <field name="total_package_count" string="Total No. Of Packages" />
                                 </group>
                                 <group name="quotation_summary_2" col="2">
+                                    <field name="proposal_amount_perhead" widget="monetary" />
                                     <field name="total_proposal_amount" widget="monetary" />
                                 </group>
                             </group>
@@ -450,18 +456,23 @@
 
                 <xpath expr="//page[@name='lead']" position="after">
                     <page name="trips" string="Trips" invisible="type=='lead' or stage_id in (1,2)">
-                            <field name="opportunity_trip_ids" context="{'default_partner_id': partner_id,
-                                                                            'default_lead_type_id':lead_type_id,
-                                                                            'default_visiting_center_id': visiting_center_id}">
+                            <field name="opportunity_trip_ids" context="{
+                'default_partner_id': partner_id,
+                'default_lead_type_id': lead_type_id,
+                'default_visiting_center_id': visiting_center_id,
+                'default_assigned_event_manager_id':user_id,
+                'default_organization_id' : organization_id,
+                'default_trip_poc_id': partner_id
+            }">
                                 <list>
                                     <field name="name"/>
                                     <field name="trip_poc_id"/>
-                                    <field name="planned_number_of_students"/>
-                                    <field name="planned_number_of_staff"/>
+                                    <field name="planned_number_of_students" string="Pax Students"/>
+                                    <field name="planned_number_of_staff"  string="Pax Staff"/>
                                     <field name="expected_amount" widget="monetary"/>
                                     <field name="revised_amount" widget="monetary"/>
-                                    <field name="number_of_visited_students"/>
-                                    <field name="number_of_visited_staff"/>
+                                    <field name="number_of_visited_students" string="Final Students"/>
+                                    <field name="number_of_visited_staff" string="Final Staff"/>
                                     <field name="pos_amount"/>
                                     <field name="trip_status" widget="badge"
                                         decoration-success="trip_status == 'visited'"
@@ -470,7 +481,6 @@
                                 
                             </field>
                     </page>
-
                 </xpath>
             </field>
         </record>

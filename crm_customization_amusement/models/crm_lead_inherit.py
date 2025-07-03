@@ -14,7 +14,7 @@ class ResPartnerInherit(models.Model):
         for partner in self:
             partner.trip_count = self.env['opportunity.trip'].search_count([('partner_id.parent_id', '=', partner.id),
                                                                             ('trip_status','=','visited')])
-            
+
 
     def action_view_partner_trips(self):
         self.ensure_one()
@@ -154,7 +154,9 @@ class CrmLeadInherit(models.Model):
     #                 "The following fields must be greater than 0:\n- Students Planned For Visit "
     #             )
     ### Proposal Stage Fields 
-    total_proposal_amount = fields.Float("Proposal Amount Per Head",tracking=True,compute="_compute_total_proposal_amount")
+    total_proposal_amount = fields.Float("Amt/Head(With Primary Pkg.)",tracking=True,compute="_compute_total_proposal_amount")
+    proposal_amount_perhead = fields.Float("Amt/Head(Withtout Primary Pkg.)",tracking=True,compute="_compute_proposal_amount_perhead")
+    
     total_deal_value = fields.Float(tracking=True,compute="_compute_deal_value")
     total_package_count = fields.Integer(tracking=True,string="Total Packages",compute='_total_package_count')
     # negotiated_amount = fields.Float()
@@ -217,8 +219,18 @@ class CrmLeadInherit(models.Model):
                     for order_line in line.order_line:
                         if order_line.is_primary_valuation_product:
                             total += order_line.price_unit
-                        
             record.total_proposal_amount = total
+
+    @api.depends('order_ids.amount_total','order_ids.order_line','order_ids.order_line.price_unit','order_ids.state')
+    def _compute_proposal_amount_perhead(self):
+        for record in self:
+            total = 0.0
+            for line in record.order_ids:
+                if line.state == 'sale':
+                    for order_line in line.order_line:
+                        total += order_line.price_unit
+                        
+            record.proposal_amount_perhead = total
     #Trip 
     
     opportunity_trip_ids = fields.One2many('opportunity.trip','lead_id',tracking=True)
@@ -257,7 +269,22 @@ class CrmLeadInherit(models.Model):
             'res_model': 'opportunity.trip',
             'view_mode': 'list,form',
             'domain': [('lead_id', '=', self.id)],
-            'context': {'default_lead_id': self.id},
+            'context': {
+                'default_lead_id': self.id,
+                'default_partner_id': self.partner_id.id,
+                'default_lead_type_id': self.lead_type_id.id,
+                'default_visiting_center_id': self.visiting_center_id.id,
+                'default_trip_poc_id': self.env['res.partner'].search([
+                    ('parent_id', '=', self.partner_id.parent_id.id),
+                    ('name', '=', self.contact_name)
+                ], limit=1).id,
+                'default_secondary_trip_poc_id': self.env['res.partner'].search([
+                    ('parent_id', '=', self.partner_id.parent_id.id),
+                    ('name', '=', self.secondary_poc_name)
+                ], limit=1).id,
+                'default_assigned_event_manager_id':self.user_id.id,
+                'default_organization_id' : self.partner_id.parent_id.id
+            },
             'target': 'current'
         }
         

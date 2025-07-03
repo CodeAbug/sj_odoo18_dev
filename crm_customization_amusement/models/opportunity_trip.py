@@ -1,6 +1,7 @@
 from odoo import api,fields, models
 from datetime import datetime
 from odoo.exceptions import ValidationError
+import re
 
 
 
@@ -41,6 +42,7 @@ class OpportunityTrip(models.Model):
     organization_id = fields.Many2one('res.partner',tracking=True,string="Organization")
 
     visiting_center_id = fields.Many2one('city.city',tracking=True)
+    center_manager = fields.Char(related='visiting_center_id.center_manager_name')
     
     trip_status = fields.Selection([
         ('draft', 'Draft'),
@@ -49,8 +51,45 @@ class OpportunityTrip(models.Model):
         ('cancelled', 'Cancelled'),
     ], string="Trip Status", tracking=True, default='draft')
 
-    trip_count  = fields.Char(tracking=True)
+    trip_cycle = fields.Char(
+        string="Trip Number",
+        compute="_compute_trip_cycle",
+        store=True
+    )
+
+    @api.depends('lead_id')
+    def _compute_trip_cycle(self):
+        for record in self:
+            raw_lead_id = record.lead_id.id
+
+            lead_id = 0
+
+            # Extract only digits from lead_id using regex
+            match = re.search(r'\d+', str(raw_lead_id))
+            # print('Match---------,',match)
+            if match:
+                lead_id = int(match.group())
+            if lead_id:
+                # Count all existing trips for this cleaned lead_id
+                existing_trips = self.search_count([('lead_id', '=', lead_id)])
+                # print('--------the lead id here = ', lead_id)
+                # print('--------the existing trips here = ', existing_trips)
+                # +1 if it's a new record
+                sequence = existing_trips + (0 if record.id else 1)
+                suffix = self._get_ordinal_suffix(sequence)
+                record.trip_cycle = f"{sequence}{suffix} Trip"
+            else:
+                record.trip_cycle = "Trip"
+
+    def _get_ordinal_suffix(self, number):
+        if 10 <= number % 100 <= 20:
+            return 'th'
+        return {1: 'st', 2: 'nd', 3: 'rd'}.get(number % 10, 'th')
     
+    @api.onchange('lead_id')
+    def _onchange_trip_cycle(self):
+        self._compute_trip_cycle()
+        
     planned_number_of_students = fields.Integer(tracking=True,string="Planned No. Of Students")
     planned_number_of_staff = fields.Integer(tracking=True ,help="Teachers, helpers, bus drivers",string="Planned No. Of Staff")
     
@@ -80,7 +119,6 @@ class OpportunityTrip(models.Model):
         for rec in self:
             if rec.trip_start_time <= 0:
                 raise ValidationError("Trip Start Time is required.")
-
 
             if not (0 <= rec.trip_start_time <= 24):
                 raise ValidationError("Trip Start Time must be between 0 and 24 hours.")
@@ -153,7 +191,7 @@ class OpportunityTrip(models.Model):
         for record in self:
             expected = 0.0
             actual = 0.0
-            rate = record.lead_id.total_proposal_amount
+            rate = record.lead_id.proposal_amount_perhead
             expected = (record.planned_number_of_students + record.planned_number_of_staff) * rate
             record.expected_amount = expected
 

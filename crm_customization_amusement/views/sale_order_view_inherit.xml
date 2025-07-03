@@ -12,6 +12,13 @@
                 position="before">
                 <field name="is_primary_valuation_product" />
             </xpath>
+
+            <xpath
+                expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_uom_qty']"
+                position="attributes">
+                    <attribute name="string">Pax</attribute>
+            </xpath>
+            
             <xpath expr="//button[@name='action_quotation_send']" position="after">
                 <button name="action_mark_as_sent_custom"
                     type="object"

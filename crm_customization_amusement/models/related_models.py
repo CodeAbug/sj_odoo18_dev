@@ -1,6 +1,7 @@
 from odoo import models,fields,api
 from odoo.exceptions import ValidationError
 import re
+from datetime import date,timedelta
 
 class City(models.Model):
     _name = 'city.city'
@@ -28,7 +29,10 @@ class City(models.Model):
             default=lambda self: self.env.ref('base.in', raise_if_not_found=False)
         ) 
     
-    
+    center_code = fields.Char(string="Center Code", tracking=True)
+    active = fields.Boolean(default=True, tracking=True)
+    capacity = fields.Integer(string="Center Capacity", tracking=True)
+    notes = fields.Text(string="Additional Notes", tracking=True)
     
     
 class LeadType(models.Model):
@@ -101,5 +105,19 @@ class ResUserInherit(models.Model):
 
     city_center_ids = fields.Many2many('city.city', string="Center")
     
+
+class MailActivitySchedule(models.TransientModel):
+    _inherit = 'mail.activity.schedule'
+
+    # @api.onchange('date_dead')
+    @api.onchange('date_deadline')
+    def _check_date_deadline_not_too_old(self):
+        for record in self:
+            if record.date_deadline:
+                min_allowed_date = date.today() - timedelta(days=2)
+                if record.date_deadline < min_allowed_date:
+                    raise ValidationError("You cannot set the deadline more than 2 days in the past.")
+
     
+        
     

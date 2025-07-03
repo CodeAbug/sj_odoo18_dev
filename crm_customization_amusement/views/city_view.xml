@@ -1,33 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <!-- List View -->
     <record id="view_city_list" model="ir.ui.view">
         <field name="name">city.city.list</field>
         <field name="model">city.city</field>
         <field name="arch" type="xml">
-            <list>
-                <field name="id"/>
+            <list multi_edit="1">
                 <field name="name"/>
                 <field name="center_manager_name"/>
                 <field name="manager_phone_number"/>
+                <field name="manager_email"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="country_id"/>
+                <field name="active"/>
             </list>
         </field>
     </record>
 
+    <!-- Form View -->
     <record id="view_city_form" model="ir.ui.view">
         <field name="name">city.city.form</field>
         <field name="model">city.city</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <group string="General Information" col="2">
                         <field name="name"/>
+                        <field name="center_code"/>
+                        <field name="active" widget="boolean_toggle"/>
+                    </group>
+
+                    <group string="Center Manager" col="2">
                         <field name="center_manager_name"/>
                         <field name="manager_phone_number"/>
+                        <field name="manager_email"/>
+                        <field name="center_phone"/>
+                    </group>
+
+                    <group string="Center Address" col="2">
+                        <field name="address_line_1"/>
+                        <field name="address_line_2"/>
+                        <field name="city"/>
+                        <field name="state_id"/>
+                        <field name="country_id"/>
+                    </group>
+
+                    <group string="Other Info" col="2">
+                        <field name="capacity"/>
+                        <field name="notes"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
+
 
     <record id="action_city" model="ir.actions.act_window">
         <field name="name">Cities</field>

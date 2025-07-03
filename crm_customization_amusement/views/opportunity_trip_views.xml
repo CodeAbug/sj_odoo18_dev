@@ -25,7 +25,7 @@
                 <field name="partner_id"/>
                 <field name="trip_status"/>
                 <field name="visiting_center_id"/>
-                <field name="planned_number_of_students"/>
+                <field name="planned_number_of_students" string="Pax Students"/>
             </list>
         </field>
     </record>
@@ -78,18 +78,22 @@
                 <div class="oe_button_box" name="button_box">
                     <field name="trip_status" widget="badge"/>
                 </div>
+                <h3>
+            <field name="trip_cycle" readonly="1"/>
+        </h3>
 
                 <group col="3" style=" background: #f9f9f9; padding: 5px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
                     <!-- Column 1 -->
                     <group col="1" style="border-right: 1px solid #ddd; padding-right: 10px;">
                         <field name="name" readonly="1"/>
+
+
                         <field name="lead_id" readonly="1"/>
                         <field name="lead_type_id" readonly="1"/>
-                        <field name="partner_id" string="Contact" readonly="1"/>
-                        <field name="visiting_center_id" readonly="1"/>
                         <field name="organization_id" readonly="1"/>
-
-                        <field name="trip_count" invisible="1"/>
+                        <field name="partner_id" string="Org. P.O.C." readonly="1"/>
+                        <field name="visiting_center_id" readonly="1"/>
+                        <field name="center_manager" readonly="1"/>
                         <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
                         <field name="secondary_trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  readonly="trip_status != 'draft'" />
                         <field name="create_uid" string="Booked By" />
@@ -98,11 +102,11 @@
                     <!-- Column 2 -->
                     <group col="1" style="border-right: 1px solid #ddd; padding: 0 10px;">
                         <field name="trip_planned_date" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="trip_start_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="trip_end_time" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="trip_duration" widget="float_time" required="trip_status=='draft'"/>
-                        <field name="planned_number_of_students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="planned_number_of_staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_start_time" string="Start Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_end_time" string="End Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
+                        <field name="planned_number_of_students" string="Pax Students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="expected_amount"/>
                         <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
@@ -112,8 +116,8 @@
                     <!-- Column 3 (Visited Info) -->
                     <group name="after_visiting_details" col="1" style="padding-left: 10px;" invisible="trip_status != 'visited'">
                         <field name="trip_rating" widget="priority"/>
-                        <field name="number_of_visited_students"/>
-                        <field name="number_of_visited_staff"/>
+                        <field name="number_of_visited_students" string="Final Students"/>
+                        <field name="number_of_visited_staff" string="Final Staff"/>
                         <field name="actual_visit_datetime"/>
                         <field name="pos_invoice_number"/>
                         <field name="pos_datetime"/>
@@ -129,9 +133,9 @@
                                     class="btn btn-primary"/>
 
                             <field name="package_line_ids">
-                                <list editable="bottom">
+                                <list create="0" edit="1">
                                     <field name="product_id"/>
-                                    <field name="product_uom_qty"/>
+                                    <field name="product_uom_qty" string="Pax"/>
                                     <field name="discount" optional="hide"/>
                                     <field name="price_unit"/>
                                     <field name="price_subtotal" readonly="1"/>
