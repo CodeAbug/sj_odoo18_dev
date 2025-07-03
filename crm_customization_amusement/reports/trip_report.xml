@@ -30,6 +30,8 @@
                             <td colspan="2" style="font-weight:bold; background:#f0f0f0; padding:5px;">Organization Details</td>
                         </tr>
                         <tr><td style="font-weight:bold;">Organization:</td><td style="font-weight:bold;" t-esc="doc.organization_id.name"/></tr>
+                        <tr><td>Organization P.O.C. :</td><td><t t-esc="doc.lead_id.contact_name"/>, <t t-esc="doc.lead_id.poc_designation_id.name"/></td></tr>
+
                         <tr><td>Organization Address:</td><td t-esc="doc.organization_id.contact_address"/></tr>
                         <tr><td>Organization Trip Count:</td><td t-esc="doc.trip_cycle"/></tr>
                         <tr><td>Center:</td><td t-esc="doc.visiting_center_id.name"/></tr>
@@ -42,7 +44,7 @@
                         </tr>
                         <tr><td>Trip Number:</td><td t-esc="doc.name"/></tr>
                         <tr><td>Lead ID:</td><td t-esc="doc.lead_id.id"/></tr>
-                        <tr><td>Trip P.O.C. :</td><td><t t-esc="doc.partner_id.name"/>, <t t-esc="doc.partner_id.function"/></td></tr>
+                        <tr><td>Trip P.O.C. :</td><td><t t-esc="doc.trip_poc_id.name"/>, <t t-esc="doc.trip_poc_id.function"/></td></tr>
                         <tr><td>Trip P.O.C. Number:</td><td t-esc="doc.partner_id.mobile"/></tr>
                         <t t-if="doc.secondary_trip_poc_id">
                             <tr><td>Trip Secondary P.O.C. :</td><td><t t-esc="doc.secondary_trip_poc_id.name"/>, <t t-esc="doc.secondary_trip_poc_id.function"/></td></tr>
@@ -109,7 +111,7 @@
         
         <!-- Custom Header -->
         <xpath expr="//div[1]" position="replace">
-            <div class="header" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+            <div class="header" style="border-bottom: 1px solid #ccc; padding: 10px 0; margin-bottom:-300px !important;">
                 <div style="display: flex; flex-direction: column;">
                     <div>
                         <img t-if="company.logo" class="o_company_logo_small"

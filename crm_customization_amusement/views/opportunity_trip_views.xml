@@ -82,9 +82,10 @@
             <field name="trip_cycle" readonly="1"/>
         </h3>
 
-                <group col="3" style=" background: #f9f9f9; padding: 5px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+                <group col="3" name="group_trip_info_visited" invisible="trip_status!='visited'" style="padding: 5px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
                     <!-- Column 1 -->
-                    <group col="1" style="border-right: 1px solid #ddd; padding-right: 10px;">
+                    
+                    <group col="1" name="group_trip_basic_info_left" style="border-right: 1px solid #ddd; padding-right: 10px;">
                         <field name="name" readonly="1"/>
 
 
@@ -100,7 +101,7 @@
                     </group>
 
                     <!-- Column 2 -->
-                    <group col="1" style="border-right: 1px solid #ddd; padding: 0 10px;">
+                    <group col="1" name="group_trip_schedule_info" style="border-right: 1px solid #ddd; padding: 0 10px;">
                         <field name="trip_planned_date" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_start_time" string="Start Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_end_time" string="End Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
@@ -114,7 +115,7 @@
                     </group>
 
                     <!-- Column 3 (Visited Info) -->
-                    <group name="after_visiting_details" col="1" style="padding-left: 10px;" invisible="trip_status != 'visited'">
+                    <group name="group_visited_trip_details" col="1" style="padding-left: 10px;" invisible="trip_status != 'visited'">
                         <field name="trip_rating" widget="priority"/>
                         <field name="number_of_visited_students" string="Final Students"/>
                         <field name="number_of_visited_staff" string="Final Staff"/>
@@ -127,7 +128,42 @@
                     </group>
                 </group>
 
-                    <notebook>
+
+                <group col="2" name="group_trip_info_non_visited" invisible="trip_status=='visited'" style="padding: 5px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+                    <!-- Column 1 -->
+                    <group col="1" name="group_non_visited_trip_basic" style="border-right: 1px solid #ddd; padding-right: 10px;">
+                        <field name="name" readonly="1"/>
+
+
+                        <field name="lead_id" readonly="1"/>
+                        <field name="lead_type_id" readonly="1"/>
+                        <field name="organization_id" readonly="1"/>
+                        <field name="partner_id" string="Org. P.O.C." readonly="1"/>
+                        <field name="visiting_center_id" readonly="1"/>
+                        <field name="center_manager" readonly="1"/>
+                        <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="secondary_trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  readonly="trip_status != 'draft'" />
+                        <field name="create_uid" string="Booked By" />
+                    </group>
+
+                    <!-- Column 2 -->
+                    <group col="1" name="group_non_visited_trip_schedule" style="border-right: 1px solid #ddd; padding: 0 10px;">
+                        <field name="trip_planned_date" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_start_time" string="Start Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_end_time" string="End Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
+                        <field name="planned_number_of_students" string="Pax Students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="expected_amount"/>
+                        <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="assigned_event_manager_id" string="Trip Coordinator" required="trip_status=='draft'"/>
+                    </group>
+
+                    <!-- Column 3 (Visited Info) -->
+                </group>
+
+                    <notebook name="trip_package_notebook">
                         <page name="package_lines" string="Package Lines">
                             <button name="action_fetch_packages_from_deal" type="object" string="Fetch Packages from Deal"
                                     class="btn btn-primary"/>
@@ -142,8 +178,8 @@
                                 </list>
                             </field>
 
-                            <group>
-                            <group>
+                            <group name="group_package_totals">
+                                <group name="group_package_totals_inner">
                                 <field name="total_package_qty" readonly="1"/>
                                 <field name="total_package_discount_amount" readonly="1"/>
                                 <field name="total_package_amount" readonly="1"/>
