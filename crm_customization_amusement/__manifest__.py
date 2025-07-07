@@ -10,7 +10,7 @@
     'website': '',
     'category': 'Leads Management',
     'version': "0.0.1",
-    'depends': ['base','crm','sales_team','sale_crm','crm_sms','crm_iap_enrich'],
+    'depends': ['base','crm','sales_team','sale_crm','sale_management','crm_sms','crm_iap_enrich'],
     'data': [
         'security/city_center_record_rules.xml',
         'security/ir.model.access.csv',
