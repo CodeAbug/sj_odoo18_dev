@@ -94,7 +94,7 @@ class PartyEnquiryController(http.Controller):
                 vals[field] = value
 
         # Ensure state
-        vals['stage_id'] = False
+        vals['stage_id'] = 1
 
         # Clear enquiry_handler
         vals['user_id'] = False
@@ -128,7 +128,7 @@ class PartyEnquiryController(http.Controller):
                 return json.dumps({'status': 'error', 'message': str(e)})
 
 
-        # Case B: If Record is closed or cancelled then CREATE NEW Lead
+        # Case B: If Record is closed or lost then CREATE NEW Lead
         elif existing.lost_reason_id :
             if not vals.get('client_name') and existing.mobile:
                 vals['client_name'] = existing.mobile
@@ -147,7 +147,11 @@ class PartyEnquiryController(http.Controller):
         # Case C: Record is active → UPDATE
         else:
             try:
-                existing.with_user(user).write(vals)
+                print('-----------------entered in write upate')
+                print("Before Write---------------", vals)
+                existing.sudo().write(vals)
+                print("After Write------------------",vals)
+                # existing.sudo().write(vals)
                 return json.dumps({
                     'status': 'success',
                     'message': 'Existing Lead updated',
