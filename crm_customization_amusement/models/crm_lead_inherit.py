@@ -61,7 +61,7 @@ class CrmLeadInherit(models.Model):
             vals['is_editable_bool'] = False
         return super().write(vals)
 
-    
+    whats_app_customer_id = fields.Char()
     school_type_id = fields.Many2one('school.type', string="School Type" ,tracking=True)
     country_id = fields.Many2one(
         'res.country',

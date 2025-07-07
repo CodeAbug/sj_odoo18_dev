@@ -174,6 +174,10 @@
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="before">
                         <field name="organization_id" string="Organization Master Link" readonly="1"/>
                 </xpath>
+
+                <xpath expr="//page[@name='lead']//field[@name='source_id']" position="after">
+                        <field name="whats_app_customer_id" readonly="1"/>
+                </xpath>
                 <xpath expr="//page[@name='lead']//field[@name='partner_name']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
@@ -441,7 +445,9 @@
                     <field name="name" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" />
                     <field name="user_id" context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user"
                                     readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
-                </group>
+                    <field name="whats_app_customer_id" readonly="1"/>
+                    
+                                </group>
                 </xpath>
                 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
