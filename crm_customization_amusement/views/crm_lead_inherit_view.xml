@@ -51,7 +51,7 @@
 
 
                 <xpath expr="//sheet/notebook" position="inside">
-                    <page name="developer_debug_page" string="Dev Tools" invisible="0">
+                    <page name="developer_debug_page" string="Dev Tools" groups="base.group_system" invisible="0">
                             <group>
                                 <field name="is_editable_bool"/>
                                 <field name="type"/>

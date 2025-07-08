@@ -169,7 +169,7 @@
                                     class="btn btn-primary"/>
 
                             <field name="package_line_ids">
-                                <list create="0" edit="1">
+                                <list editable="bottom" create="0">
                                     <field name="product_id"/>
                                     <field name="product_uom_qty" string="Pax"/>
                                     <field name="discount" optional="hide"/>
