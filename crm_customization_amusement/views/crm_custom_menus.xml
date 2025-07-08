@@ -3,7 +3,7 @@
 
     <!-- === Root Menu: Corporate === -->
 <menuitem id="menu_root_corporate" name="Corporate" 
-sequence="10" web_icon="crm_customization_amusement/static/description/corporate_icon.png"/>
+sequence="5"/>
 
 <!-- Corporate → Leads -->
 <record id="action_corporate_leads" model="ir.actions.act_window">
@@ -27,7 +27,7 @@ name="Opportunities" parent="menu_root_corporate" action="action_corporate_oppor
 
 <!-- === Root Menu: School === -->
 <menuitem id="menu_root_school" name="School" 
-sequence="20" web_icon="crm_customization_amusement/static/description/corporate_icon.png"/>
+sequence="4"/>
 
 <!-- School → Leads -->
 <record id="action_school_leads" model="ir.actions.act_window">

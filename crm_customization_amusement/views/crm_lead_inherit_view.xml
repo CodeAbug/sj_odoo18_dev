@@ -344,7 +344,7 @@
                             <field name="school_strength" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                             <field name="student_per_class" style="margin-right: 3%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                             <field name="average_fees" widget="monetary" string="Average Fees Per Month"  readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
-                            <field name="first_visit_datetime" string="First Visit Datetime" required="stage_id >= 1 and type=='opportunity' and lead_type_id ==3 " readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="first_visit_datetime" string="First Visit Datetime" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                         </group>
 
                         <!-- Quotations & Trips  -->
@@ -356,7 +356,7 @@
                                         padding: 8px; margin: 10px 0; width:100%;
                                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                                 <group name="quotation_summary_1" col="2">
-                                    <field name="students_planned_for_visit" string="Pax Students" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 2" />
+                                    <!-- <field name="students_planned_for_visit" string="Pax Students" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 2" /> -->
                                     <field name="total_deal_value" widget="monetary"/>
                                     <field name="total_package_count" string="Total No. Of Packages" />
                                 </group>
