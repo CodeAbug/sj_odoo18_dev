@@ -431,7 +431,7 @@ class CrmLeadInherit(models.Model):
             if not record.organization_id:
                 record.organization_id = record.partner_id.parent_id.id
             
-    def action_proposal(self):
+    def action_quotation(self):
         if self.type == 'opportunity':
             self.stage_id = 2
             

@@ -9,8 +9,8 @@
             <field name="arch" type="xml">
             
                 <xpath expr="//header" position="inside">
-                    <button name="action_proposal" string="Proposal"
-                            type="object" class="oe_highlight" title="Send To Proposition Stage"
+                    <button name="action_quotation" string="Quotation"
+                            type="object" class="oe_highlight" title="Send To Quotation Stage"
                             invisible="type == 'lead' or stage_id != 1"/>
                     
 
@@ -319,9 +319,9 @@
                     <attribute name="required">stage_id==1</attribute>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
-                    <field name="email_from" string="Org. Email" widget="email"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
-                    <field name="phone" string="Org. Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
-                    <field name="mobile" string="Org. Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                    <field name="email_from" string="Organization Email" widget="email"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                    <field name="phone" string="Organization Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
+                    <field name="mobile" string="Organization Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[field[@name='user_id'] and field[@name='team_id']]" position="attributes">
                     <attribute name="invisible">1</attribute>
