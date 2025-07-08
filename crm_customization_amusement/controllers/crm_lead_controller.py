@@ -97,7 +97,7 @@ class PartyEnquiryController(http.Controller):
         vals['stage_id'] = 1
 
         # Clear enquiry_handler
-        vals['user_id'] = False
+        vals['user_id'] = user.id
         
         vals['mobile'] = client_number
         vals['type'] = 'lead'
