@@ -35,6 +35,8 @@
         'views/crm_lead_inherited_views_inherit.xml',
         'views/product_template_view_inherit.xml',
         'views/res_users_view_inherit.xml',
+        'views/crm_lead_search_view_inherit.xml',
+        'views/crm_custom_menus.xml'
         
         
         

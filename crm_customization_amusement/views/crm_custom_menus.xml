@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- === Root Menu: Corporate === -->
+<menuitem id="menu_root_corporate" name="Corporate" 
+sequence="10" web_icon="crm_customization_amusement/static/description/corporate_icon.png"/>
+
+<!-- Corporate → Leads -->
+<record id="action_corporate_leads" model="ir.actions.act_window">
+    <field name="name">Leads</field>
+    <field name="res_model">crm.lead</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('type', '=', 'lead'), ('lead_type_id.name', '=', 'Corporate Party')]</field>
+</record>
+<menuitem id="menu_corporate_leads" name="Leads" parent="menu_root_corporate" action="action_corporate_leads"/>
+
+<!-- Corporate → Opportunities -->
+<record id="action_corporate_opportunities" model="ir.actions.act_window">
+    <field name="name">Opportunities</field>
+    <field name="res_model">crm.lead</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('type', '=', 'opportunity'), ('lead_type_id.name', '=', 'Corporate Party')]</field>
+</record>
+<menuitem id="menu_corporate_opportunities" 
+name="Opportunities" parent="menu_root_corporate" action="action_corporate_opportunities"/>
+
+
+<!-- === Root Menu: School === -->
+<menuitem id="menu_root_school" name="School" 
+sequence="20" web_icon="crm_customization_amusement/static/description/corporate_icon.png"/>
+
+<!-- School → Leads -->
+<record id="action_school_leads" model="ir.actions.act_window">
+    <field name="name">Leads</field>
+    <field name="res_model">crm.lead</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('type', '=', 'lead'), ('lead_type_id.name', '=', 'School Trip')]</field>
+</record>
+<menuitem id="menu_school_leads" name="Leads" parent="menu_root_school" action="action_school_leads"/>
+
+<!-- School → Opportunities -->
+<record id="action_school_opportunities" model="ir.actions.act_window">
+    <field name="name">Opportunities</field>
+    <field name="res_model">crm.lead</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('type', '=', 'opportunity'), ('lead_type_id.name', '=', 'School Trip')]</field>
+</record>
+<menuitem id="menu_school_opportunities" name="Opportunities" parent="menu_root_school" action="action_school_opportunities"/>
+
+
+</odoo>
