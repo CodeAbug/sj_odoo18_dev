@@ -76,6 +76,7 @@ class CrmLeadInherit(models.Model):
                             ('walkin', 'Walk-in'),
                             ('ivr', 'IVR')],
                             string="Lead Source",tracking=True)
+    lead_source_id = fields.Many2one('crm.lead.source', string="Lead Source", tracking=True)
     organization_id = fields.Many2one('res.partner',tracking=True)
     
     @api.onchange('partner_id')

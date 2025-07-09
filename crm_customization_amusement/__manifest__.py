@@ -20,15 +20,15 @@
         'data/city_data.xml',
         'data/school_type_data.xml',
         'data/designation_data.xml',
-        # 'data/package_info_data.xml',
+        'data/crm_lead_source_data.xml',
         'reports/trip_report.xml',
         
+        'views/res_partner_inherit_view.xml',
         'views/city_view.xml',
         'views/lead_type_views.xml',
         'views/school_type_views.xml',
         'views/stakeholder_designation_views.xml',
         'views/crm_lead_inherit_view.xml',
-        'views/res_partner_inherit_view.xml',
         'views/opportunity_trip_views.xml',
         'views/crm_stage_view_inherit.xml',
         'views/sale_order_view_inherit.xml',
@@ -36,7 +36,8 @@
         'views/product_template_view_inherit.xml',
         'views/res_users_view_inherit.xml',
         'views/crm_lead_search_view_inherit.xml',
-        'views/crm_custom_menus.xml'
+        'views/crm_custom_menus.xml',
+        'views/crm_lead_source_views.xml',
         
         
         

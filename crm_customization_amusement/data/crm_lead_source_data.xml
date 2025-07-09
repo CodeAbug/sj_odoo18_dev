@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="lead_source_whatsapp" model="crm.lead.source">
+            <field name="name">WhatsApp</field>
+        </record>
+
+        <record id="lead_source_website" model="crm.lead.source">
+            <field name="name">Website</field>
+        </record>
+
+        <record id="lead_source_walkin" model="crm.lead.source">
+            <field name="name">Walk-in</field>
+        </record>
+
+        <record id="lead_source_ivr" model="crm.lead.source">
+            <field name="name">IVR</field>
+        </record>
+
+
+        <record id="lead_source_referral" model="crm.lead.source">
+            <field name="name">Referral</field>
+        </record>
+
+        <record id="lead_source_sms" model="crm.lead.source">
+            <field name="name">SMS Campaign</field>
+        </record>
+
+        <record id="lead_source_email" model="crm.lead.source">
+            <field name="name">Email Campaign</field>
+        </record>
+
+        <record id="lead_source_events" model="crm.lead.source">
+            <field name="name">Events / Exhibitions</field>
+        </record>
+
+        <record id="lead_source_partner" model="crm.lead.source">
+            <field name="name">Channel Partner</field>
+        </record>
+
+        <record id="lead_source_call_center" model="crm.lead.source">
+            <field name="name">Call Center</field>
+        </record>
+
+    </data>
+</odoo>

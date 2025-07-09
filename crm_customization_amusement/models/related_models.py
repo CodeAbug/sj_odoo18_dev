@@ -43,6 +43,14 @@ class LeadType(models.Model):
     name = fields.Char(string="Lead Type", copy=False,tracking=True)
 
 
+class CrmLeadSource(models.Model):
+    _name = 'crm.lead.source'
+    _description = 'Lead Source'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(string="Source Name", required=True, tracking=True)
+    active = fields.Boolean(default=True, tracking=True)
+
 class SchoolType(models.Model):
     _name = 'school.type'
     _inherit = ['mail.thread', 'mail.activity.mixin']

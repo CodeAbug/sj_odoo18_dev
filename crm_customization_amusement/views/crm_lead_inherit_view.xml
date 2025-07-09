@@ -271,7 +271,8 @@
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
                         <field name="school_type_id" invisible="lead_type_id != 3" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
-                        <field name="lead_source"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="lead_source_id" widget="selection"
+                        readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
                         <field name="visiting_center_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
@@ -433,11 +434,10 @@
                 <xpath expr="//group[@name='opportunity_partner']/div[2]" position="after">
                         <field name="user_id" string="Lead Assigned To" readonly="is_editable_bool==False and type!='lead'"
                         context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user" invisible="type!= 'opportunity'"/>
-                        <field name="lead_source" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
+                        <field name="lead_source_id" widget="selection" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
                     <field name="visiting_center_id" string="Preferred Visiting Center" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
                         <field name="priority" widget="priority" class="oe_inline align-top" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
-                    
-                    </xpath>
+                </xpath>
                 
 
                 <xpath expr="//page[@name='extra']//group[1]" position="before">
@@ -447,7 +447,7 @@
                                     readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
                     <field name="whats_app_customer_id" readonly="1"/>
                     
-                                </group>
+                </group>
                 </xpath>
                 
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
@@ -468,8 +468,8 @@
                 'default_visiting_center_id': visiting_center_id,
                 'default_assigned_event_manager_id':user_id,
                 'default_organization_id' : organization_id,
-                'default_trip_poc_id': partner_id
-            }">
+                'default_trip_poc_id': partner_id   
+                }">
                                 <list>
                                     <field name="name"/>
                                     <field name="trip_poc_id"/>
