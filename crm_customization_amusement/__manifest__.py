@@ -21,6 +21,7 @@
         'data/school_type_data.xml',
         'data/designation_data.xml',
         'data/crm_lead_source_data.xml',
+        'data/company_type_data.xml',
         'reports/trip_report.xml',
         
         'views/res_partner_inherit_view.xml',
@@ -38,6 +39,7 @@
         'views/crm_lead_search_view_inherit.xml',
         'views/crm_custom_menus.xml',
         'views/crm_lead_source_views.xml',
+        'views/company_type_views.xml',
         
         
         

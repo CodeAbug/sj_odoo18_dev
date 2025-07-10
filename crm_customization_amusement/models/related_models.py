@@ -102,6 +102,7 @@ class OtherStakeholder(models.Model):
                     
                 
 
+
 class ProductTemplateInherit(models.Model):
     _inherit = 'product.template'
 
@@ -129,3 +130,9 @@ class MailActivitySchedule(models.TransientModel):
     
         
     
+class CompanyType(models.Model):
+    _name = 'company.type'
+    _description = 'Company Type'
+    _rec_name = 'name'
+
+    name = fields.Char(required=True, tracking=True)

@@ -109,6 +109,17 @@ class CrmLeadInherit(models.Model):
     poc_role = fields.Char()
     
     
+    # Corporate fields - 
+    company_type_id = fields.Many2one('company.type', string='Company Type', tracking=True)
+    company_gstin = fields.Char(string='GSTIN', tracking=True)
+    company_pan_no = fields.Char(string='PAN Number', tracking=True)
+    company_cin = fields.Char(string='CIN', tracking=True)
+    nature_of_business = fields.Char(string='Nature of Business', tracking=True)
+    company_budget = fields.Float(string='Company Budget', tracking=True)
+    no_of_branch = fields.Integer(string='Number of Branches', tracking=True)
+    no_of_employee = fields.Integer(string='Number of Employees', tracking=True)
+    
+    
     ### sale crm function overwrite #######
     def action_sale_quotations_new(self):
         if not self.partner_id:

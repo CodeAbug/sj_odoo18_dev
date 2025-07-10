@@ -52,7 +52,9 @@
                         </t>
                         <tr><td>Trip Planned Date:</td><td t-esc="doc.trip_planned_date"/></tr>
                         <tr><td>Trip Time(24H):</td><td><t t-esc="doc.trip_start_time"/> to <t t-esc="doc.trip_end_time"/></td></tr>
-                        <tr><td>No. of Visiting Students:</td><td t-esc="doc.planned_number_of_students"/></tr>
+                        <t t-if="doc.lead_type_id.name == 'School Trip'">
+                            <tr><td>No. of Visiting Students:</td><td t-esc="doc.planned_number_of_students"/></tr>
+                        </t>
                         <tr><td>No. of Visiting Staff:</td><td t-esc="doc.planned_number_of_staff"/></tr>
                         <tr><td>Contracted Amount:</td><td>₹<t t-esc="doc.expected_amount"/></td></tr>
                         <tr><td>Revised Amount:</td><td>₹<t t-esc="doc.revised_amount"/></td></tr>

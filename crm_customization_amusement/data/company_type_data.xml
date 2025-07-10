@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="company_type_pvt_ltd" model="company.type">
+            <field name="name">Private Limited</field>
+        </record>
+
+        <record id="company_type_public_ltd" model="company.type">
+            <field name="name">Public Limited</field>
+        </record>
+
+        <record id="company_type_llp" model="company.type">
+            <field name="name">LLP</field>
+        </record>
+
+        <record id="company_type_partnership" model="company.type">
+            <field name="name">Partnership</field>
+        </record>
+
+        <record id="company_type_govt" model="company.type">
+            <field name="name">Government</field>
+        </record>
+    </data>
+</odoo>

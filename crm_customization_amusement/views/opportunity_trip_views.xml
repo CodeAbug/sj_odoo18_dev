@@ -106,7 +106,7 @@
                         <field name="trip_start_time" string="Start Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_end_time" string="End Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
-                        <field name="planned_number_of_students" string="Pax Students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_students" string="Pax Students" invisible="lead_type_id != 3" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="expected_amount"/>
                         <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
@@ -117,7 +117,7 @@
                     <!-- Column 3 (Visited Info) -->
                     <group name="group_visited_trip_details" col="1" style="padding-left: 10px;" invisible="trip_status != 'visited'">
                         <field name="trip_rating" widget="priority"/>
-                        <field name="number_of_visited_students" string="Final Students"/>
+                        <field name="number_of_visited_students" invisible="lead_type_id != 3" string="Final Students"/>
                         <field name="number_of_visited_staff" string="Final Staff"/>
                         <field name="actual_visit_datetime"/>
                         <field name="pos_invoice_number"/>
@@ -152,7 +152,7 @@
                         <field name="trip_start_time" string="Start Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_end_time" string="End Time(24H)" widget="float_time" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
-                        <field name="planned_number_of_students" string="Pax Students" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
+                        <field name="planned_number_of_students" string="Pax Students" invisible="lead_type_id != 3" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="expected_amount"/>
                         <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
@@ -162,7 +162,6 @@
 
                     <!-- Column 3 (Visited Info) -->
                 </group>
-
                     <notebook name="trip_package_notebook">
                         <page name="package_lines" string="Package Lines">
                             <button name="action_fetch_packages_from_deal" type="object" string="Fetch Packages from Deal"

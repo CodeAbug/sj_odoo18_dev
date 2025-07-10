@@ -7,7 +7,6 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-            
                 <xpath expr="//header" position="inside">
                     <button name="action_quotation" string="Quotation"
                             type="object" class="oe_highlight" title="Send To Quotation Stage"
@@ -264,10 +263,10 @@
                                     }" invisible="not is_partner_visible"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="attributes">
-                        <field name="lead_type_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="lead_type_id" create="0" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="before">
-                        <field name="lead_type_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="lead_type_id" create="0" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='partner_name']" position="after">
                         <field name="school_type_id" invisible="lead_type_id != 3" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
@@ -275,7 +274,8 @@
                         readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
-                        <field name="visiting_center_id" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="visiting_center_id"  create="0" string="Preferred Visiting Center" invisible="lead_type_id ==2" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                        <field name="visiting_center_id"  create="0" string="Preferred Visiting Branch" invisible="lead_type_id !=2" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                         <field name="user_id" context="{'default_sales_team_id': team_id}" 
                         widget="many2one_avatar_user" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
                         <field name="priority" widget="priority" class="oe_inline align-top"/>
@@ -348,6 +348,23 @@
                             <field name="first_visit_datetime" string="First Visit Datetime" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                         </group>
 
+
+                        <group name="company_information" string="Company Information"
+                            invisible="lead_type_id != 2 or type !='opportunity'"
+                            style="background: #f2f6fc; border-radius: 10px; width:49%;
+                                    padding: 10px; margin: 1px 0; margin-top:0px !important;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <field name="company_type_id" style="margin-right: 4%;" 
+                            readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1" required="stage_id >= 1 and type=='opportunity' and lead_type_id == 2"/>
+                            <field name="company_gstin" style="margin-right: 4%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="company_pan_no" style="margin-right: 3%;" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="company_cin" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="nature_of_business" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="company_budget" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="no_of_branch" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                            <field name="no_of_employee" readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                        </group>
+                        
                         <!-- Quotations & Trips  -->
                         <group>
                             <!-- Quotation Summary -->
@@ -418,7 +435,7 @@
                 </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="replace">
-                    <field name="lead_type_id" readonly="is_editable_bool==False and type!='lead'"/>
+                    <field name="lead_type_id" create="0" readonly="is_editable_bool==False and type!='lead'"/>
                     <field name="organization_id" string="Org. Name" readonly="is_editable_bool==False and type!='lead'"/>
                     <!-- <field name="partner_name" readonly="stage_id != 1" string="Org. Name"/> -->
                     <field name="contact_name" string="P.O.C. Name" readonly="is_editable_bool==False and type!='lead'"/>
@@ -435,7 +452,10 @@
                         <field name="user_id" string="Lead Assigned To" readonly="is_editable_bool==False and type!='lead'"
                         context="{'default_sales_team_id': team_id}" widget="many2one_avatar_user" invisible="type!= 'opportunity'"/>
                         <field name="lead_source_id" widget="selection" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
-                    <field name="visiting_center_id" string="Preferred Visiting Center" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
+                    
+                        <field name="visiting_center_id"  create="0" string="Preferred Visiting Center" invisible="type!= 'opportunity' or lead_type_id ==2" readonly="is_editable_bool==False and type!='lead'"/>
+                        <field name="visiting_center_id"  create="0" string="Preferred Visiting Branch" invisible="type!= 'opportunity' or lead_type_id !=2" readonly="is_editable_bool==False and type!='lead'"/>
+                    
                         <field name="priority" widget="priority" class="oe_inline align-top" invisible="type!= 'opportunity'" readonly="is_editable_bool==False and type!='lead'"/>
                 </xpath>
                 
