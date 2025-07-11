@@ -24,7 +24,7 @@
         'data/company_type_data.xml',
         'reports/trip_report.xml',
         
-        # 'views/res_partner_inherit_view.xml',
+        'views/res_partner_inherit_view.xml',
         'views/city_view.xml',
         'views/lead_type_views.xml',
         'views/school_type_views.xml',
