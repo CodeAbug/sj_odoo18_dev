@@ -107,7 +107,7 @@ class ProductTemplateInherit(models.Model):
     _inherit = 'product.template'
 
     city_center_id = fields.Many2one('city.city', string="Center" ,tracking=True)
-    
+    lead_type_ids = fields.Many2many('lead.type',tracking=True)
     
 class ResUserInherit(models.Model):
     _inherit = 'res.users'

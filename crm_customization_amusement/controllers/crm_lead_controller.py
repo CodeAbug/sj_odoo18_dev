@@ -5,14 +5,12 @@ from odoo import http
 from odoo.http import request
 import json
 
-class PartyEnquiryController(http.Controller):
+class LeadCrmController(http.Controller):
 
 
 
     @http.route('/crm_lead/create_or_update', type='http', auth='public', methods=['POST'], csrf=False)
     def create_or_update_party_enquiry(self, **kwargs):
-        import json
-
         # API Key Auth
         api_key = request.httprequest.headers.get('API-KEY')
         if not api_key:
@@ -37,8 +35,8 @@ class PartyEnquiryController(http.Controller):
         client_number = data.get('client_number')
         if not client_number:
             return json.dumps({'status': 'error', 'message': 'client_number is required'})
-        if not data.get('client_name'):
-            return json.dumps({'status': 'error', 'message': 'client_name is required'})
+        # if not data.get('client_name'):
+        #     return json.dumps({'status': 'error', 'message': 'client_name is required'})
 
         model = request.env['crm.lead']
         existing = model.sudo().search([('mobile', '=', client_number)], order='id desc', limit=1)
@@ -94,10 +92,11 @@ class PartyEnquiryController(http.Controller):
                 vals[field] = value
 
         # Ensure state
-        vals['stage_id'] = 1
+        if 'stage_id' not in data:
+            vals['stage_id'] = 1
 
         # Clear enquiry_handler
-        vals['user_id'] = user.id
+        
         
         vals['mobile'] = client_number
         vals['type'] = 'lead'
@@ -111,10 +110,11 @@ class PartyEnquiryController(http.Controller):
         if 'client_email' in data:
             vals['email_from'] = data['client_email']
             data.pop('client_email')
-        
+            
         
         # Case A: No record exists → CREATE
         if not existing:
+            vals['user_id'] = user.id
             try:
                 record = model.with_user(user).create(vals)
                 return json.dumps({
@@ -150,7 +150,11 @@ class PartyEnquiryController(http.Controller):
                 print('-----------------entered in write upate')
                 print("Before Write---------------", vals)
                 existing.sudo().write(vals)
+                
                 print("After Write------------------",vals)
+                print("userrrr id ------------------",user.id)
+                
+                
                 # existing.sudo().write(vals)
                 return json.dumps({
                     'status': 'success',

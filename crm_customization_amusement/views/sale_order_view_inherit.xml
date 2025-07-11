@@ -10,8 +10,14 @@
             <xpath
                 expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']"
                 position="before">
-                <field name="is_primary_valuation_product" />
+                <field name="is_primary_valuation_product"/>
             </xpath>
+
+            <!-- <xpath
+                expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_template_id']"
+                position="attributes">
+                    <attribute name="domain">[('lead_type_ids', '=',opportunity_id.lead_type_id )] </attribute>
+            </xpath> -->
 
             <xpath
                 expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_uom_qty']"

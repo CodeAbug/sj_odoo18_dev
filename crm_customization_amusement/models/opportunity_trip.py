@@ -96,7 +96,8 @@ class OpportunityTrip(models.Model):
     @api.constrains('planned_number_of_students', 'planned_number_of_staff')
     def _check_non_zero_values(self):
         for record in self:
-            if record.planned_number_of_students <= 0:
+            
+            if record.planned_number_of_students <= 0 and record.lead_type_id.id == 3:
                 raise ValidationError("Planned number of students must be greater than 0.")
             if record.planned_number_of_staff <= 0.0:
                 raise ValidationError("Planned number of Staff must be greater than 0.")
@@ -144,9 +145,13 @@ class OpportunityTrip(models.Model):
 
     
     trip_poc_id = fields.Many2one('res.partner',string="Trip P.O.C",tracking=True)
+    linked_in_profile_link = fields.Char(tracking=True,readonly=False)
     secondary_trip_poc_id = fields.Many2one('res.partner',string="Secondary P.O.C",tracking=True)
+    # expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount',string="Contracted Amount")
     
-    expected_amount = fields.Float(tracking=True,compute='_compute_trip_amount',string="Contracted Amount")
+    #  Remove this field in next deployment
+    expected_amount = fields.Float(string="Contracted Amount")
+    
     revised_amount = fields.Float(tracking=True , compute='_compute_revised_amount',readonly=False)
     
     total_package_qty = fields.Float(string="Total Quantity", compute="_compute_package_summary", store=True)
@@ -183,17 +188,17 @@ class OpportunityTrip(models.Model):
             record.revised_amount = total
     
     
-    @api.depends('planned_number_of_staff','planned_number_of_students',
-                    'number_of_visited_staff',
-        'number_of_visited_students',
-                'lead_id','lead_id.total_proposal_amount')
-    def _compute_trip_amount(self):
-        for record in self:
-            expected = 0.0
-            actual = 0.0
-            rate = record.lead_id.proposal_amount_perhead
-            expected = (record.planned_number_of_students + record.planned_number_of_staff) * rate
-            record.expected_amount = expected
+    # @api.depends('planned_number_of_staff','planned_number_of_students',
+    #                 'number_of_visited_staff',
+    #     'number_of_visited_students',
+    #             'lead_id','lead_id.total_proposal_amount')
+    # def _compute_trip_amount(self):
+    #     for record in self:
+    #         expected = 0.0
+    #         actual = 0.0
+    #         rate = record.lead_id.proposal_amount_perhead
+    #         expected = (record.planned_number_of_students + record.planned_number_of_staff) * rate
+    #         record.expected_amount = expected
 
 
 

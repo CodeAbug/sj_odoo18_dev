@@ -401,14 +401,16 @@
                         <group name="lead_primary_poc_info" string="Primary P.O.C. Details">
                             <field name="contact_name" string="P.O.C. Name"  readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
                             <field name="poc_mobile" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
-                            <field name="poc_designation_id" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
+                            <field name="poc_designation_id" readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=3" required="stage_id >=1"/>
+                            <field name="poc_department" readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=2" required="stage_id >=1"/>
                             <field name="poc_email" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
                         </group>
 
                         <group name="lead_secondary_poc_info" string="Secondary P.O.C Details">
                             <field name="secondary_poc_name"  readonly="is_editable_bool==False and type=='opportunity'"/>
                             <field name="secondary_poc_mobile"  readonly="is_editable_bool==False and type=='opportunity'"/>
-                            <field name="secondary_poc_designation_id"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_designation_id"  readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=3"/>
+                            <field name="secondary_poc_department" readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=2"/>
                             <field name="secondary_poc_email"  readonly="is_editable_bool==False and type=='opportunity'"/>
                         </group>
                     </div>

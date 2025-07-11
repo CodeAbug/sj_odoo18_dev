@@ -10,7 +10,7 @@ sequence="5"/>
     <field name="name">Leads</field>
     <field name="res_model">crm.lead</field>
     <field name="view_mode">list,form</field>
-    <field name="domain">[('type', '=', 'lead'), ('lead_type_id.name', '=', 'Corporate Party')]</field>
+    <field name="domain">[('type', '=', 'lead'), ('lead_type_id.id', '=',2)]</field>
 </record>
 <menuitem id="menu_corporate_leads" name="Leads" parent="menu_root_corporate" action="action_corporate_leads"/>
 
@@ -19,7 +19,7 @@ sequence="5"/>
     <field name="name">Opportunities</field>
     <field name="res_model">crm.lead</field>
     <field name="view_mode">list,form</field>
-    <field name="domain">[('type', '=', 'opportunity'), ('lead_type_id.name', '=', 'Corporate Party')]</field>
+    <field name="domain">[('type', '=', 'opportunity'), ('lead_type_id.name', '=',2)]</field>
 </record>
 <menuitem id="menu_corporate_opportunities" 
 name="Opportunities" parent="menu_root_corporate" action="action_corporate_opportunities"/>

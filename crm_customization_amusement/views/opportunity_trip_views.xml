@@ -96,6 +96,8 @@
                         <field name="visiting_center_id" readonly="1"/>
                         <field name="center_manager" readonly="1"/>
                         <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="linked_in_profile_link" widget="url" invisible="lead_type_id != 2"/>
+                        
                         <field name="secondary_trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  readonly="trip_status != 'draft'" />
                         <field name="create_uid" string="Booked By" />
                     </group>
@@ -108,7 +110,7 @@
                         <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
                         <field name="planned_number_of_students" string="Pax Students" invisible="lead_type_id != 3" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="expected_amount"/>
+                        <!-- <field name="expected_amount"/> -->
                         <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="assigned_event_manager_id" string="Trip Coordinator" required="trip_status=='draft'"/>
@@ -141,7 +143,9 @@
                         <field name="partner_id" string="Org. P.O.C." readonly="1"/>
                         <field name="visiting_center_id" readonly="1"/>
                         <field name="center_manager" readonly="1"/>
-                        <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id,
+                                                                                                            'default_website':linked_in_profile_link}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
+                        <field name="linked_in_profile_link" widget="url" invisible="lead_type_id != 2"/>
                         <field name="secondary_trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  readonly="trip_status != 'draft'" />
                         <field name="create_uid" string="Booked By" />
                     </group>
@@ -154,7 +158,7 @@
                         <field name="trip_duration" string="Trip Duration(24H)" widget="float_time" required="trip_status=='draft'"/>
                         <field name="planned_number_of_students" string="Pax Students" invisible="lead_type_id != 3" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="planned_number_of_staff" string="Pax Staff" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
-                        <field name="expected_amount"/>
+                        <!-- <field name="expected_amount"/> -->
                         <field name="revised_amount" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="advance_received" required="trip_status=='draft'" readonly="trip_status != 'draft'"/>
                         <field name="assigned_event_manager_id" string="Trip Coordinator" required="trip_status=='draft'"/>

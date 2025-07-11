@@ -7,7 +7,7 @@
         </record>
         
         <record id="lead_type_corporate" model="lead.type">
-            <field name="name">Corporate Party</field>
+            <field name="name">Corporate Event</field>
         </record>
         
         <record id="lead_type_school" model="lead.type">

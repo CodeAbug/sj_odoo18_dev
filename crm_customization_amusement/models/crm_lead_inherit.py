@@ -89,11 +89,13 @@ class CrmLeadInherit(models.Model):
     poc_email = fields.Char(tracking=True,string="P.O.C. Email")
     poc_mobile = fields.Char(tracking=True,string="P.O.C. Mobile No.")
     poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string="P.O.C. Designation")
+    poc_department = fields.Char("P.O.C Department")
     
     secondary_poc_name = fields.Char(tracking=True ,string="Secondary P.O.C. Name")
     secondary_poc_mobile = fields.Char(tracking=True ,string="Secondary P.O.C. Mobile No.")
     secondary_poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string=" Secondary P.O.C. Designation")
     secondary_poc_email = fields.Char(tracking=True,string="Secondary P.O.C. Email")
+    secondary_poc_department = fields.Char("Secondary P.O.C Department")
     
     
     first_visit_datetime = fields.Datetime(tracking=True)
@@ -110,6 +112,7 @@ class CrmLeadInherit(models.Model):
     
     
     # Corporate fields - 
+    
     company_type_id = fields.Many2one('company.type', string='Company Type', tracking=True)
     company_gstin = fields.Char(string='GSTIN', tracking=True)
     company_pan_no = fields.Char(string='PAN Number', tracking=True)
@@ -426,6 +429,7 @@ class CrmLeadInherit(models.Model):
                         'email': record.poc_email,
                         'mobile': record.poc_mobile,
                         'function': record.poc_role,
+                        'function': record.poc_department,
                         'phone': None
                     })
             if record.secondary_poc_name:
@@ -436,6 +440,7 @@ class CrmLeadInherit(models.Model):
                             'email':record.secondary_poc_email,
                             'mobile':record.secondary_poc_mobile,
                             'function':record.secondary_poc_role,
+                            'function': record.secondary_poc_department,
                             'parent_id': record.partner_id.parent_id.id,
                             'phone': None
                         }

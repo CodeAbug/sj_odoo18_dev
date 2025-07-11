@@ -13,10 +13,10 @@
                     domain="[('lead_type_id.name', '=', 'School Trip')]"
                     help="Leads of type School Trip"/>
             
-            <filter string="Corporate Party"
+            <filter string="Corporate Event"
                     name="filter_corporate_party"
-                    domain="[('lead_type_id.name', '=', 'Corporate Party')]"
-                    help="Leads of type Corporate Party"/>
+                    domain="[('lead_type_id.name', '=', 'Corporate Event')]"
+                    help="Leads of type Corporate Event"/>
 
         </xpath>
     </field>
