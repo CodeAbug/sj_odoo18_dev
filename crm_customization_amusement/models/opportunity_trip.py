@@ -280,12 +280,17 @@ class OpportunityTrip(models.Model):
         date_str = datetime.today().strftime('%d%m%y')
         sequence = self.env['ir.sequence'].next_by_code('opportunity.trip') or '0001'
         vals['name'] = f"TRIP-{date_str}-{sequence}"
+        # Saving link to website in contact respartner
+        if 'linked_in_profile_link' in vals:
+            self.trip_poc_id.website = vals['linked_in_profile_link']
         
         record = super(OpportunityTrip, self).create(vals)
         record._update_lead_stage_on_sale()
         return record
     
     def write(self, vals):
+        if 'linked_in_profile_link' in vals:
+            self.trip_poc_id.website = vals['linked_in_profile_link']
         res = super().write(vals)
         self._update_lead_stage_on_sale()
         return res
