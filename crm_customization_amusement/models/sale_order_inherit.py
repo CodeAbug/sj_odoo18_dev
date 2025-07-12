@@ -13,7 +13,6 @@ SALE_ORDER_STATE = [
 class SaleOrderInherit(models.Model):
     _inherit='sale.order'
     
-    
     def action_custom_save(self):
 
         return {
@@ -28,8 +27,8 @@ class SaleOrderInherit(models.Model):
         }
     deal_value = fields.Float(tracking=True,compute='_compute_deal_value' ,string="Deal Value")
     quotation_valuation_amount = fields.Float(string="Deal Value")
-    quotation_cancellation_reason = fields.Text(string="Quotation Cancellation Reason")
-    
+    quotation_cancellation_reason = fields.Text(string="Quotation Cancellation Reason")    
+    lead_type_id = fields.Many2one(related='opportunity_id.lead_type_id',store=True,string="Lead Type")
     state = fields.Selection(
         selection=SALE_ORDER_STATE,
         string="Status",
@@ -64,6 +63,7 @@ class SaleOrderInherit(models.Model):
                 if stage_3 and lead.stage_id.id != 3:
                     lead.stage_id = stage_3.id
                     
+                    
     def action_mark_as_sent_custom(self):
         for order in self:
             if order.state == 'draft':
@@ -81,11 +81,17 @@ class SaleOrderInherit(models.Model):
 class SaleOrderLineInherit(models.Model):
     _inherit='sale.order.line'
     
+    related_lead_type_id = fields.Many2one(
+        'lead.type',
+        string="Lead Type (Related)",
+        related='order_id.lead_type_id',
+        store=True
+    )
+    
     
     is_primary_valuation_product = fields.Boolean('Is Primary')
     
     opportunity_trip_id = fields.Many2one('opportunity.trip')
-
 
 
                 
@@ -93,7 +99,6 @@ class SaleOrderCancelInherit(models.TransientModel):
     _inherit = 'sale.order.cancel'
     
     cancellation_reason = fields.Text(string="Cancellation Reason")
-    
     
     def action_cancel(self):
         self.ensure_one()

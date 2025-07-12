@@ -13,11 +13,12 @@
                 <field name="is_primary_valuation_product"/>
             </xpath>
 
-            <!-- <xpath
+            <xpath
                 expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_template_id']"
                 position="attributes">
-                    <attribute name="domain">[('lead_type_ids', '=',opportunity_id.lead_type_id )] </attribute>
-            </xpath> -->
+                    <!-- <attribute name="domain">[('lead_type_ids', '=',order_id.lead_type_id )] </attribute> -->
+                    <attribute name="domain">[('lead_type_ids', 'in', [related_lead_type_id])]</attribute>
+            </xpath>
 
             <xpath
                 expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_uom_qty']"
@@ -48,7 +49,14 @@
                     icon="fa-save" />
             </xpath>
 
-            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+            <xpath expr="//button[@id='send_by_email_primary']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@id='send_proforma_primary']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='send_proforma']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
 
@@ -61,6 +69,7 @@
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="deal_value" widget="monetary" />
+                <field name="lead_type_id" readonly="1"/>
             </xpath>
             <xpath expr="//page[@name='other_information']" position="inside">
                 <group name="quoation_cancellation_info" string="Quotation Cancellation Info">

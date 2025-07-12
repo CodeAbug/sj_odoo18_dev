@@ -121,7 +121,7 @@ class CrmLeadInherit(models.Model):
     company_budget = fields.Float(string='Company Budget', tracking=True)
     no_of_branch = fields.Integer(string='Number of Branches', tracking=True)
     no_of_employee = fields.Integer(string='Number of Employees', tracking=True)
-    
+
     
     ### sale crm function overwrite #######
     def action_sale_quotations_new(self):
@@ -129,6 +129,7 @@ class CrmLeadInherit(models.Model):
             return self.env["ir.actions.actions"]._for_xml_id("sale_crm.crm_quotation_partner_action")
         else:
             return self.action_new_quotation()
+
     
     # @api.constrains('stage_id','students_planned_for_visit', 'school_strength', 'student_per_class', 'average_fees')
     # def _check_fields_if_stage_one(self):
