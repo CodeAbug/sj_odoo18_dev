@@ -281,16 +281,33 @@ class OpportunityTrip(models.Model):
         sequence = self.env['ir.sequence'].next_by_code('opportunity.trip') or '0001'
         vals['name'] = f"TRIP-{date_str}-{sequence}"
         # Saving link to website in contact respartner
-        if 'linked_in_profile_link' in vals:
-            self.trip_poc_id.website = vals['linked_in_profile_link']
+        trip_poc_id = vals.get('trip_poc_id')
+        linked_in_link = vals.get('linked_in_profile_link')
+        if trip_poc_id and linked_in_link:
+            # print('---------self.trip_poc id ----',self.env['res.partner'].browse(trip_poc_id))
+            
+            self.env['res.partner'].browse(trip_poc_id).write({
+                'function': linked_in_link
+            })
+
+        # if 'linked_in_profile_link' in vals:
+        #     print('---------self.trip_poc id ----',self.trip_poc_id)
+        #     new_trip_poc_contact = self.env['res.partner'].search(['id','=',self.trip_poc_id.id]).write({
+        #         'function':vals['linked_in_profile_link']
+        #     })
         
         record = super(OpportunityTrip, self).create(vals)
         record._update_lead_stage_on_sale()
         return record
     
     def write(self, vals):
-        if 'linked_in_profile_link' in vals:
-            self.trip_poc_id.website = vals['linked_in_profile_link']
+        trip_poc_id = vals.get('trip_poc_id')
+        linked_in_link = vals.get('linked_in_profile_link')
+        if trip_poc_id and linked_in_link:
+            # print('------write function---self.trip_poc id ----',self.env['res.partner'].browse(trip_poc_id))
+            self.env['res.partner'].browse(trip_poc_id).write({
+                'function': linked_in_link
+            })
         res = super().write(vals)
         self._update_lead_stage_on_sale()
         return res

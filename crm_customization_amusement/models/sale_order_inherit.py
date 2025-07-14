@@ -26,7 +26,7 @@ class SaleOrderInherit(models.Model):
             }
         }
     deal_value = fields.Float(tracking=True,compute='_compute_deal_value' ,string="Deal Value")
-    quotation_valuation_amount = fields.Float(string="Deal Value")
+    quotation_valuation_amount = fields.Float()
     quotation_cancellation_reason = fields.Text(string="Quotation Cancellation Reason")    
     lead_type_id = fields.Many2one(related='opportunity_id.lead_type_id',store=True,string="Lead Type")
     state = fields.Selection(

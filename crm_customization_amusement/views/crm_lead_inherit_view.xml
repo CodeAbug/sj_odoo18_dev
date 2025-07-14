@@ -495,7 +495,7 @@
                                 <list>
                                     <field name="name"/>
                                     <field name="trip_poc_id"/>
-                                    <field name="planned_number_of_students" string="Pax Students"/>
+                                    <field name="planned_number_of_students" column_invisible="parent.lead_type_id != 3" string="Pax Students"/>
                                     <field name="planned_number_of_staff"  string="Pax Staff"/>
                                     <field name="expected_amount" widget="monetary"/>
                                     <field name="revised_amount" widget="monetary"/>
