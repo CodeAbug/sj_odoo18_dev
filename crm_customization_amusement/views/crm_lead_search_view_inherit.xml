@@ -22,5 +22,26 @@
     </field>
 </record>
 
+<record id="view_crm_case_opportunities_filter_inherit_lead_type_filters" model="ir.ui.view">
+    <field name="name">crm.lead.search.opportunities.inherit.lead_type</field>
+    <field name="model">crm.lead</field>
+    <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+    <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+        
+            <filter string="School Trip"
+                    name="filter_school_trip"
+                    domain="[('lead_type_id.name', '=', 'School Trip')]"
+                    help="Leads of type School Trip"/>
+            
+            <filter string="Corporate Event"
+                    name="filter_corporate_party"
+                    domain="[('lead_type_id.name', '=', 'Corporate Event')]"
+                    help="Leads of type Corporate Event"/>
+        </xpath>
+    </field>
+</record>
+
+
 
 </odoo>

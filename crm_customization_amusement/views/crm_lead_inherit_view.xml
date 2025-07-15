@@ -321,8 +321,8 @@
                 </xpath>
                 <xpath expr="//group[@name='lead_partner']/field[@name='website']" position="after">
                     <field name="email_from" string="Organization Email" widget="email"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
-                    <field name="phone" string="Organization Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
                     <field name="mobile" string="Organization Mobile" widget="pohne" readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1" required="stage_id ==1"/>
+                    <field name="phone" string="Organization Phone" widget="phone"  readonly="is_editable_bool==False and type=='opportunity' and  stage_id != 1"/>
                 </xpath>
                 <xpath expr="//group[field[@name='user_id'] and field[@name='team_id']]" position="attributes">
                     <attribute name="invisible">1</attribute>

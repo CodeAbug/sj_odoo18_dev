@@ -205,16 +205,20 @@ class CrmLeadInherit(models.Model):
             if lead.stage_id.id >= 2:
 
             # Trip Status Evaluation
-                trip_visited = any(trip.trip_status == 'visited' for trip in lead.opportunity_trip_ids)
-                # print('   trip  visited - -----------',trip_visited )
+
+                trip_visited = 0
+                for trip in lead.opportunity_trip_ids:
+                    if trip.trip_status=='visited':
+                        trip_visited +=1
+                    print('trip  visited - -----------',trip_visited )
                 
-                if trip_visited:
+                if trip_visited > 0:
                     visited_stage = self.env['crm.stage'].search([('id', '=', 5)], limit=1)
                     if visited_stage and lead.stage_id.id != visited_stage.id:
                         lead.stage_id = visited_stage.id
                     
                     
-                elif not trip_visited and lead.stage_id.id ==5 :
+                elif trip_visited <= 0 and lead.stage_id.id ==5 :
                     # print('ELIF entered by trip not visited')
                     lead.stage_id = 3 
                         

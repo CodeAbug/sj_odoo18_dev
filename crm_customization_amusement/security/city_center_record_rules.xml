@@ -29,7 +29,7 @@
         <record id="crm_products_center_wise_rule" model="ir.rule">
             <field name="name">Products: Center Wise Access</field>
             <field name="model_id" ref="product.model_product_template"/>
-            <field name="groups" eval="[(4, ref('group_crm_user_custom'))]"/>
+            <field name="groups" eval="[(4, ref('group_crm_user_custom')), (4, ref('group_crm_zone_manager'))]"/>
             <field name="domain_force">[
                 '|',
                 ('city_center_id', 'in', user.city_center_ids.ids),
