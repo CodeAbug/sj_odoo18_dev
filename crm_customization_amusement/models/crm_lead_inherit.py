@@ -210,7 +210,7 @@ class CrmLeadInherit(models.Model):
                 for trip in lead.opportunity_trip_ids:
                     if trip.trip_status=='visited':
                         trip_visited +=1
-                    print('trip  visited - -----------',trip_visited )
+                    # print('trip  visited - -----------',trip_visited )
                 
                 if trip_visited > 0:
                     visited_stage = self.env['crm.stage'].search([('id', '=', 5)], limit=1)

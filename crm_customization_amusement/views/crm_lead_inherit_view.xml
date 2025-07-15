@@ -437,6 +437,9 @@
                     </page>
                 </xpath>
 
+                <xpath expr="//group[@name='opportunity_partner']" position="attributes">
+                    <attribute name="string">Opportunity Details</attribute>
+                </xpath>
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="replace">
                     <field name="lead_type_id" create="0" readonly="is_editable_bool==False and type!='lead'"/>
                     <field name="organization_id" string="Org. Name" readonly="is_editable_bool==False and type!='lead'"/>
