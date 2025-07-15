@@ -69,7 +69,8 @@ class StakeholderDesignation(models.Model):
     
 class OtherStakeholder(models.Model):
     _name = 'other.stakeholder.line'
-    _inherit = ['mail.thread', 'mail.activity.mixin']    
+    _inherit = ['mail.thread', 'mail.activity.mixin']   
+    _description = 'Other Stakeholder Lines'
     _order = 'id desc'
 
     name = fields.Char(string="Name",tracking=True)
@@ -77,6 +78,7 @@ class OtherStakeholder(models.Model):
     mail = fields.Char("Mail", tracking=True)
     mobile = fields.Char("Mobile", tracking= True)
     designation_id = fields.Many2one('stakeholder.designation', string="Designation",tracking=True)
+    department = fields.Char(tracking=True)
     is_primary_bool = fields.Boolean("Is Primary Person",tracking=True)
     partner_id = fields.Many2one('res.partner',tracking=True)
 

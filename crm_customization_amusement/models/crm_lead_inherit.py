@@ -106,9 +106,9 @@ class CrmLeadInherit(models.Model):
     student_per_class = fields.Integer(string="Student Per Class",tracking=True)
     average_fees = fields.Float(tracking=True)
     #remove this field in next deploy
-    budget_per_student = fields.Float()
-    secondary_poc_role = fields.Char()
-    poc_role = fields.Char()
+    # budget_per_student = fields.Float()
+    # secondary_poc_role = fields.Char()
+    # poc_role = fields.Char()
     
     
     # Corporate fields - 
@@ -409,7 +409,7 @@ class CrmLeadInherit(models.Model):
                             'name':record.name,
                             'email':record.mail,
                             'mobile':record.mobile,
-                            'function':record.designation_id.name,
+                            'function':record.designation_id.name if record.designation_id else record.department,
                             'parent_id': rec.partner_id.parent_id.id,
                             'is_primary_stakeholder_bool': record.is_primary_bool,
                             'phone': None
@@ -429,8 +429,7 @@ class CrmLeadInherit(models.Model):
                     contact.write({
                         'email': record.poc_email,
                         'mobile': record.poc_mobile,
-                        'function': record.poc_role,
-                        'function': record.poc_department,
+                        'function': record.poc_designation_id.name if record.poc_designation_id else record.poc_department,
                         'phone': None
                     })
             if record.secondary_poc_name:
@@ -440,8 +439,7 @@ class CrmLeadInherit(models.Model):
                             'name':record.secondary_poc_name,
                             'email':record.secondary_poc_email,
                             'mobile':record.secondary_poc_mobile,
-                            'function':record.secondary_poc_role,
-                            'function': record.secondary_poc_department,
+                            'function':record.secondary_poc_designation_id.name if record.secondary_poc_designation_id else record.secondary_poc_department,
                             'parent_id': record.partner_id.parent_id.id,
                             'phone': None
                         }

@@ -285,33 +285,29 @@ class OpportunityTrip(models.Model):
         linked_in_link = vals.get('linked_in_profile_link')
         if trip_poc_id and linked_in_link:
             # print('---------self.trip_poc id ----',self.env['res.partner'].browse(trip_poc_id))
-            
             self.env['res.partner'].browse(trip_poc_id).write({
                 'function': linked_in_link
             })
-
-        # if 'linked_in_profile_link' in vals:
-        #     print('---------self.trip_poc id ----',self.trip_poc_id)
-        #     new_trip_poc_contact = self.env['res.partner'].search(['id','=',self.trip_poc_id.id]).write({
-        #         'function':vals['linked_in_profile_link']
-        #     })
+            # print("===-----------------==Trip POC function",self.trip_poc_id.function)
         
         record = super(OpportunityTrip, self).create(vals)
         record._update_lead_stage_on_sale()
         return record
     
     def write(self, vals):
-        trip_poc_id = vals.get('trip_poc_id')
+        res = super().write(vals)
+
         linked_in_link = vals.get('linked_in_profile_link')
+        trip_poc_id = vals.get('trip_poc_id') or self.trip_poc_id.id  # fallback to current
+
         if trip_poc_id and linked_in_link:
-            # print('------write function---self.trip_poc id ----',self.env['res.partner'].browse(trip_poc_id))
             self.env['res.partner'].browse(trip_poc_id).write({
                 'function': linked_in_link
             })
-        res = super().write(vals)
+            # print("===-----------------==Trip POC function----",self.trip_poc_id.function)
+
         self._update_lead_stage_on_sale()
         return res
-
     
     def action_plan(self):
         for trip in self:
