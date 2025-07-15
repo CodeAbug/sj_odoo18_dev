@@ -286,7 +286,7 @@ class OpportunityTrip(models.Model):
         if trip_poc_id and linked_in_link:
             # print('---------self.trip_poc id ----',self.env['res.partner'].browse(trip_poc_id))
             self.env['res.partner'].browse(trip_poc_id).write({
-                'function': linked_in_link
+                'website': linked_in_link
             })
             # print("===-----------------==Trip POC function",self.trip_poc_id.function)
         
@@ -302,7 +302,7 @@ class OpportunityTrip(models.Model):
 
         if trip_poc_id and linked_in_link:
             self.env['res.partner'].browse(trip_poc_id).write({
-                'function': linked_in_link
+                'website': linked_in_link
             })
             # print("===-----------------==Trip POC function----",self.trip_poc_id.function)
 
