@@ -27,9 +27,9 @@
                                         decoration-success="trip_status == 'visited'"
                                         decoration-warning="trip_status == 'planned'"/>
                 <field name="visiting_center_id"/>
-                <field name="planned_number_of_students" column_invisible ="lead_type_id != 3" string="Pax Students"/>
-                <field name="planned_number_of_staff"  string="Pax Staff"  column_invisible="lead_type_id not in (2,3)"/>
-                <field name="expected_guests" column_invisible="lead_type_id in (2,3)"/>
+                <field name="planned_number_of_students" optional="hide" string="Pax Students"/>
+                <field name="planned_number_of_staff" optional="hide" string="Pax Staff"/>
+                <field name="expected_guests" optional="hide"/>
             </list>
         </field>
     </record>
@@ -77,7 +77,6 @@
             </style>
             </header>
             
-
             <sheet>
                 <div class="oe_button_box" name="button_box">
                     <field name="trip_status" widget="badge"/>
@@ -92,7 +91,6 @@
                     <group col="1" name="group_trip_basic_info_left" style="border-right: 1px solid #ddd; padding-right: 10px;">
                         <field name="name" readonly="1"/>
 
-
                         <field name="lead_id" readonly="1"/>
                         <field name="lead_type_id" readonly="1"/>
                         <field name="organization_id" readonly="1"/>
@@ -101,7 +99,6 @@
                         <field name="center_manager" readonly="1"/>
                         <field name="trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  required="trip_status=='draft'" readonly="trip_status != 'draft'" />
                         <field name="linked_in_profile_link" widget="url" invisible="lead_type_id != 2"/>
-                        
                         <field name="secondary_trip_poc_id" domain="[('parent_id', '=', organization_id)]" context="{'default_parent_id': organization_id}"  readonly="trip_status != 'draft'" />
                         <field name="create_uid" string="Booked By" />
                     </group>
@@ -126,8 +123,7 @@
                         <field name="trip_rating" widget="priority"/>
                         <field name="number_of_visited_students" invisible="lead_type_id != 3" string="Final Students"/>
                         <field name="number_of_visited_staff" string="Final Staff" invisible="lead_type_id not in (2,3)"/>
-                        <field name="final_guests" required="trip_status=='draft'" readonly="trip_status != 'draft'" invisible="lead_type_id in (2,3)"/>
-
+                        <field name="final_guests" required="trip_status=='draft'" invisible="lead_type_id in (2,3)"/>
                         <field name="actual_visit_datetime"/>
                         <field name="pos_invoice_number"/>
                         <field name="pos_datetime"/>

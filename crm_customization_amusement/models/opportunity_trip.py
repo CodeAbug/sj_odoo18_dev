@@ -116,6 +116,13 @@ class OpportunityTrip(models.Model):
     # actual_trip_amount = fields.Float()
     
     
+    # @api.onchange('pos_amount')
+    # def _check_pos_amount(self):
+    #     for rec in self:
+    #         if rec.pos_amount > 10000000:
+    #             raise Warning("Seriously?????")
+
+    
     
     @api.constrains('trip_start_time', 'trip_end_time')
     def _check_time_validity(self):

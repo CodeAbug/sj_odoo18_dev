@@ -138,6 +138,13 @@ class CrmLeadInherit(models.Model):
     expected_guest_count = fields.Integer(string="Expected Guests", tracking=True)
     budget = fields.Float(string="Budget (if provided)", tracking=True)
     
+    @api.constrains('expected_guest_count','stage_id')
+    def compute_student_planned_for_visit_validation(self):
+        for rec in self:
+            if rec.type == 'opportunity'  and rec.stage_id.id ==2  and rec.lead_type_id.id not in (2,3) and rec.expected_guest_count <= 0:                
+                raise ValidationError(
+                    "The following fields must be greater than 0:\n- Expected Guests "
+                )
     ### sale crm function overwrite #######
     def action_sale_quotations_new(self):
         if not self.partner_id:

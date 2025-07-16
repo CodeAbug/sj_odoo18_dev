@@ -437,20 +437,12 @@
                             <field name="poc_email" readonly="is_editable_bool==False and type=='opportunity'" required="stage_id >=1"/>
                         </group>
 
-                        <group name="lead_secondary_poc_info" string="Secondary P.O.C Details">
-                            <field name="secondary_poc_name"  readonly="is_editable_bool==False and type=='opportunity'"/>
-                            <field name="secondary_poc_mobile"  readonly="is_editable_bool==False and type=='opportunity'"/>
-                            <field name="secondary_poc_designation_id"  readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=3"/>
-                            <field name="secondary_poc_department" readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=2"/>
-                            <field name="secondary_poc_email"  readonly="is_editable_bool==False and type=='opportunity'"/>
-                        </group>
-
                         <group string="Birthday Person Details" invisible="lead_type_id != 1 or type=='opportunity'" name="birthday_person_details">
-                            <field name="birthday_person_name"/>
+                            <field name="birthday_person_name" required="lead_type_id==1"/>
                             
-                            <field name="birthday_person_gender"/>
+                            <field name="birthday_person_gender" required="lead_type_id==1"/>
                             
-                            <field name="birthday_person_dob"/>
+                            <field name="birthday_person_dob" required="lead_type_id==1"/>
                         </group>
 
                         <group name="event_details" string="Event Details"
@@ -459,21 +451,30 @@
                                     padding: 10px; margin: 1px 0; margin-top:0px !important;
                                     box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
-                            <field name="birthday_person_name" style="margin-right: 4%;"  invisible="lead_type_id!=1"
+                            <field name="birthday_person_name" style="margin-right: 4%;"  invisible="lead_type_id!=1" required="lead_type_id==1"
                                 readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                             
                             <field name="birthday_person_gender" style="margin-right: 4%;"  invisible="lead_type_id!=1"
-                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1" required="lead_type_id==1"/>
                             
                             <field name="birthday_person_dob" style="margin-right: 4%;"  invisible="lead_type_id!=1"
-                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1" required="lead_type_id==1"/>
                             
                             <field name="expected_guest_count" style="margin-right: 4%;" 
-                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
+                                readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1" required="lead_type_id==1" invisible="type=='lead'"/>
                             
                             <field name="budget" widget="monetary" 
                                 readonly="is_editable_bool==False and type=='opportunity' and stage_id != 1"/>
                         </group>
+
+                        <group name="lead_secondary_poc_info" string="Secondary P.O.C Details">
+                            <field name="secondary_poc_name"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_mobile"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                            <field name="secondary_poc_designation_id"  readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=3"/>
+                            <field name="secondary_poc_department" readonly="is_editable_bool==False and type=='opportunity'" invisible="lead_type_id!=2"/>
+                            <field name="secondary_poc_email"  readonly="is_editable_bool==False and type=='opportunity'"/>
+                        </group>
+
                     </div>
                 </xpath>
                 
