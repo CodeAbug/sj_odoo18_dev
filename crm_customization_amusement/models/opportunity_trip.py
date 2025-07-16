@@ -92,16 +92,18 @@ class OpportunityTrip(models.Model):
         
     planned_number_of_students = fields.Integer(tracking=True,string="Planned No. Of Students")
     planned_number_of_staff = fields.Integer(tracking=True ,help="Teachers, helpers, bus drivers",string="Planned No. Of Staff")
-    
-    @api.constrains('planned_number_of_students', 'planned_number_of_staff')
+    expected_guests = fields.Integer(tracking=True)
+    @api.constrains('planned_number_of_students', 'planned_number_of_staff','expected_guests')
     def _check_non_zero_values(self):
         for record in self:
             
             if record.planned_number_of_students <= 0 and record.lead_type_id.id == 3:
                 raise ValidationError("Planned number of students must be greater than 0.")
-            if record.planned_number_of_staff <= 0.0:
+            if record.planned_number_of_staff <= 0.0 and record.lead_type_id.id in (2,3):
                 raise ValidationError("Planned number of Staff must be greater than 0.")
-    
+            elif record.expected_guests <= 0.0 and record.lead_type_id.id not in (2,3):
+                raise ValidationError("Planned number of Expected Guests must be greater than 0.")
+            
     advance_received = fields.Float(tracking=True,help="Token payment")
             
     assigned_event_manager_id =  fields.Many2one('res.users',tracking=True)
@@ -174,7 +176,8 @@ class OpportunityTrip(models.Model):
     
     #After visit fields 
     number_of_visited_students = fields.Integer(tracking=True,string="No. Of Visited Students")
-    number_of_visited_staff = fields.Integer(tracking=True , help="Teachers, helpers, bus drivers",string="No. Of Visited Staff")
+    number_of_visited_staff = fields.Integer(tracking=True , string="No. Of Visited Staff")
+    final_guests = fields.Integer(tracking=True)
     actual_visit_datetime = fields.Datetime(tracking=True)
     
     

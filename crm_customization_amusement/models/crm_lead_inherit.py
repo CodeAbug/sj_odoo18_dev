@@ -91,12 +91,12 @@ class CrmLeadInherit(models.Model):
     poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string="P.O.C. Designation")
     poc_department = fields.Char("P.O.C Department")
     
-    secondary_poc_name = fields.Char(tracking=True ,string="Secondary P.O.C. Name")
+    secondary_poc_name = fields.Char(tracking=True ,string="Secondary P.O.C. Name", readonly=False)
     secondary_poc_mobile = fields.Char(tracking=True ,string="Secondary P.O.C. Mobile No.")
     secondary_poc_designation_id = fields.Many2one('stakeholder.designation',tracking=True,string=" Secondary P.O.C. Designation")
     secondary_poc_email = fields.Char(tracking=True,string="Secondary P.O.C. Email")
     secondary_poc_department = fields.Char("Secondary P.O.C Department")
-    
+    secondary_poc_id = fields.Many2one('res.partner',tracking=True)
     
     first_visit_datetime = fields.Datetime(tracking=True)
     students_planned_for_visit = fields.Integer(string="Students Planned For Visit",tracking=True)
@@ -122,6 +122,21 @@ class CrmLeadInherit(models.Model):
     no_of_branch = fields.Integer(string='Number of Branches', tracking=True)
     no_of_employee = fields.Integer(string='Number of Employees', tracking=True)
 
+    # birthday fields - 
+    birthday_person_name = fields.Char(string="Birthday Person's Name", tracking=True)
+    # birthday_person_age = fields.Integer(string="Person's Age", tracking=True)
+    birthday_person_gender = fields.Selection([
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other')
+    ], string="Birthday Person's Gender", tracking=True)
+    birthday_person_dob = fields.Date(string="Birthday Person' D.O.B.", tracking=True)
+    # relation_to_person = fields.Char(string="Relation to Booker (e.g., Son, Wife)", tracking=True)
+    
+    
+    #usniversal fields - 
+    expected_guest_count = fields.Integer(string="Expected Guests", tracking=True)
+    budget = fields.Float(string="Budget (if provided)", tracking=True)
     
     ### sale crm function overwrite #######
     def action_sale_quotations_new(self):
@@ -297,11 +312,8 @@ class CrmLeadInherit(models.Model):
                 'default_trip_poc_id': self.env['res.partner'].search([
                     ('parent_id', '=', self.partner_id.parent_id.id),
                     ('name', '=', self.contact_name)
-                ], limit=1).id,
-                'default_secondary_trip_poc_id': self.env['res.partner'].search([
-                    ('parent_id', '=', self.partner_id.parent_id.id),
-                    ('name', '=', self.secondary_poc_name)
-                ], limit=1).id,
+                ], limit=1).id if self.partner_id.parent_id else self.partner_id.id,
+                'default_secondary_trip_poc_id': self.secondary_poc_id.id,
                 'default_assigned_event_manager_id':self.user_id.id,
                 'default_organization_id' : self.partner_id.parent_id.id
             },
@@ -325,11 +337,8 @@ class CrmLeadInherit(models.Model):
                 'default_trip_poc_id': self.env['res.partner'].search([
                     ('parent_id', '=', self.partner_id.parent_id.id),
                     ('name', '=', self.contact_name)
-                ], limit=1).id,
-                'default_secondary_trip_poc_id': self.env['res.partner'].search([
-                    ('parent_id', '=', self.partner_id.parent_id.id),
-                    ('name', '=', self.secondary_poc_name)
-                ], limit=1).id,
+                ], limit=1).id if self.partner_id.parent_id else self.partner_id.id,
+                'default_secondary_trip_poc_id': self.secondary_poc_id.id,
                 'default_assigned_event_manager_id':self.user_id.id,
                 'default_organization_id' : self.partner_id.parent_id.id
             }
@@ -444,10 +453,13 @@ class CrmLeadInherit(models.Model):
                             'email':record.secondary_poc_email,
                             'mobile':record.secondary_poc_mobile,
                             'function':record.secondary_poc_designation_id.name if record.secondary_poc_designation_id else record.secondary_poc_department,
-                            'parent_id': record.partner_id.parent_id.id,
+                            'parent_id': record.partner_id.parent_id.id if record.partner_id.parent_id else False,
                             'phone': None
                         }
                     )
+                if not record.secondary_poc_id:
+                    record.secondary_poc_id = contact.id 
+                
             if not record.organization_id:
                 record.organization_id = record.partner_id.parent_id.id
             
@@ -486,10 +498,11 @@ class CrmLeadInherit(models.Model):
                 lead.last_activity_deadline = False
 
                 
-    @api.onchange('partner_name')
+    @api.onchange('partner_name','contact_name')
     def _onchange_partner_name(self):
         for rec in self:
-            rec.name = rec.partner_name
+            if not rec.name:
+                rec.name = rec.partner_name if rec.partner_name else rec.contact_name
 
     def action_revert_to_stage_one(self):
         for lead in self:
